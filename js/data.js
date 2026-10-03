@@ -53,21 +53,21 @@ const RESULTADOS = [
   { fecha: "2026-09-27", rival: "Tordos", nuestros: 15, suyos: 6, torneo: "Copa Primavera · Final" },
 ];
 
-// numero: camiseta. nacionalidad: se muestra al dar vuelta la carta.
+// numero, nacionalidad y dato (algo gracioso) se muestran al dar vuelta la carta.
 // foto: archivo dentro de assets/jugadores/ (las tarjetas ya traen nombre y apodo dibujados)
 const JUGADORES = [
-  { nombre: "Ainara Rodriguez", apodo: "Aini", foto: "ainara-rodriguez.webp", numero: 4, nacionalidad: "Uruguaya" },
-  { nombre: "Camila Couture", apodo: "Camilinha", foto: "camila-couture.webp", numero: 24, nacionalidad: "Uruguaya" },
-  { nombre: "Juanjo Alonso", apodo: "Juano", foto: "juanjo-alonso.webp", numero: 10, nacionalidad: "Uruguaya" },
-  { nombre: "Julieta Noguez", apodo: "Ju", foto: "julieta-noguez.webp", numero: 33, nacionalidad: "Uruguaya" },
-  { nombre: "Leandro Rodriguez", apodo: "Lean", foto: "leandro-rodriguez.webp", numero: 22, nacionalidad: "Uruguaya" },
-  { nombre: "Matilde Rodriguez", apodo: "Matildinha", foto: "matilde-rodriguez.webp", numero: 21, nacionalidad: "Uruguaya" },
-  { nombre: "Nicolas Cabana", apodo: "Nico", foto: "nicolas-cabana.webp", numero: 5, nacionalidad: "Uruguaya" },
-  { nombre: "Rosina Cordero", apodo: "Rosi", foto: "rosina-cordero.webp", numero: 12, nacionalidad: "Uruguaya" },
-  { nombre: "Santiago Rodriguez", apodo: "Santiaginho", foto: "santiago-rodriguez.webp", numero: 9, nacionalidad: "Uruguaya" },
-  { nombre: "Sebastian Migdal", apodo: "Seba", foto: "sebastian-migdal.webp", numero: 30, nacionalidad: "Uruguaya" },
-  { nombre: "Sofia Rodriguez", apodo: "Sofi", foto: "sofia-rodriguez.webp", numero: 27, nacionalidad: "Uruguaya" },
-  { nombre: "Thiago Elizalde", apodo: "Facha", foto: "thiago-elizalde.webp", numero: 6, nacionalidad: "Uruguaya" },
+  { nombre: "Ainara Rodriguez", apodo: "Aini", foto: "ainara-rodriguez.webp", numero: 4, nacionalidad: "Uruguaya", dato: "Si el disco está en el aire, ya es suyo." },
+  { nombre: "Camila Couture", apodo: "Camilinha", foto: "camila-couture.webp", numero: 24, nacionalidad: "Uruguaya", dato: "Festeja cada punto como si fuera la final." },
+  { nombre: "Juanjo Alonso", apodo: "Juano", foto: "juanjo-alonso.webp", numero: 10, nacionalidad: "Uruguaya", dato: "Tiene un pase para cada ocasión… y un festejo para cada pase." },
+  { nombre: "Julieta Noguez", apodo: "Ju", foto: "julieta-noguez.webp", numero: 33, nacionalidad: "Uruguaya", dato: "Su marca no te deja ni respirar (con espíritu, eso sí)." },
+  { nombre: "Leandro Rodriguez", apodo: "Lean", foto: "leandro-rodriguez.webp", numero: 22, nacionalidad: "Uruguaya", dato: "Corre más que el disco. A veces, literalmente." },
+  { nombre: "Matilde Rodriguez", apodo: "Matildinha", foto: "matilde-rodriguez.webp", numero: 21, nacionalidad: "Uruguaya", dato: "Atrapa con una mano y saluda con la otra." },
+  { nombre: "Nicolas Cabana", apodo: "Nico", foto: "nicolas-cabana.webp", numero: 5, nacionalidad: "Uruguaya", dato: "Nunca se pierde un huddle." },
+  { nombre: "Rosina Cordero", apodo: "Rosi", foto: "rosina-cordero.webp", numero: 12, nacionalidad: "Uruguaya", dato: "Le encuentra el hueco a cualquier defensa." },
+  { nombre: "Santiago Rodriguez", apodo: "Santi", foto: "santiago-rodriguez.webp", numero: 9, nacionalidad: "Uruguaya", dato: "Hace layouts hasta en el pasto mojado." },
+  { nombre: "Sebastian Migdal", apodo: "Seba", foto: "sebastian-migdal.webp", numero: 30, nacionalidad: "Uruguaya", dato: "Le pide el disco hasta al árbitro… que no existe." },
+  { nombre: "Sofia Rodriguez", apodo: "Sofi", foto: "sofia-rodriguez.webp", numero: 27, nacionalidad: "Uruguaya", dato: "Lee el viento mejor que el pronóstico." },
+  { nombre: "Thiago Elizalde", apodo: "Facha", foto: "thiago-elizalde.webp", numero: 6, nacionalidad: "Uruguaya", dato: "El apodo lo dice todo." },
 ];
 
 // Torneos de la galería. id: se usa en los items de GALERIA (campo "torneo", por defecto "primavera").
