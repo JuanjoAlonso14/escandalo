@@ -3,19 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Escándalo — Ultimate Frisbee</title>
   <meta name="description" content="Escándalo, equipo de Ultimate Frisbee. Plantel, partidos, resultados y cómo sumarte.">
   <link rel="icon" href="assets/logos/favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="nav" id="nav">
   <a href="/" class="brand">
-    <img src="assets/logos/logo.png" alt="" onerror="this.style.display='none'">
+    <img src="assets/logos/logo.png" alt="">
     <span>ESCÁNDALO</span>
   </a>
   <button class="burger" id="burger" aria-label="Menú"><span></span><span></span></button>
@@ -100,7 +99,7 @@
 </main>
 
 <footer>
-  <div class="brand"><img src="assets/logos/logo.png" alt="" onerror="this.style.display='none'"><span>ESCÁNDALO</span></div>
+  <div class="brand"><img src="assets/logos/logo.png" alt=""><span>ESCÁNDALO</span></div>
   <div class="links">
     <a id="ig" target="_blank" rel="noopener">Instagram</a>
     <a id="mail">Email</a>

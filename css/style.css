@@ -1,3 +1,7 @@
+@font-face{font-family:Anton;font-weight:400;font-display:swap;src:url(../assets/fonts/anton-400.ttf) format("truetype")}
+@font-face{font-family:Inter;font-weight:400;font-display:swap;src:url(../assets/fonts/inter-400.ttf) format("truetype")}
+@font-face{font-family:Inter;font-weight:500;font-display:swap;src:url(../assets/fonts/inter-500.ttf) format("truetype")}
+@font-face{font-family:Inter;font-weight:700;font-display:swap;src:url(../assets/fonts/inter-700.ttf) format("truetype")}
 :root{
   --bg:#0b0b10; --bg2:#13131b; --card:#1a1a24; --txt:#f4f4f7; --mute:#9a9aae;
   --a:#b44cff;      /* acento principal (violeta del logo) */
