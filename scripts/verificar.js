@@ -20,7 +20,7 @@ for (const m of data.matchAll(/(?:src|poster|portada|foto):\s*"([^"]+)"/g)) {
 
 for (const f of fs.readdirSync(".").filter((x) => x.endsWith(".html"))) {
   const html = fs.readFileSync(f, "utf8");
-  for (const m of html.matchAll(/(?:src|href)="((?:assets|css|js)\/[^"#?]+)"/g))
+  for (const m of html.matchAll(/(?:src|href)="\/?((?:assets|css|js)\/[^"#?]+)"/g))
     if (!fs.existsSync(m[1])) falla(`${f}: falta ${m[1]}`);
 }
 

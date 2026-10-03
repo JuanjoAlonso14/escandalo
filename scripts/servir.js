@@ -3,7 +3,7 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const tipos = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".jpg": "image/jpeg", ".png": "image/png", ".mp4": "video/mp4", ".json": "application/json" };
+const tipos = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".jpg": "image/jpeg", ".webp": "image/webp", ".ttf": "font/ttf", ".png": "image/png", ".mp4": "video/mp4", ".json": "application/json" };
 
 http.createServer((req, res) => {
   let ruta = decodeURIComponent(req.url.split("?")[0]);
@@ -12,7 +12,7 @@ http.createServer((req, res) => {
   if (!path.extname(archivo)) archivo += ".html";
   if (!archivo.startsWith(path.join(__dirname, ".."))) { res.writeHead(403); return res.end(); }
   fs.stat(archivo, (err, st) => {
-    if (err || !st.isFile()) { res.writeHead(404); return res.end("404"); }
+    if (err || !st.isFile()) { res.writeHead(404, { "Content-Type": tipos[".html"] }); return fs.createReadStream(path.join(__dirname, "..", "404.html")).pipe(res); }
     const total = st.size, rango = req.headers.range;
     const tipo = tipos[path.extname(archivo)] || "application/octet-stream";
     if (rango) {                       // los videos necesitan "range" para poder adelantarse
