@@ -113,18 +113,43 @@ for (let i = mezclados.length - 1; i > 0; i--) {
   [mezclados[i], mezclados[k]] = [mezclados[k], mezclados[i]];
 }
 $("#players").innerHTML = mezclados.map((j) => `
-  <article class="pcard">
-    <img src="assets/jugadores/${j.foto}" alt="${j.nombre} (${j.apodo})" loading="lazy">
+  <article class="pcard" tabindex="0" aria-label="${j.nombre}: tocá para dar vuelta la carta">
+    <div class="pcard-in">
+      <div class="cara frente">
+        <img src="assets/jugadores/${j.foto}" alt="${j.nombre} (${j.apodo})" loading="lazy">
+        <span class="pcard-giro" aria-hidden="true">↻</span>
+      </div>
+      <div class="cara dorso">
+        <img class="dorso-logo" src="assets/logos/logo.webp" alt="">
+        ${j.numero ? `<span class="dorso-num" aria-hidden="true">${j.numero}</span>` : ""}
+        <span class="dorso-apodo">${j.apodo}</span>
+        <b class="dorso-nombre">${j.nombre}</b>
+        <ul class="dorso-datos">
+          ${j.numero ? `<li><small>Camiseta</small><b>#${j.numero}</b></li>` : ""}
+          ${j.nacionalidad ? `<li><small>Nacionalidad</small><b>${j.nacionalidad}</b></li>` : ""}
+          <li><small>Equipo</small><b>🏆 Campeón Copa Primavera 2026</b></li>
+        </ul>
+        <button class="dorso-zoom" type="button">Ver carta completa</button>
+      </div>
+    </div>
   </article>`).join("");
 // Adelanto de galería: 4 fotos
 $("#teaser").innerHTML = GALERIA.filter((g) => g.tipo === "foto").slice(0, 4).map((g) =>
   `<a class="gitem" href="/galeria#primavera"><img src="assets/${g.src}" alt="Foto del equipo" loading="lazy"></a>`).join("");
 
-// Zoom de tarjetas de jugadores
+// Cartas de jugadores: al tocarlas se dan vuelta; "Ver carta completa" la amplía
 const lb = $("#lb");
 $("#players").addEventListener("click", (e) => {
-  const img = e.target.closest("img"); if (!img) return;
-  lb.querySelector("img").src = img.src; lb.classList.add("open");
+  const carta = e.target.closest(".pcard"); if (!carta) return;
+  if (e.target.closest(".dorso-zoom")) {
+    lb.querySelector("img").src = carta.querySelector(".frente img").src; lb.classList.add("open");
+    return;
+  }
+  carta.classList.toggle("girada");
+});
+$("#players").addEventListener("keydown", (e) => {
+  const carta = e.target.closest(".pcard");
+  if (carta && e.target === carta && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); carta.classList.toggle("girada"); }
 });
 lb.addEventListener("click", () => lb.classList.remove("open"));
 document.addEventListener("keydown", (e) => e.key === "Escape" && lb.classList.remove("open"));

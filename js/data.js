@@ -29,12 +29,19 @@ const HISTORIA = [
   "Entrenamos tres veces por semana y la puerta está abierta: no hace falta tener experiencia. Si querés sumarte, escribinos y te prestamos un disco.",
 ];
 
+// Línea de tiempo de la página Nosotros. Los torneos se agregan solos desde TORNEOS.
+const HITOS = [
+  { fecha: "2026-04-14", icono: "🥏", titulo: "Primera práctica", texto: "Un grupo de amigos, un disco y muchas ganas: así arrancó Escándalo." },
+];
+
+// Torneos: id se usa en la dirección de su página (/torneo#id). Los RESULTADOS se asocian por el nombre
+// (lo que va antes del "·" en el campo torneo). "hito" es opcional y aparece en la línea de tiempo.
 // Calendario del año: todos los torneos, pasados y futuros. "logro" es opcional (ej: "🏆 Campeones").
 // Agregá acá los demás torneos del año (desde/hasta en formato AÑO-MES-DIA).
 const TORNEOS = [
-  { nombre: "Copa Primavera", desde: "2026-09-26", hasta: "2026-09-27", lugar: "Florida", logro: "🏆 Campeones" },
-  { nombre: "Copa Oriental 2026 · 11.ª edición", desde: "2026-12-04", hasta: "2026-12-06", lugar: "Punta del Este, Maldonado" },
-  { nombre: "Ciudad de la Furia · Torneo de Ultimate Mixto", desde: "2027-03-26", hasta: "2027-03-28", lugar: "Argentina" },
+  { id: "primavera", nombre: "Copa Primavera", hito: "Nuestro primer torneo oficial.", desde: "2026-09-26", hasta: "2026-09-27", lugar: "Florida", logro: "🏆 Campeones" },
+  { id: "oriental-2026", nombre: "Copa Oriental 2026 · 11.ª edición", desde: "2026-12-04", hasta: "2026-12-06", lugar: "Punta del Este, Maldonado" },
+  { id: "ciudad-de-la-furia-2027", nombre: "Ciudad de la Furia · Torneo de Ultimate Mixto", desde: "2027-03-26", hasta: "2027-03-28", lugar: "Argentina" },
 ];
 
 // nuestros/suyos son opcionales: sin marcador se muestra "Victoria"/"Derrota". Completá los puntajes cuando los tengas.
@@ -46,20 +53,21 @@ const RESULTADOS = [
   { fecha: "2026-09-27", rival: "Tordos", nuestros: 15, suyos: 6, torneo: "Copa Primavera · Final" },
 ];
 
+// numero: camiseta. nacionalidad: se muestra al dar vuelta la carta.
 // foto: archivo dentro de assets/jugadores/ (las tarjetas ya traen nombre y apodo dibujados)
 const JUGADORES = [
-  { nombre: "Ainara Rodriguez", apodo: "Aini", foto: "ainara-rodriguez.webp" },
-  { nombre: "Camila Couture", apodo: "Camilinha", foto: "camila-couture.webp" },
-  { nombre: "Juanjo Alonso", apodo: "Juano", foto: "juanjo-alonso.webp" },
-  { nombre: "Julieta Noguez", apodo: "Ju", foto: "julieta-noguez.webp" },
-  { nombre: "Leandro Rodriguez", apodo: "Lean", foto: "leandro-rodriguez.webp" },
-  { nombre: "Matilde Rodriguez", apodo: "Matildinha", foto: "matilde-rodriguez.webp" },
-  { nombre: "Nicolas Cabana", apodo: "Nico", foto: "nicolas-cabana.webp" },
-  { nombre: "Rosina Cordero", apodo: "Rosi", foto: "rosina-cordero.webp" },
-  { nombre: "Santiago Rodriguez", apodo: "Santiaginho", foto: "santiago-rodriguez.webp" },
-  { nombre: "Sebastian Migdal", apodo: "Seba", foto: "sebastian-migdal.webp" },
-  { nombre: "Sofia Rodriguez", apodo: "Sofi", foto: "sofia-rodriguez.webp" },
-  { nombre: "Thiago Elizalde", apodo: "Facha", foto: "thiago-elizalde.webp" },
+  { nombre: "Ainara Rodriguez", apodo: "Aini", foto: "ainara-rodriguez.webp", numero: 4, nacionalidad: "Uruguaya" },
+  { nombre: "Camila Couture", apodo: "Camilinha", foto: "camila-couture.webp", numero: 24, nacionalidad: "Uruguaya" },
+  { nombre: "Juanjo Alonso", apodo: "Juano", foto: "juanjo-alonso.webp", numero: 10, nacionalidad: "Uruguaya" },
+  { nombre: "Julieta Noguez", apodo: "Ju", foto: "julieta-noguez.webp", numero: 33, nacionalidad: "Uruguaya" },
+  { nombre: "Leandro Rodriguez", apodo: "Lean", foto: "leandro-rodriguez.webp", numero: 22, nacionalidad: "Uruguaya" },
+  { nombre: "Matilde Rodriguez", apodo: "Matildinha", foto: "matilde-rodriguez.webp", numero: 21, nacionalidad: "Uruguaya" },
+  { nombre: "Nicolas Cabana", apodo: "Nico", foto: "nicolas-cabana.webp", numero: 5, nacionalidad: "Uruguaya" },
+  { nombre: "Rosina Cordero", apodo: "Rosi", foto: "rosina-cordero.webp", numero: 12, nacionalidad: "Uruguaya" },
+  { nombre: "Santiago Rodriguez", apodo: "Santiaginho", foto: "santiago-rodriguez.webp", numero: 9, nacionalidad: "Uruguaya" },
+  { nombre: "Sebastian Migdal", apodo: "Seba", foto: "sebastian-migdal.webp", numero: 30, nacionalidad: "Uruguaya" },
+  { nombre: "Sofia Rodriguez", apodo: "Sofi", foto: "sofia-rodriguez.webp", numero: 27, nacionalidad: "Uruguaya" },
+  { nombre: "Thiago Elizalde", apodo: "Facha", foto: "thiago-elizalde.webp", numero: 6, nacionalidad: "Uruguaya" },
 ];
 
 // Torneos de la galería. id: se usa en los items de GALERIA (campo "torneo", por defecto "primavera").
