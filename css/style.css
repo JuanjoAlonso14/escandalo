@@ -3,7 +3,7 @@
 @font-face{font-family:Inter;font-weight:500;font-display:swap;src:url(../assets/fonts/inter-500.ttf) format("truetype")}
 @font-face{font-family:Inter;font-weight:700;font-display:swap;src:url(../assets/fonts/inter-700.ttf) format("truetype")}
 :root{
-  --bg:#0b0b10; --bg2:#13131b; --card:#1a1a24; --txt:#f4f4f7; --mute:#9a9aae;
+  --bg:#0b0b10; --bg2:#13131bd9; --card:#1d1d2bb8; --borde:#ffffff12; --txt:#f4f4f7; --mute:#9a9aae;
   --a:#b44cff;      /* acento principal (violeta del logo) */
   --b:#ffb81c;      /* acento secundario (naranja de la mecha) */
   --r:18px;
@@ -11,6 +11,17 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:70px}
 body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,sans-serif;line-height:1.6;overflow-x:hidden}
+/* Ambiente de fondo: luces de colores del logo que se mueven lento + trama de puntos */
+body::before,body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1}
+body::before{inset:-20%;background:
+  radial-gradient(42% 42% at 78% 22%,#b44cff5c,transparent 72%),
+  radial-gradient(36% 36% at 14% 58%,#ff7a1c3d,transparent 72%),
+  radial-gradient(34% 34% at 66% 86%,#31c4ff33,transparent 72%),
+  radial-gradient(30% 30% at 34% 12%,#ff3fa42e,transparent 72%);
+  animation:luces 28s ease-in-out infinite alternate}
+body::after{background-image:radial-gradient(#ffffff1f 1px,transparent 1.3px);background-size:28px 28px;
+  -webkit-mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%);mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%)}
+@keyframes luces{50%{transform:translate(4%,-3%) rotate(6deg) scale(1.05)}100%{transform:translate(-4%,3%) rotate(-5deg) scale(.97)}}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 h1,h2,h3,.brand span,.stats b{font-family:Anton,Impact,sans-serif;font-weight:400;letter-spacing:.02em}
@@ -149,6 +160,27 @@ h3{font-size:1.5rem;text-transform:uppercase;margin-bottom:16px;color:var(--b)}
 .lg{display:inline-block;width:12px;height:12px;border-radius:4px;margin-left:10px}
 .lg.t-future{background:var(--a)}.lg.t-past{background:var(--b)}.lg.tr{background:var(--b);opacity:.6;border-radius:50%}
 .row .score.small{font-size:1rem;text-align:right}
+
+
+/* Tarjetas con borde y brillo sutil */
+.row,#train div,.cal,.stats,.tcard,.next{border:1px solid var(--borde)}
+.row,#train div{transition:border-color .25s,background .25s}
+.row{border-left-width:4px}
+.row.win{border-color:var(--borde);border-left-color:var(--b)}
+.row.loss{border-color:var(--borde);border-left-color:var(--a)}
+.row:hover,#train div:hover{background:#26263acc}
+#train div:hover{border-color:#b44cff55}
+.cal{background:linear-gradient(160deg,#22223299,#16162299)}
+.day{background:#ffffff08;border-color:#ffffff0a}
+.day.empty{background:none;border-color:transparent}
+.day:not(.empty):hover{border-color:#b44cff66}
+.stats{background:var(--borde)}
+.stats div{background:#191927e6}
+h3{display:flex;align-items:center;gap:10px}
+h3::before{content:"";width:22px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--a),var(--b))}
+.cal-head h3{justify-content:center}
+.cal-head h3::before{display:none}
+.title{text-shadow:0 0 40px #b44cff33}
 
 /* UNIFORMES */
 .historia{margin-bottom:36px}
