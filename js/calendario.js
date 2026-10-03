@@ -75,11 +75,11 @@ function abrirDia(iso) {
   pintarMes();
   const panel = $("#dia-info");
   panel.innerHTML = html;
-  panel.hidden = false;
+  $("#dia-modal").classList.add("open");
   panel.classList.remove("abre"); void panel.offsetWidth; panel.classList.add("abre");
-  if (panel.getBoundingClientRect().top > innerHeight - 120) panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  panel.querySelector(".dia-x").focus({ preventScroll: true });
 }
-function cerrarDia() { elegido = null; $("#dia-info").hidden = true; pintarMes(); }
+function cerrarDia() { elegido = null; $("#dia-modal").classList.remove("open"); pintarMes(); }
 $("#month-grid").addEventListener("click", (e) => {
   const c = e.target.closest(".day.tiene"); if (!c) return;
   c.dataset.fecha === elegido ? cerrarDia() : abrirDia(c.dataset.fecha);
@@ -88,7 +88,8 @@ $("#month-grid").addEventListener("keydown", (e) => {
   const c = e.target.closest(".day.tiene");
   if (c && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); abrirDia(c.dataset.fecha); }
 });
-$("#dia-info").addEventListener("click", (e) => { if (e.target.closest(".dia-x")) cerrarDia(); });
+$("#dia-modal").addEventListener("click", (e) => { if (e.target.closest(".dia-x") || e.target.id === "dia-modal") cerrarDia(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("#dia-modal").classList.contains("open")) cerrarDia(); });
 pintarMes();
 $("#fixture").innerHTML = torneos.map((t) =>
   `<div class="row ${pasado(t) ? "win" : ""}"><div class="date">${t.d.getDate()}<small>${MESES[t.d.getMonth()]}</small></div>
