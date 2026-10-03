@@ -53,9 +53,20 @@ $("#wa").href = "https://wa.me/" + TEAM.whatsapp;
 const esV = (r) => r.resultado ? r.resultado === "V" : r.nuestros > r.suyos;
 const esD = (r) => r.resultado ? r.resultado === "D" : r.nuestros < r.suyos;
 const gan = RESULTADOS.filter(esV).length;
-const stats = { "#st-jug": JUGADORES.length, "#st-gan": gan, "#st-par": RESULTADOS.length };
-for (const [sel, n] of Object.entries(stats)) $(sel).textContent = n;
-$("#st-pct").textContent = RESULTADOS.length ? Math.round((gan / RESULTADOS.length) * 100) + "%" : "–";
+const stats = { "#st-jug": [JUGADORES.length, ""], "#st-gan": [gan, ""], "#st-par": [RESULTADOS.length, ""],
+  "#st-pct": [RESULTADOS.length ? Math.round((gan / RESULTADOS.length) * 100) : null, "%"] };
+// Los números cuentan desde 0 cuando la franja aparece en pantalla
+function contar() {
+  const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches, t0 = performance.now(), dur = 1600;
+  const paso = (t) => {
+    const p = quieto ? 1 : Math.min(1, (t - t0) / dur), suave = 1 - Math.pow(1 - p, 3);
+    for (const [sel, [n, suf]] of Object.entries(stats)) $(sel).textContent = n === null ? "–" : Math.round(n * suave) + suf;
+    if (p < 1) requestAnimationFrame(paso);
+  };
+  requestAnimationFrame(paso);
+}
+const ioStats = new IntersectionObserver(([e]) => { if (e.isIntersecting) { ioStats.disconnect(); contar(); } }, { threshold: 0.4 });
+ioStats.observe($(".stats"));
 
 // Próximo partido + cuenta regresiva
 const futuros = PARTIDOS.map((p) => ({ ...p, f: toDate(p.fecha) }))
