@@ -22,6 +22,7 @@ const pasado = (t) => new Date(t.h.getTime() + 864e5) < hoy;
 const NOMBRES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 const DIAS_ENTRENO = TEAM.entrenamientos.map((e) => ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"].indexOf(e.dia));
 let vista = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+let elegido = null;   // día abierto en el panel de detalle (AAAA-MM-DD)
 function pintarMes() {
   const y = vista.getFullYear(), m = vista.getMonth();
   $("#mes-titulo").textContent = `${NOMBRES[m]} ${y}`;
@@ -31,15 +32,65 @@ function pintarMes() {
   for (let d = 1; d <= total; d++) {
     const f = new Date(y, m, d), wd = f.getDay();
     const t = torneos.find((t) => f >= t.d && f <= t.h);
-    const cls = ["day", t ? (pasado(t) ? "t-past" : "t-future") : "", DIAS_ENTRENO.includes(wd) ? "entreno" : "",
-      f.toDateString() === hoy.toDateString() ? "today" : ""].join(" ");
-    html += `<div class="${cls}"><span>${d}</span>${t && (+f === +t.d || d === 1 || wd === 1) ? `<small>${t.nombre.split(" · ")[0]}</small>` : ""}</div>`;
+    const iso = `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    const entrena = !t && DIAS_ENTRENO.includes(wd);   // los días de torneo no hay práctica
+    const algo = t || entrena || RESULTADOS.some((r) => r.fecha === iso);
+    const cls = ["day", t ? (pasado(t) ? "t-past" : "t-future") : "", entrena ? "entreno" : "",
+      f.toDateString() === hoy.toDateString() ? "today" : "", algo ? "tiene" : "", iso === elegido ? "elegido" : ""].join(" ");
+    html += `<div class="${cls}" data-fecha="${iso}"${algo ? ' role="button" tabindex="0"' : ""}><span>${d}</span>${t && (+f === +t.d || d === 1 || wd === 1) ? `<small>${t.nombre.split(" · ")[0]}</small>` : ""}</div>`;
   }
   $("#month-grid").innerHTML = html;
 }
-$("#mes-prev").onclick = () => { vista.setMonth(vista.getMonth() - 1); pintarMes(); };
-$("#mes-next").onclick = () => { vista.setMonth(vista.getMonth() + 1); pintarMes(); };
-$("#mes-hoy").onclick = () => { vista = new Date(hoy.getFullYear(), hoy.getMonth(), 1); pintarMes(); };
+$("#mes-prev").onclick = () => { vista.setMonth(vista.getMonth() - 1); cerrarDia(); };
+$("#mes-next").onclick = () => { vista.setMonth(vista.getMonth() + 1); cerrarDia(); };
+$("#mes-hoy").onclick = () => { vista = new Date(hoy.getFullYear(), hoy.getMonth(), 1); cerrarDia(); };
+
+// Detalle del día: al tocar un día con torneo, partidos o entrenamiento
+const DIAS_LARGOS = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+function abrirDia(iso) {
+  const f = toDate(iso);
+  const t = torneos.find((x) => f >= x.d && f <= x.h);
+  const partidos = RESULTADOS.filter((r) => r.fecha === iso);
+  const entrenos = t ? [] : TEAM.entrenamientos.filter((e) => e.dia === DIAS_LARGOS[f.getDay()]);
+  let html = `<div class="dia-cab"><h4>${DIAS_LARGOS[f.getDay()]} ${f.getDate()} de ${NOMBRES[f.getMonth()].toLowerCase()}</h4>
+    <button class="dia-x" aria-label="Cerrar">✕</button></div>`;
+  if (t) html += `<div class="dia-bloque ${pasado(t) ? "jugado" : "proximo"}">
+      <span class="dia-tag">${pasado(t) ? "Torneo jugado" : "Torneo próximo"}</span>
+      <b>${t.nombre}</b>
+      <p>📅 ${rango(t)} &nbsp;·&nbsp; 📍 ${t.lugar}</p>
+      ${t.logro && pasado(t) ? `<p class="dia-logro">${t.logro}</p>` : ""}
+      ${!pasado(t) && f >= hoy ? `<p>Faltan ${Math.ceil((t.d - hoy) / 864e5)} días para que empiece.</p>` : ""}
+    </div>`;
+  if (partidos.length) html += `<div class="dia-bloque">
+      <span class="dia-tag">Partidos de este día</span>
+      ${partidos.map((r) => `<div class="dia-partido ${esV(r) ? "win" : esD(r) ? "loss" : ""}">
+        <span>vs <b>${r.rival}</b><small>${r.torneo.split(" · ").slice(1).join(" · ") || r.torneo}</small></span>
+        <strong>${r.resultado ? (esV(r) ? "Victoria" : "Derrota") : r.nuestros + " - " + r.suyos}</strong></div>`).join("")}
+    </div>`;
+  if (entrenos.length) html += entrenos.map((e) => `<div class="dia-bloque entreno">
+      <span class="dia-tag">Entrenamiento</span>
+      <b>${e.hora} hs · ${e.lugar}</b>
+      ${e.mapa ? `<a class="btn ghost dia-mapa" href="${e.mapa}" target="_blank" rel="noopener">📍 Cómo llegar</a>` : ""}
+    </div>`).join("");
+  elegido = iso;
+  pintarMes();
+  const panel = $("#dia-info");
+  panel.innerHTML = html;
+  $("#dia-modal").classList.add("open");
+  panel.classList.remove("abre"); void panel.offsetWidth; panel.classList.add("abre");
+  panel.querySelector(".dia-x").focus({ preventScroll: true });
+}
+function cerrarDia() { elegido = null; $("#dia-modal").classList.remove("open"); pintarMes(); }
+$("#month-grid").addEventListener("click", (e) => {
+  const c = e.target.closest(".day.tiene"); if (!c) return;
+  c.dataset.fecha === elegido ? cerrarDia() : abrirDia(c.dataset.fecha);
+});
+$("#month-grid").addEventListener("keydown", (e) => {
+  const c = e.target.closest(".day.tiene");
+  if (c && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); abrirDia(c.dataset.fecha); }
+});
+$("#dia-modal").addEventListener("click", (e) => { if (e.target.closest(".dia-x") || e.target.id === "dia-modal") cerrarDia(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("#dia-modal").classList.contains("open")) cerrarDia(); });
 pintarMes();
 $("#fixture").innerHTML = torneos.map((t) =>
   `<div class="row ${pasado(t) ? "win" : ""}"><div class="date">${t.d.getDate()}<small>${MESES[t.d.getMonth()]}</small></div>
