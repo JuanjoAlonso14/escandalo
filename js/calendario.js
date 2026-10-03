@@ -53,12 +53,12 @@ function abrirDia(iso) {
   const partidos = RESULTADOS.filter((r) => r.fecha === iso);
   const entrenos = t ? [] : TEAM.entrenamientos.filter((e) => e.dia === DIAS_LARGOS[f.getDay()]);
   let html = `<div class="dia-cab"><h4>${DIAS_LARGOS[f.getDay()]} ${f.getDate()} de ${NOMBRES[f.getMonth()].toLowerCase()}</h4>
-    <button class="dia-x" aria-label="Cerrar">✕</button></div>`;
+    <button class="dia-x" aria-label="Cerrar">${ico("cerrar")}</button></div>`;
   if (t) html += `<div class="dia-bloque ${pasado(t) ? "jugado" : "proximo"}">
       <span class="dia-tag">${pasado(t) ? "Torneo jugado" : "Torneo próximo"}</span>
       <b>${t.nombre}</b>
-      <p>📅 ${rango(t)} &nbsp;·&nbsp; 📍 ${t.lugar}</p>
-      ${t.logro && pasado(t) ? `<p class="dia-logro">${t.logro}</p>` : ""}
+      <p>${ico("calendario")} ${rango(t)} &nbsp;·&nbsp; ${ico("pin")} ${t.lugar}</p>
+      ${t.logro && pasado(t) ? `<p class="dia-logro">${conIconos(t.logro)}</p>` : ""}
       ${!pasado(t) && f >= hoy ? `<p>Faltan ${Math.ceil((t.d - hoy) / 864e5)} días para que empiece.</p>` : ""}
       <a class="btn ghost dia-mapa" href="/torneo#${t.id}">Ver torneo →</a>
     </div>`;
@@ -71,7 +71,7 @@ function abrirDia(iso) {
   if (entrenos.length) html += entrenos.map((e) => `<div class="dia-bloque entreno">
       <span class="dia-tag">Entrenamiento</span>
       <b>${e.hora} hs · ${e.lugar}</b>
-      ${e.mapa ? `<a class="btn ghost dia-mapa" href="${e.mapa}" target="_blank" rel="noopener">📍 Cómo llegar</a>` : ""}
+      ${e.mapa ? `<a class="btn ghost dia-mapa" href="${e.mapa}" target="_blank" rel="noopener">${ico("pin")} Cómo llegar</a>` : ""}
     </div>`).join("");
   elegido = iso;
   pintarMes();
@@ -96,7 +96,7 @@ pintarMes();
 $("#fixture").innerHTML = torneos.map((t) =>
   `<a class="row ${pasado(t) ? "win" : ""}" href="/torneo#${t.id}"><div class="date">${t.d.getDate()}<small>${MESES[t.d.getMonth()]}</small></div>
     <div class="info"><b>${t.nombre}</b><small>${rango(t)} · ${t.lugar}</small></div>
-    <div class="score small">${pasado(t) ? (t.logro || "Jugado") : "Próximo"}</div></a>`).join("");
+    <div class="score small">${pasado(t) ? (t.logro ? conIconos(t.logro) : "Jugado") : "Próximo"}</div></a>`).join("");
 
 // Resultados
 $("#results").innerHTML = RESULTADOS.map((r) => {

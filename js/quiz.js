@@ -92,7 +92,7 @@ function mezclar(lista) {
 function abrirQuiz() {
   modal.classList.add("open");
   caja.innerHTML = `
-    <div class="quiz-top"><span>Quiz de reglas</span><button class="quiz-x" aria-label="Cerrar">✕</button></div>
+    <div class="quiz-top"><span>Quiz de reglas</span><button class="quiz-x" aria-label="Cerrar">${ico("cerrar")}</button></div>
     <h3 class="quiz-titulo">Elegí tu nivel</h3>
     <p class="quiz-sub">10 preguntas de verdadero o falso. Aprobás con ${APROBADO} correctas.</p>
     <div class="quiz-niveles">${Object.entries(NIVELES).map(([n, x]) => `
@@ -114,7 +114,7 @@ function cerrarQuiz() { modal.classList.remove("open"); }
 function mostrarPregunta() {
   const p = ronda[actual];
   caja.innerHTML = `
-    <div class="quiz-top"><span>Nivel ${NIVELES[nivel].nombre} · Pregunta ${actual + 1} de ${ronda.length}</span><button class="quiz-x" aria-label="Cerrar">✕</button></div>
+    <div class="quiz-top"><span>Nivel ${NIVELES[nivel].nombre} · Pregunta ${actual + 1} de ${ronda.length}</span><button class="quiz-x" aria-label="Cerrar">${ico("cerrar")}</button></div>
     <div class="quiz-barra"><i style="width:${(actual / ronda.length) * 100}%"></i></div>
     <p class="quiz-preg">${p.t}</p>
     <div class="quiz-opc">
@@ -140,7 +140,7 @@ function mostrarResultado() {
   const ok = ronda.length - fallos.length, aprobado = ok >= APROBADO;
   const vf = (b) => (b ? "Verdadero" : "Falso");
   caja.innerHTML = `
-    <div class="quiz-top"><span>Resultado · Nivel ${NIVELES[nivel].nombre}</span><button class="quiz-x" aria-label="Cerrar">✕</button></div>
+    <div class="quiz-top"><span>Resultado · Nivel ${NIVELES[nivel].nombre}</span><button class="quiz-x" aria-label="Cerrar">${ico("cerrar")}</button></div>
     <div class="quiz-res ${aprobado ? "aprobado" : "desaprobado"}">
       <div class="quiz-nota"><b>${ok}</b><small>de ${ronda.length}</small></div>
       <h3>${aprobado ? "¡Aprobado!" : "No aprobado"}</h3>

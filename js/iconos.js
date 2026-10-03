@@ -1,0 +1,16 @@
+// Íconos propios (SVG) para no depender de los emojis, que se ven distinto en cada dispositivo.
+// En los textos de js/data.js se pueden seguir usando emojis: conIconos() los cambia por el ícono al mostrarlos.
+const ICONOS = {
+  calendario: '<rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  pin: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  trofeo: '<path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8M10 17h4"/>',
+  disco: '<ellipse cx="12" cy="12" rx="9.5" ry="4.2"/><ellipse cx="12" cy="12" rx="4.5" ry="1.8"/>',
+  reloj: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>',
+  estrella: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+  cerrar: '<path d="M6 6l12 12M18 6L6 18"/>',
+  flecha: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+};
+const ico = (n) => `<svg class="ico ico-${n}" viewBox="0 0 24 24" aria-hidden="true">${ICONOS[n] || ""}</svg>`;
+const EMOJI_ICONO = { "🏆": "trofeo", "📅": "calendario", "📍": "pin", "🥏": "disco", "⭐": "estrella", "⏱": "reloj" };
+const conIconos = (s) => String(s).replace(/🏆|📅|📍|🥏|⭐|⏱️?/gu, (e) => ico(EMOJI_ICONO[e.replace("️", "")]));
+const sinEmojis = (s) => String(s).replace(/🏆|📅|📍|🥏|⭐|⏱️?/gu, "").trim();
