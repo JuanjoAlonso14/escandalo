@@ -31,6 +31,10 @@ jobs:
           mkdir _site
           cp *.html CNAME .nojekyll _site/
           cp -r css js assets _site/
+      - name: Evitar caché vieja de CSS y JS
+        run: |
+          sed -i -E "s#(css/style\.css|js/[a-z]+\.js)\"#\1?v=${GITHUB_SHA::7}\"#g" _site/*.html
+          grep -ho 'css/style.css?v=[a-z0-9]*' _site/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
