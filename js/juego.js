@@ -157,9 +157,15 @@
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && capa.classList.contains("open")) cerrar(); });
   addEventListener("resize", () => capa.classList.contains("open") && medir());
 
-  logo.setAttribute("role", "button");
+  // Solo la bomba (el círculo del centro del logo) abre el juego, no el texto
+  const enBomba = (ev) => {
+    const r = logo.getBoundingClientRect();
+    return Math.hypot((ev.clientX - r.left) / r.width - 0.52, ((ev.clientY - r.top) / r.width) - 0.523) < 0.22;
+  };
   logo.setAttribute("tabindex", "0");
-  logo.title = "¿Te animás a atrapar discos?";
-  logo.addEventListener("click", abrir);
+  logo.setAttribute("aria-label", "Escándalo Ultimate");
+  logo.addEventListener("mousemove", (ev) => logo.classList.toggle("sobre-bomba", enBomba(ev)));
+  logo.addEventListener("mouseleave", () => logo.classList.remove("sobre-bomba"));
+  logo.addEventListener("click", (ev) => { if (enBomba(ev)) abrir(); });
   logo.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrir(); } });
 })();

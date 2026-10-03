@@ -68,7 +68,7 @@ h1,h2,h3,.brand span,.stats b{font-family:Anton,Impact,sans-serif;font-weight:40
 /* INTRO: explosión y aparición del logo */
 .hero.entrada .hero-content{animation:shake .5s .12s}
 .hero.entrada .hero-logo{animation:logo-in 1.2s cubic-bezier(.2,1.3,.4,1) .22s both}
-.hero.entrada .eyebrow,.hero.entrada .hero-btns,.hero.entrada .juego-pista{animation:fade-up .8s 1.1s both}
+.hero.entrada .eyebrow,.hero.entrada .hero-btns{animation:fade-up .8s 1.1s both}
 .boom{position:fixed;inset:0;pointer-events:none;z-index:200;overflow:hidden}
 .boom b{position:absolute;left:50%;top:50%;border-radius:50%;translate:-50% -50%}
 .boom .whiteout{inset:0;left:0;top:0;width:100%;height:100%;border-radius:0;translate:0;background:#fff;animation:whiteout .9s .12s ease-out both}
@@ -372,9 +372,8 @@ body:has(.quiz-modal.open){overflow:hidden}
 .quiz-fin{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
 
 /* MINIJUEGO */
-.hero-logo{cursor:pointer;transition:scale .3s}
-.hero-logo:hover{scale:1.03}
-.juego-pista{margin-top:18px;color:var(--mute);font-size:.85rem}
+.hero-logo{transition:scale .3s}
+.hero-logo.sobre-bomba{cursor:pointer;scale:1.03}
 .juego{position:fixed;inset:0;z-index:160;display:none;background:radial-gradient(ellipse at center,#1d0f33f2,#07070cf7);touch-action:none;user-select:none}
 .juego.open{display:block}
 body:has(.juego.open){overflow:hidden}
