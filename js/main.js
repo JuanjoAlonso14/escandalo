@@ -96,7 +96,13 @@ if (futuros.length) {
 $("#train").innerHTML = TEAM.entrenamientos.map((e) => `<div><b>${e.dia}</b> ${e.hora} hs · ${e.lugar}${e.mapa ? ` · <a href="${e.mapa}" target="_blank" rel="noopener">📍 Ver ubicación</a>` : ""}</div>`).join("");
 
 // Plantel
-$("#players").innerHTML = JUGADORES.map((j) => `
+// Orden aleatorio en cada carga (Fisher-Yates), para que nadie quede siempre primero
+const mezclados = [...JUGADORES];
+for (let i = mezclados.length - 1; i > 0; i--) {
+  const k = Math.floor(Math.random() * (i + 1));
+  [mezclados[i], mezclados[k]] = [mezclados[k], mezclados[i]];
+}
+$("#players").innerHTML = mezclados.map((j) => `
   <article class="pcard">
     <img src="assets/jugadores/${j.foto}" alt="${j.nombre} (${j.apodo})" loading="lazy">
   </article>`).join("");
