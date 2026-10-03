@@ -3,7 +3,7 @@
 @font-face{font-family:Inter;font-weight:500;font-display:swap;src:url(../assets/fonts/inter-500.ttf) format("truetype")}
 @font-face{font-family:Inter;font-weight:700;font-display:swap;src:url(../assets/fonts/inter-700.ttf) format("truetype")}
 :root{
-  --bg:#0b0b10; --bg2:#13131b; --card:#1a1a24; --txt:#f4f4f7; --mute:#9a9aae;
+  --bg:#0b0b10; --bg2:#13131bd9; --card:#1d1d2bb8; --borde:#ffffff12; --txt:#f4f4f7; --mute:#9a9aae;
   --a:#b44cff;      /* acento principal (violeta del logo) */
   --b:#ffb81c;      /* acento secundario (naranja de la mecha) */
   --r:18px;
@@ -11,6 +11,17 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:70px}
 body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,sans-serif;line-height:1.6;overflow-x:hidden}
+/* Ambiente de fondo: luces de colores del logo que se mueven lento + trama de puntos */
+body::before,body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1}
+body::before{inset:-20%;background:
+  radial-gradient(42% 42% at 78% 22%,#b44cff5c,transparent 72%),
+  radial-gradient(36% 36% at 14% 58%,#ff7a1c3d,transparent 72%),
+  radial-gradient(34% 34% at 66% 86%,#31c4ff33,transparent 72%),
+  radial-gradient(30% 30% at 34% 12%,#ff3fa42e,transparent 72%);
+  animation:luces 28s ease-in-out infinite alternate}
+body::after{background-image:radial-gradient(#ffffff1f 1px,transparent 1.3px);background-size:28px 28px;
+  -webkit-mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%);mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%)}
+@keyframes luces{50%{transform:translate(4%,-3%) rotate(6deg) scale(1.05)}100%{transform:translate(-4%,3%) rotate(-5deg) scale(.97)}}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 h1,h2,h3,.brand span,.stats b{font-family:Anton,Impact,sans-serif;font-weight:400;letter-spacing:.02em}
@@ -32,8 +43,8 @@ h1,h2,h3,.brand span,.stats b{font-family:Anton,Impact,sans-serif;font-weight:40
 /* HERO */
 .hero{position:relative;min-height:100vh;padding:90px 0 170px;display:grid;place-items:center;text-align:center;overflow:hidden;
   background:radial-gradient(circle at 70% 20%,#2a0f4a 0,transparent 55%),radial-gradient(circle at 20% 80%,#3a2400 0,transparent 50%),var(--bg)}
-.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,#0b0b10aa,#0b0b10 98%)}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85;filter:saturate(1.2) contrast(1.05)}
+.hero-overlay{position:absolute;inset:0;background:radial-gradient(ellipse at center,#0b0b1080 0,#0b0b10a6 70%),linear-gradient(180deg,#2a0f4a33,#0b0b1066 55%,#0b0b10 99%)}
 .disc{position:absolute;border-radius:50%;border:3px solid var(--b);opacity:.18;animation:float 9s ease-in-out infinite}
 .disc::after{content:"";position:absolute;inset:18%;border:2px solid var(--b);border-radius:50%}
 .d1{width:320px;height:320px;top:8%;right:-80px}
@@ -150,6 +161,36 @@ h3{font-size:1.5rem;text-transform:uppercase;margin-bottom:16px;color:var(--b)}
 .lg.t-future{background:var(--a)}.lg.t-past{background:var(--b)}.lg.tr{background:var(--b);opacity:.6;border-radius:50%}
 .row .score.small{font-size:1rem;text-align:right}
 
+
+/* Fondo propio del plantel: rayos violeta y naranja como las tarjetas, rayas y el nombre gigante de marca de agua */
+#plantel{position:relative;background:
+  radial-gradient(45% 70% at 0% 45%,#b44cff40,transparent 70%),
+  radial-gradient(45% 70% at 100% 55%,#ff6a1c38,transparent 70%),
+  repeating-linear-gradient(135deg,#ffffff06 0 2px,transparent 2px 26px),
+  linear-gradient(180deg,#17172299,#0e0e16cc)}
+#plantel::before{content:"ESCÁNDALO";position:absolute;left:50%;top:50%;translate:-50% -50%;font-family:Anton,Impact,sans-serif;font-size:24vw;line-height:1;white-space:nowrap;color:transparent;-webkit-text-stroke:2px #ffffff0d;pointer-events:none}
+#plantel>*{position:relative}
+
+/* Tarjetas con borde y brillo sutil */
+.row,#train div,.cal,.stats,.tcard,.next{border:1px solid var(--borde)}
+.row,#train div{transition:border-color .25s,background .25s}
+.row{border-left-width:4px}
+.row.win{border-color:var(--borde);border-left-color:var(--b)}
+.row.loss{border-color:var(--borde);border-left-color:var(--a)}
+.row:hover,#train div:hover{background:#26263acc}
+#train div:hover{border-color:#b44cff55}
+.cal{background:linear-gradient(160deg,#22223299,#16162299)}
+.day{background:#ffffff08;border-color:#ffffff0a}
+.day.empty{background:none;border-color:transparent}
+.day:not(.empty):hover{border-color:#b44cff66}
+.stats{background:var(--borde)}
+.stats div{background:#191927e6}
+h3{display:flex;align-items:center;gap:10px}
+h3::before{content:"";width:22px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--a),var(--b))}
+.cal-head h3{justify-content:center}
+.cal-head h3::before{display:none}
+.title{text-shadow:0 0 40px #b44cff33}
+
 /* UNIFORMES */
 .historia{margin-bottom:36px}
 .historia p{font-size:1.1rem;color:#d8d8e4;margin-bottom:18px}
@@ -259,6 +300,7 @@ footer small{color:var(--mute)}
 
 /* MOVIL */
 @media(max-width:800px){
+  .scroll{display:none}
   .players{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;margin-inline:-5vw;padding:0 5vw 14px;scrollbar-width:none}
   .players::-webkit-scrollbar{display:none}
   .players .pcard{flex:0 0 68%;scroll-snap-align:center}
