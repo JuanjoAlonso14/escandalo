@@ -1,18 +1,18 @@
-// Intro: explosión al entrar (una vez por visita; se omite con "reducir movimiento")
+// Intro: explosión a pantalla completa en cada carga (se omite con "reducir movimiento")
 const boom = document.querySelector("#boom");
-let yaVista = false;
-try { yaVista = sessionStorage.getItem("intro") === "1"; sessionStorage.setItem("intro", "1"); } catch (e) {}
-if (yaVista) document.documentElement.classList.add("no-intro");
-else if (boom) {
+if (boom) {
   const colores = ["#ffb81c", "#b44cff", "#ff7a1c", "#31c4ff", "#ffffff", "#ff3fa4"];
-  for (let i = 0; i < 36; i++) {
-    const a = (i / 36) * Math.PI * 2 + Math.random() * 0.5, d = 140 + Math.random() * 260;
+  const R = Math.hypot(innerWidth, innerHeight) / 2;     // del centro a la esquina
+  for (let i = 0; i < 70; i++) {
+    const a = (i / 70) * Math.PI * 2 + Math.random() * 0.4, d = R * (0.35 + Math.random() * 0.8);
     const s = document.createElement("i");
     s.style.setProperty("--dx", Math.cos(a) * d + "px");
     s.style.setProperty("--dy", Math.sin(a) * d + "px");
     s.style.setProperty("--c", colores[i % colores.length]);
+    s.style.setProperty("--s", 6 + Math.random() * 12 + "px");
     boom.appendChild(s);
   }
+  setTimeout(() => boom.remove(), 2200);
 }
 
 const $ = (s) => document.querySelector(s);
