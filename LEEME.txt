@@ -1,0 +1,22 @@
+PAGINA DE ESCANDALO — COMO USARLA
+==================================
+
+Abrir: doble clic en index.html
+
+DONDE SUBIR LAS FOTOS (carpeta assets/)
+---------------------------------------
+assets/logos/logo.png        -> logo chico (bomba) para menu y footer
+assets/logos/logo-full.png   -> logo completo con texto, portada
+assets/logos/_originales/    -> archivos originales del zip
+assets/hero/hero.jpg         -> foto grande de portada (horizontal, idealmente 1920px de ancho)
+assets/jugadores/            -> una foto por jugador (vertical, tipo 3:4). Nombre = el que pusiste en js/data.js
+assets/torneo/             -> fotos y videos de la galería (se listan en js/data.js, GALERIA)
+
+EDITAR TEXTOS, JUGADORES, PARTIDOS Y RESULTADOS
+-----------------------------------------------
+Todo esta en js/data.js. Cambia los nombres, fechas, numero de WhatsApp, mail, etc.
+Si una foto no existe, la pagina muestra un reemplazo automaticamente (no se rompe).
+
+COLORES
+-------
+Estan al principio de css/style.css (--a rosa, --b lima). Se pueden cambiar por los colores del logo.
