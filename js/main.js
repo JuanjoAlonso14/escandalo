@@ -102,9 +102,27 @@ $("#players").addEventListener("click", (e) => {
 lb.addEventListener("click", () => lb.classList.remove("open"));
 document.addEventListener("keydown", (e) => e.key === "Escape" && lb.classList.remove("open"));
 
-// Formulario → WhatsApp
+// Formulario → WhatsApp, con avisos propios en vez de los del navegador
+const REGLAS = {
+  nombre: (v) => v.length >= 2 || "Contanos cómo te llamás",
+  contacto: (v) => !v ? "Dejanos un teléfono o mail para escribirte"
+    : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || /^\+?[\d\s()-]{8,}$/.test(v) || "Ese no parece un teléfono ni un mail válido",
+};
+function validar(input) {
+  const r = REGLAS[input.name](input.value.trim());
+  const campo = input.closest(".campo");
+  campo.classList.remove("mal"); void campo.offsetWidth;    // reinicia el temblor si vuelve a fallar
+  campo.classList.toggle("mal", r !== true);
+  input.setAttribute("aria-invalid", r !== true);
+  campo.querySelector(".aviso").textContent = r === true ? "" : r;
+  return r === true;
+}
+const inputs = [...$("#form").querySelectorAll(".campo input")];
+inputs.forEach((i) => i.addEventListener("input", () => i.closest(".campo").classList.contains("mal") && validar(i)));
 $("#form").addEventListener("submit", (e) => {
   e.preventDefault();
+  const malos = inputs.filter((i) => !validar(i));
+  if (malos.length) return malos[0].focus();
   const f = new FormData(e.target);
   const txt = `Hola Escándalo! Soy ${f.get("nombre")}. Contacto: ${f.get("contacto")}. Experiencia: ${f.get("exp")}. ${f.get("msg") || ""}`;
   window.open(`https://wa.me/${TEAM.whatsapp}?text=${encodeURIComponent(txt)}`, "_blank");
