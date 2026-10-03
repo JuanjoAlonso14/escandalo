@@ -15,8 +15,8 @@
   capa.innerHTML = `
     <canvas></canvas>
     <div class="juego-hud">
-      <span>🥏 <b id="j-pts">0</b></span><span>⏱ <b id="j-tiempo">${DURACION}</b></span><span>Récord <b id="j-rec">0</b></span>
-      <button class="juego-x" aria-label="Cerrar">✕</button>
+      <span>${ico("disco")} <b id="j-pts">0</b></span><span>${ico("reloj")} <b id="j-tiempo">${DURACION}</b></span><span>Récord <b id="j-rec">0</b></span>
+      <button class="juego-x" aria-label="Cerrar">${ico("cerrar")}</button>
     </div>
     <div class="juego-panel" id="j-panel"></div>`;
   document.body.appendChild(capa);

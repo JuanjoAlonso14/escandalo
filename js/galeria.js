@@ -28,7 +28,7 @@ function abrirTorneo(id) {
   torneo = id; filtro = "todo";
   document.querySelectorAll(".chip[data-f]").forEach((c) => c.classList.toggle("on", c.dataset.f === "todo"));
   $("#t-titulo").textContent = t.nombre;
-  $("#t-sub").textContent = `${t.lugar} · ${t.fecha}${t.logro ? " · " + t.logro : ""}`;
+  $("#t-sub").innerHTML = `${t.lugar} · ${t.fecha}${t.logro ? " · " + conIconos(t.logro) : ""}`;
   $("#t-resumen").href = "/torneo#" + id;
   $("#torneos-view").hidden = true; $("#torneo-view").hidden = false;
   history.replaceState(null, "", "#" + id);
@@ -101,4 +101,35 @@ $("#uniforms").addEventListener("click", (e) => {
   const img = e.target.closest("img"); if (!img) return;
   lbVid.pause(); lbVid.style.display = "none"; lbImg.style.display = ""; lbImg.src = img.src;
   lb.classList.add("open", "solo");
+});
+
+// Uniformes con candado. Es un juego, no seguridad real: los archivos son públicos;
+// el hash solo evita que la contraseña quede escrita a la vista en el código.
+const HASH_UNIFORMES = "107b42b9255bada2509d9742387eda2a76270b22073b733dab292355d436dd7f";
+const uniWrap = $("#uni-wrap");
+async function sha256(texto) {
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(texto));
+  return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
+}
+function desbloquearUniformes(animar) {
+  uniWrap.classList.remove("bloqueado");
+  if (animar) uniWrap.classList.add("revela");
+  uniWrap.querySelectorAll("[data-src]").forEach((el) => {
+    if (el.tagName === "VIDEO") { el.removeAttribute("poster"); el.preload = "metadata"; }
+    el.src = el.dataset.src;
+  });
+}
+try { if (localStorage.getItem("uniformes-ok") === "1") desbloquearUniformes(false); } catch (e) {}
+$("#uni-candado").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.currentTarget, clave = $("#uni-clave").value.trim().toLowerCase();
+  const ok = clave && window.crypto && crypto.subtle && (await sha256(clave)) === HASH_UNIFORMES;
+  if (ok) {
+    try { localStorage.setItem("uniformes-ok", "1"); } catch (err) {}
+    desbloquearUniformes(true);
+  } else {
+    $("#uni-error").textContent = "Contraseña incorrecta. ¿Seguro que sos campeón?";
+    form.classList.remove("mal"); void form.offsetWidth; form.classList.add("mal");
+    $("#uni-clave").select();
+  }
 });

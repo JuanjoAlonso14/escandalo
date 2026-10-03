@@ -27,8 +27,8 @@ let html = `
   <header class="t-hero${portada ? "" : " sin-foto"}"${portada ? ` style="--img:url('/assets/${portada}')"` : ""}>
     <span class="t-estado ${jugado ? "jugado" : "proximo"}">${jugado ? "Torneo jugado" : "Próximo torneo"}</span>
     <h1 class="title">${base}${resto.length ? ` <span>${resto.join(" · ")}</span>` : ""}</h1>
-    <p>📅 ${textoFechas()} &nbsp;·&nbsp; 📍 ${torneo.lugar}</p>
-    ${jugado && torneo.logro ? `<div class="t-logro">${torneo.logro}</div>` : ""}
+    <p>${ico("calendario")} ${textoFechas()} &nbsp;·&nbsp; ${ico("pin")} ${torneo.lugar}</p>
+    ${jugado && torneo.logro ? `<div class="t-logro">${conIconos(torneo.logro)}</div>` : ""}
   </header>`;
 
 if (partidos.length) {
