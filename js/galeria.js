@@ -78,6 +78,16 @@ lb.querySelector(".prev").onclick = (e) => { e.stopPropagation(); mostrar(cur - 
 lb.querySelector(".next-btn").onclick = (e) => { e.stopPropagation(); mostrar(cur + 1); };
 lb.querySelector(".close").onclick = cerrar;
 lb.addEventListener("click", (e) => { if (e.target === lb) cerrar(); });
+// En el celular: deslizar a los costados cambia de foto, deslizar hacia abajo cierra
+let toque = null;
+lb.addEventListener("touchstart", (e) => { toque = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }, { passive: true });
+lb.addEventListener("touchend", (e) => {
+  if (!toque) return;
+  const dx = e.changedTouches[0].clientX - toque.x, dy = e.changedTouches[0].clientY - toque.y;
+  toque = null;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) && !lb.classList.contains("solo")) mostrar(cur + (dx < 0 ? 1 : -1));
+  else if (dy > 90 && Math.abs(dy) > Math.abs(dx)) cerrar();
+});
 document.addEventListener("keydown", (e) => {
   if (!lb.classList.contains("open")) return;
   if (e.key === "Escape") cerrar();
