@@ -33,8 +33,9 @@ function pintarMes() {
     const f = new Date(y, m, d), wd = f.getDay();
     const t = torneos.find((t) => f >= t.d && f <= t.h);
     const iso = `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-    const algo = t || DIAS_ENTRENO.includes(wd) || RESULTADOS.some((r) => r.fecha === iso);
-    const cls = ["day", t ? (pasado(t) ? "t-past" : "t-future") : "", DIAS_ENTRENO.includes(wd) ? "entreno" : "",
+    const entrena = !t && DIAS_ENTRENO.includes(wd);   // los días de torneo no hay práctica
+    const algo = t || entrena || RESULTADOS.some((r) => r.fecha === iso);
+    const cls = ["day", t ? (pasado(t) ? "t-past" : "t-future") : "", entrena ? "entreno" : "",
       f.toDateString() === hoy.toDateString() ? "today" : "", algo ? "tiene" : "", iso === elegido ? "elegido" : ""].join(" ");
     html += `<div class="${cls}" data-fecha="${iso}"${algo ? ' role="button" tabindex="0"' : ""}><span>${d}</span>${t && (+f === +t.d || d === 1 || wd === 1) ? `<small>${t.nombre.split(" · ")[0]}</small>` : ""}</div>`;
   }
@@ -50,7 +51,7 @@ function abrirDia(iso) {
   const f = toDate(iso);
   const t = torneos.find((x) => f >= x.d && f <= x.h);
   const partidos = RESULTADOS.filter((r) => r.fecha === iso);
-  const entrenos = TEAM.entrenamientos.filter((e) => e.dia === DIAS_LARGOS[f.getDay()]);
+  const entrenos = t ? [] : TEAM.entrenamientos.filter((e) => e.dia === DIAS_LARGOS[f.getDay()]);
   let html = `<div class="dia-cab"><h4>${DIAS_LARGOS[f.getDay()]} ${f.getDate()} de ${NOMBRES[f.getMonth()].toLowerCase()}</h4>
     <button class="dia-x" aria-label="Cerrar">✕</button></div>`;
   if (t) html += `<div class="dia-bloque ${pasado(t) ? "jugado" : "proximo"}">
