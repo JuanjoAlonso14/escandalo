@@ -89,7 +89,7 @@ if (futuros.length) {
     <div>
       <p>${p.fechas ? p.fechas : p.torneo + " · " + p.f.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" }) + " · " + hora(p.f)}</p>
       <h4>${p.rival ? "ESCÁNDALO vs " + p.rival : p.torneo}</h4>
-      <p>📍 ${p.lugar}</p>
+      <p>${ico("pin")} ${p.lugar}</p>
     </div>
     <div class="count" id="count"></div>`;
   const tick = () => {
@@ -102,8 +102,17 @@ if (futuros.length) {
   next.innerHTML = `<div><h4>Próximamente</h4><p>Todavía no hay partidos cargados.</p></div>`;
 }
 
+// Cintas animadas entre secciones (los logros salen de TORNEOS)
+const logrosCinta = TORNEOS.filter((t) => t.logro && new Date(t.hasta + "T00:00").getTime() + 864e5 < Date.now())
+  .map((t) => `${sinEmojis(t.logro)} ${t.nombre.split(" · ")[0]} ${t.desde.slice(0, 4)}`);
+const frasesCinta = ["Escándalo", "Ultimate Frisbee", ...logrosCinta, "Spirit of the game", "Sumate al equipo"];
+document.querySelectorAll(".cinta").forEach((c) => {
+  const tramo = frasesCinta.map((f) => `<span>${f}</span>${ico("disco")}`).join("");
+  c.innerHTML = `<div class="cinta-pista">${tramo.repeat(4)}</div>`;
+});
+
 // Entrenamientos
-$("#train").innerHTML = TEAM.entrenamientos.map((e) => `<div><b>${e.dia}</b> ${e.hora} hs · ${e.lugar}${e.mapa ? ` · <a href="${e.mapa}" target="_blank" rel="noopener">📍 Ver ubicación</a>` : ""}</div>`).join("");
+$("#train").innerHTML = TEAM.entrenamientos.map((e) => `<div><b>${e.dia}</b> ${e.hora} hs · ${e.lugar}${e.mapa ? ` · <a href="${e.mapa}" target="_blank" rel="noopener">${ico("pin")} Ver ubicación</a>` : ""}</div>`).join("");
 
 // Plantel
 // Orden aleatorio en cada carga (Fisher-Yates), para que nadie quede siempre primero

@@ -28,7 +28,7 @@ function abrirTorneo(id) {
   torneo = id; filtro = "todo";
   document.querySelectorAll(".chip[data-f]").forEach((c) => c.classList.toggle("on", c.dataset.f === "todo"));
   $("#t-titulo").textContent = t.nombre;
-  $("#t-sub").textContent = `${t.lugar} · ${t.fecha}${t.logro ? " · " + t.logro : ""}`;
+  $("#t-sub").innerHTML = `${t.lugar} · ${t.fecha}${t.logro ? " · " + conIconos(t.logro) : ""}`;
   $("#t-resumen").href = "/torneo#" + id;
   $("#torneos-view").hidden = true; $("#torneo-view").hidden = false;
   history.replaceState(null, "", "#" + id);

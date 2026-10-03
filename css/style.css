@@ -131,7 +131,7 @@ h3{font-size:1.5rem;text-transform:uppercase;margin-bottom:16px;color:var(--b)}
 .chip{background:var(--card);color:var(--txt);border:1px solid #ffffff22;padding:8px 20px;border-radius:99px;cursor:pointer;font:inherit;transition:.2s}
 .chip.on,.chip:hover{background:var(--a);border-color:var(--a)}
 .pcard{position:relative;aspect-ratio:9/16;perspective:1400px;cursor:pointer;transition:transform .3s;outline:none}
-.pcard:hover{transform:translateY(-8px)}
+.pcard:hover{--ty:-8px}
 .pcard:focus-visible .cara{outline:3px solid var(--b);outline-offset:3px}
 .pcard-in{position:absolute;inset:0;transition:transform .75s cubic-bezier(.3,1.3,.5,1);transform-style:preserve-3d}
 .pcard.girada .pcard-in{transform:rotateY(180deg)}
@@ -279,7 +279,7 @@ h3::before{content:"";width:22px;height:4px;border-radius:4px;background:linear-
 .grupo-ult small{font-family:Inter,sans-serif;font-size:.95rem;color:var(--mute);text-transform:none;letter-spacing:0}
 .recursos{grid-template-columns:repeat(auto-fill,minmax(320px,1fr));margin-bottom:48px}
 .recurso{display:grid;grid-template-columns:130px 1fr;gap:18px;background:var(--card);border:1px solid var(--borde);border-radius:var(--r);padding:16px;transition:border-color .25s,transform .25s}
-.recurso:hover{border-color:#b44cff66;transform:translateY(-4px)}
+.recurso:hover{border-color:#b44cff66;--ty:-4px}
 .recurso-tapa{display:block;border-radius:10px;overflow:hidden;background:#fff;aspect-ratio:3/4;box-shadow:0 8px 24px #0008}
 .recurso-tapa img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .4s}
 .recurso:hover .recurso-tapa img{transform:scale(1.06)}
@@ -455,6 +455,39 @@ body:has(.quiz-modal.open,.dia-modal.open,.lightbox.open,#menu.open,.juego.open)
 .t-otros{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:40px;padding-top:24px;border-top:1px solid var(--borde);color:var(--mute)}
 .t-resumen{display:inline-block;margin:-12px 0 24px}
 
+/* ICONOS */
+.ico{display:inline-block;flex:none;width:1.15em;height:1.15em;vertical-align:-.2em;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.ico-pin,.ico-calendario{color:var(--b)}
+.btn .ico-pin,.t-logro .ico{color:inherit}
+.hito-punto .ico{width:22px;height:22px;color:var(--b)}
+.hito.futuro .hito-punto .ico{color:var(--mute)}
+.lightbox button .ico,.quiz-x .ico,.dia-x .ico,.juego-x .ico{width:1em;height:1em;vertical-align:middle}
+.juego-hud .ico{width:1.3em;height:1.3em;color:var(--b)}
+
+/* CINTAS ANIMADAS */
+.cinta{position:relative;z-index:3;overflow:hidden;margin:34px -3vw;padding:13px 0;transform:rotate(-2deg);background:linear-gradient(90deg,var(--a),#ff3fa4);color:#fff;box-shadow:0 12px 40px #b44cff55}
+.cinta.naranja{transform:rotate(1.6deg);background:linear-gradient(90deg,var(--b),#ff7a1c);color:#1a0f05;box-shadow:0 12px 40px #ff7a1c44}
+.cinta-pista{display:flex;align-items:center;width:max-content;animation:cinta 40s linear infinite}
+.cinta.naranja .cinta-pista{animation-direction:reverse}
+.cinta span{font-family:Anton,Impact,sans-serif;font-size:clamp(1.25rem,2.8vw,1.9rem);text-transform:uppercase;letter-spacing:.04em;padding:0 22px;white-space:nowrap}
+.cinta .ico{width:1.5em;height:1.5em;stroke-width:1.6}
+@keyframes cinta{to{transform:translateX(-50%)}}
+
+/* BARRA DE PROGRESO */
+.progreso{position:fixed;top:0;left:0;right:0;height:3px;z-index:70;pointer-events:none;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--a),#ff3fa4,var(--b));box-shadow:0 0 12px #b44cff99}
+
+/* GRANO DE FONDO */
+html::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.07;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* TRANSICIONES ENTRE PAGINAS */
+@view-transition{navigation:auto}
+.nav{view-transition-name:barra-nav}
+::view-transition-old(root){animation:vt-sale .22s ease both}
+::view-transition-new(root){animation:vt-entra .45s cubic-bezier(.2,.8,.2,1) both}
+@keyframes vt-sale{to{opacity:0;transform:scale(.985)}}
+@keyframes vt-entra{from{opacity:0;transform:translateY(16px)}}
+
 /* 404 */
 .p404{min-height:calc(100vh - 160px);display:grid;place-items:center;text-align:center;padding:120px 5vw 60px}
 .p404 .bomba{width:min(300px,70vw);margin:0 auto;mix-blend-mode:lighten;animation:tiembla 2.4s ease-in-out infinite}
@@ -541,3 +574,14 @@ footer small{color:var(--mute)}
   .count div{min-width:0;flex:1}
 }
 @media(prefers-reduced-motion:reduce){.boom{display:none}*{animation:none!important;transition:none!important}.anim{opacity:1!important;transform:none!important;clip-path:none!important;filter:none!important}}
+
+/* TARJETAS 3D (js/tilt.js): se inclinan con el mouse y tienen un brillo que lo sigue */
+.pcard,.tcard,.recurso,.t-stat{transform:perspective(1000px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--ty,0px));transition:transform .5s cubic-bezier(.2,.8,.2,1),border-color .25s,box-shadow .3s}
+.pcard.tilt,.tcard.tilt,.recurso.tilt,.t-stat.tilt{transition:transform .12s ease-out,border-color .25s,box-shadow .3s}
+.recurso,.t-stat{position:relative}
+.pcard .frente::after,.tcard::after,.recurso::after,.t-stat::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;
+  background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),#ffffff33,transparent 55%)}
+.pcard .frente::after{mix-blend-mode:screen;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),#ffffff40,transparent 50%),
+  linear-gradient(115deg,transparent 20%,#ff3fa42e calc(var(--gx,50%) - 12%),#31c4ff2e var(--gx,50%),#ffb81c2e calc(var(--gx,50%) + 12%),transparent 80%)}
+.pcard.tilt .frente::after,.tcard.tilt::after,.recurso.tilt::after,.t-stat.tilt::after{opacity:1}
+@media(prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
