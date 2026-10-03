@@ -1,6 +1,10 @@
-// Intro: explosión a pantalla completa en cada carga (se omite con "reducir movimiento")
-const boom = document.querySelector("#boom");
-if (boom) {
+// Explosión de entrada. Corre al cargar el inicio y cada vez que se toca "Inicio" (se omite con "reducir movimiento").
+function explotar() {
+  document.querySelector(".boom")?.remove();
+  const boom = document.createElement("div");
+  boom.className = "boom";
+  boom.setAttribute("aria-hidden", "true");
+  boom.innerHTML = '<b class="whiteout"></b><b class="flash"></b><b class="ring"></b><b class="ring r2"></b><b class="ring r3"></b>';
   const colores = ["#ffb81c", "#b44cff", "#ff7a1c", "#31c4ff", "#ffffff", "#ff3fa4"];
   const R = Math.hypot(innerWidth, innerHeight) / 2;     // del centro a la esquina
   for (let i = 0; i < 70; i++) {
@@ -12,8 +16,18 @@ if (boom) {
     s.style.setProperty("--s", 6 + Math.random() * 12 + "px");
     boom.appendChild(s);
   }
+  document.body.prepend(boom);
+  const hero = document.querySelector(".hero");     // reinicia la entrada del logo, texto y botones
+  hero.classList.remove("play"); void hero.offsetWidth; hero.classList.add("play");
   setTimeout(() => boom.remove(), 2200);
 }
+explotar();
+document.querySelectorAll('a[href="/"]').forEach((a) => a.addEventListener("click", (e) => {
+  e.preventDefault();
+  scrollTo({ top: 0, behavior: "smooth" });
+  history.replaceState(null, "", "/");
+  explotar();
+}));
 
 const $ = (s) => document.querySelector(s);
 const MESES = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
