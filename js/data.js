@@ -66,7 +66,7 @@ const JUGADORES = [
   { nombre: "Rosina Cordero", apodo: "Rosi", foto: "rosina-cordero.webp", numero: 12, nacionalidad: "Uruguaya", dato: "Más rápida que el Correcaminos. La queremos." },
   { nombre: "Santiago Rodriguez", apodo: "Santi", foto: "santiago-rodriguez.webp", numero: 9, nacionalidad: "Uruguaya", dato: "Si hace give and go, andá preparándote para atacar en el siguiente punto." },
   { nombre: "Sebastian Migdal", apodo: "Seba", foto: "sebastian-migdal.webp", numero: 30, nacionalidad: "Uruguaya", dato: "El muñe, por su gran forehand." },
-  { nombre: "Sofia Rodriguez", apodo: "Sofi", foto: "sofia-rodriguez.webp", numero: 27, nacionalidad: "Uruguaya", dato: "Lentamente se transforma en el demonio de Tasmania, pero maneja mejor que vos." },
+  { nombre: "Sofia Rodriguez", apodo: "Sofi", foto: "sofia-rodriguez.webp", numero: 27, nacionalidad: "Uruguaya", dato: "Lentamente se está transformando en el demonio de Tasmania, pero maneja mejor que vos." },
   { nombre: "Thiago Elizalde", apodo: "Facha", foto: "thiago-elizalde.webp", numero: 6, nacionalidad: "Uruguaya", dato: "Llega tarde siempre, pero es el Facha." },
 ];
 
