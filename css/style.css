@@ -274,6 +274,31 @@ h3::before{content:"";width:22px;height:4px;border-radius:4px;background:linear-
 .credito-ult{color:var(--mute);font-size:.85rem;border-top:1px solid var(--borde);padding-top:20px}
 .credito-ult a{color:var(--b);text-decoration:underline;text-underline-offset:3px}
 
+/* CALENDARIO: detalle del día */
+.day.tiene{cursor:pointer;transition:transform .15s,border-color .15s}
+.day.tiene:hover{transform:translateY(-2px);border-color:#b44cff99}
+.day.elegido{outline:2px solid var(--a);outline-offset:2px;box-shadow:0 0 24px #b44cff55}
+.dia-info{margin-top:16px;background:#ffffff08;border:1px solid #b44cff44;border-radius:16px;padding:18px 20px}
+.dia-info.abre{animation:quiz-in .3s cubic-bezier(.2,.8,.2,1)}
+.dia-cab{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.dia-cab h4{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:1.5rem;text-transform:uppercase}
+.dia-x{background:none;border:0;color:var(--mute);font-size:1.2rem;cursor:pointer;padding:4px 8px}
+.dia-x:hover{color:#fff}
+.dia-bloque{display:grid;gap:6px;padding:14px 16px;border-radius:12px;background:#ffffff08;border-left:4px solid var(--b);margin-top:10px}
+.dia-bloque.proximo{border-left-color:var(--a)}
+.dia-bloque.jugado{border-left-color:var(--b)}
+.dia-bloque.entreno{border-left-color:#b8862b}
+.dia-bloque b{font-size:1.1rem}
+.dia-bloque p{color:#d8d8e4;font-size:.92rem}
+.dia-tag{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.dia-logro{color:var(--b)!important;font-weight:700}
+.dia-partido{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #ffffff10}
+.dia-partido:first-of-type{border-top:0}
+.dia-partido small{display:block;color:var(--mute);font-size:.8rem}
+.dia-partido strong{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:1.3rem}
+.dia-partido.win strong{color:var(--b)}.dia-partido.loss strong{color:var(--a)}
+.dia-mapa{justify-self:start;padding:8px 16px;font-size:.85rem;margin-top:4px}
+
 /* QUIZ */
 .quiz-tapa{display:grid;place-items:center;grid-template-columns:1fr 1fr;background:linear-gradient(150deg,#b44cff,#ff7a1c)!important;font-family:Anton,Impact,sans-serif;font-size:2.6rem;color:#fff;padding:0 10px}
 .quiz-tapa span:last-child{opacity:.55}
