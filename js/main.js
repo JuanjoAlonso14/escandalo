@@ -127,7 +127,7 @@ $("#players").innerHTML = mezclados.map((j) => `
         <ul class="dorso-datos">
           ${j.numero ? `<li><small>Camiseta</small><b>#${j.numero}</b></li>` : ""}
           ${j.nacionalidad ? `<li><small>Nacionalidad</small><b>${j.nacionalidad}</b></li>` : ""}
-          <li><small>Equipo</small><b>🏆 Campeón Copa Primavera 2026</b></li>
+          ${j.dato ? `<li class="dorso-dato"><small>Dato</small><b>${j.dato}</b></li>` : ""}
         </ul>
         <button class="dorso-zoom" type="button">Ver carta completa</button>
       </div>
