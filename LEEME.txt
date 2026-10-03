@@ -1,7 +1,8 @@
 PAGINA DE ESCANDALO — COMO USARLA
 ==================================
 
-Abrir: doble clic en index.html
+Abrir en la compu: node scripts/servir.js y entrar a http://localhost:8080
+(las páginas usan URLs limpias: /galeria, /calendario, /historia; no funcionan con doble clic en el .html)
 
 DONDE SUBIR LAS FOTOS (carpeta assets/)
 ---------------------------------------
