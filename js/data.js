@@ -161,3 +161,15 @@ const GALERIA = [
   { tipo: "video", dia: "previa", src: "torneo/previa-6116.mp4", poster: "torneo/previa-6116-poster.webp" },
   { tipo: "video", dia: "previa", src: "torneo/previa-6117.mp4", poster: "torneo/previa-6117-poster.webp" },
 ];
+
+// Recursos de la página Ultimate (ultimate.html). Los PDF y sus portadas están en assets/recursos/
+// grupo: "reglas", "visual" o "avanzado". idioma: "ES" o "EN".
+const RECURSOS = [
+  { grupo: "reglas", titulo: "Reglas de Ultimate 2025–2028", desc: "El reglamento oficial completo de la WFDF: espíritu de juego, campo, puntos, faltas y violaciones.", idioma: "ES", paginas: 20, pdf: "recursos/reglas-ultimate-2025-2028.pdf", portada: "recursos/reglas-ultimate-2025-2028.webp" },
+  { grupo: "reglas", titulo: "Reglas de Ultimate Playa 5 vs 5", desc: "El reglamento oficial para jugar en la arena, con las reglas propias de playa resaltadas.", idioma: "ES", paginas: 21, pdf: "recursos/reglas-ultimate-playa-2025-2028.pdf", portada: "recursos/reglas-ultimate-playa-2025-2028.webp" },
+  { grupo: "visual", titulo: "Señales de manos", desc: "Los gestos para marcar falta, violación, gol, pasos, pick y más. Ideal para aprender rápido.", idioma: "ES", paginas: 2, pdf: "recursos/senales-de-manos.pdf", portada: "recursos/senales-de-manos.webp" },
+  { grupo: "visual", titulo: "Diagramas de decisión", desc: "Árboles de “sí / no” para resolver jugadas dudosas: pull, faltas, recepciones y más.", idioma: "ES", paginas: 8, pdf: "recursos/diagramas-de-decision.pdf", portada: "recursos/diagramas-de-decision.webp" },
+  { grupo: "visual", titulo: "Diagramas del pull", desc: "Dónde se pone el disco en juego cuando el pull sale del campo, con dibujos de cada caso.", idioma: "EN", paginas: 4, pdf: "recursos/diagramas-del-pull-2025-2028.pdf", portada: "recursos/diagramas-del-pull-2025-2028.webp" },
+  { grupo: "avanzado", titulo: "Anotaciones oficiales", desc: "Explicaciones y ejemplos que aclaran cómo se aplica cada regla en situaciones concretas.", idioma: "EN", paginas: 35, pdf: "recursos/anotaciones-oficiales-2025-2028.pdf", portada: "recursos/anotaciones-oficiales-2025-2028.webp" },
+  { grupo: "avanzado", titulo: "Apéndice del reglamento", desc: "Reglas adicionales para campeonatos: medidas del campo, tiempos, observadores y más.", idioma: "EN", paginas: 33, pdf: "recursos/apendice-2025-2028.pdf", portada: "recursos/apendice-2025-2028.webp" },
+];

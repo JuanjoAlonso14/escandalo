@@ -12,7 +12,7 @@ for (const f of fs.readdirSync("js")) {
 
 const existe = (p) => fs.existsSync(path.join("assets", p));
 const data = fs.readFileSync("js/data.js", "utf8");
-for (const m of data.matchAll(/(?:src|poster|portada|foto):\s*"([^"]+)"/g)) {
+for (const m of data.matchAll(/(?:src|poster|portada|foto|pdf):\s*"([^"]+)"/g)) {
   const rel = m[1];
   const ruta = rel.includes("/") ? rel : "jugadores/" + rel;   // las fotos de jugadores no llevan carpeta
   if (!existe(ruta)) falla(`assets/${ruta} (referenciado en js/data.js) no existe`);
