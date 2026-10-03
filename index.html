@@ -85,9 +85,15 @@
     <div class="join-box">
       <h2 class="title">¿Querés <span>jugar?</span></h2>
       <p>No hace falta experiencia. Vení a un entrenamiento, te prestamos un disco y te enseñamos todo.</p>
-      <form id="form">
-        <input name="nombre" placeholder="Tu nombre" required>
-        <input name="contacto" placeholder="Tu teléfono o mail" required>
+      <form id="form" novalidate>
+        <div class="campo">
+          <input name="nombre" placeholder="Tu nombre" autocomplete="name" aria-describedby="aviso-nombre">
+          <small class="aviso" id="aviso-nombre" aria-live="polite"></small>
+        </div>
+        <div class="campo">
+          <input name="contacto" placeholder="Tu teléfono o mail" autocomplete="tel" aria-describedby="aviso-contacto">
+          <small class="aviso" id="aviso-contacto" aria-live="polite"></small>
+        </div>
         <select name="exp">
           <option>Nunca jugué</option>
           <option>Jugué un poco</option>
