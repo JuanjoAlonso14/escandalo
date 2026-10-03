@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calendario — Escándalo Ultimate</title>
+  <meta name="description" content="Calendario de torneos y resultados de Escándalo.">
+  <link rel="icon" href="assets/logos/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="nav solid" id="nav">
+  <a href="index.html" class="brand">
+    <img src="assets/logos/logo.png" alt="">
+    <span>ESCÁNDALO</span>
+  </a>
+  <button class="burger" id="burger" aria-label="Menú"><span></span><span></span></button>
+  <nav id="menu">
+    <a href="historia.html">Historia</a>
+    <a href="calendario.html">Calendario</a>
+    <a href="index.html#plantel">Plantel</a>
+    <a href="galeria.html">Galería</a>
+    <a href="index.html#unite" class="cta-link">Sumate</a>
+  </nav>
+</header>
+
+<main>
+  <section class="sec gpage">
+    <h2 class="title">Calendario</h2>
+    <div class="cal">
+      <div class="cal-head">
+        <button id="mes-prev" aria-label="Mes anterior">‹</button>
+        <h3 id="mes-titulo"></h3>
+        <button id="mes-next" aria-label="Mes siguiente">›</button>
+        <button id="mes-hoy" class="chip">Hoy</button>
+      </div>
+      <div class="month-grid" id="month-grid"></div>
+      <p class="legend"><i class="lg t-future"></i> Torneo próximo <i class="lg t-past"></i> Torneo jugado <i class="lg tr"></i> Entrenamiento</p>
+    </div>
+    <div class="cols">
+      <div class="">
+        <h3>Torneos</h3>
+        <div id="fixture" class="list"></div>
+      </div>
+      <div class="">
+        <h3>Resultados</h3>
+        <div id="results" class="list"></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>
+  <div class="brand"><img src="assets/logos/logo.png" alt=""><span>ESCÁNDALO</span></div>
+  <div class="links">
+    <a id="ig" target="_blank" rel="noopener">Instagram</a>
+    <a id="mail">Email</a>
+    <a id="wa" target="_blank" rel="noopener">WhatsApp</a>
+  </div>
+  <small>© <span id="year"></span> Escándalo Ultimate</small>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/calendario.js"></script>
+</body>
+</html>

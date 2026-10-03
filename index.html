@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Escándalo — Ultimate Frisbee</title>
+  <meta name="description" content="Escándalo, equipo de Ultimate Frisbee. Plantel, partidos, resultados y cómo sumarte.">
+  <link rel="icon" href="assets/logos/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <a href="#inicio" class="brand">
+    <img src="assets/logos/logo.png" alt="" onerror="this.style.display='none'">
+    <span>ESCÁNDALO</span>
+  </a>
+  <button class="burger" id="burger" aria-label="Menú"><span></span><span></span></button>
+  <nav id="menu">
+    <a href="historia.html">Historia</a>
+    <a href="calendario.html">Calendario</a>
+    <a href="#plantel">Plantel</a>
+    <a href="galeria.html">Galería</a>
+    <a href="#unite" class="cta-link">Sumate</a>
+  </nav>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" id="inicio">
+    <div class="hero-bg" style="background-image:url('assets/hero/hero.jpg')"></div>
+    <div class="hero-overlay"></div>
+    <div class="disc d1"></div><div class="disc d2"></div>
+    <div class="hero-content">
+      <p class="eyebrow">Ultimate Frisbee</p>
+      <img class="hero-logo" src="assets/logos/logo-full.png" alt="Escándalo Ultimate" width="560">
+      <h1 class="sr-only">Escándalo</h1>
+      <div class="hero-btns">
+        <a href="#unite" class="btn">Sumate al equipo</a>
+        <a href="galeria.html" class="btn ghost">Galería</a>
+      </div>
+    </div>
+    <a href="#partidos" class="scroll" aria-label="Bajar">↓</a>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats reveal">
+    <div><b id="st-jug">0</b><span>Jugadores</span></div>
+    <div><b id="st-gan">0</b><span>Victorias</span></div>
+    <div><b id="st-par">0</b><span>Partidos jugados</span></div>
+    <div><b id="st-pct">0%</b><span>Efectividad</span></div>
+  </section>
+
+  <!-- PARTIDOS -->
+  <section class="sec" id="partidos">
+    <h2 class="title reveal">Próximo <span>torneo</span></h2>
+    <div class="next reveal" id="next"></div>
+
+    <div class="train reveal">
+      <h3>Entrenamientos</h3>
+      <div id="train"></div>
+    </div>
+  </section>
+
+  <!-- PLANTEL -->
+  <section class="sec dark" id="plantel">
+    <h2 class="title reveal">El <span>plantel</span></h2>
+    <div class="grid players" id="players"></div>
+  </section>
+
+  <!-- GALERIA (adelanto) -->
+  <section class="sec" id="galeria">
+    <h2 class="title reveal">Galería</h2>
+    <p class="sub reveal">Copa Primavera 2026 · Florida — nuestro primer torneo oficial, y salimos campeones 🏆</p>
+    <div class="grid gallery teaser reveal" id="teaser"></div>
+    <p class="center reveal"><a href="galeria.html" class="btn">Ver galería completa</a></p>
+  </section>
+
+  <!-- UNITE -->
+  <section class="sec join" id="unite">
+    <div class="join-box reveal">
+      <h2 class="title">¿Querés <span>jugar?</span></h2>
+      <p>No hace falta experiencia. Vení a un entrenamiento, te prestamos un disco y te enseñamos todo.</p>
+      <form id="form">
+        <input name="nombre" placeholder="Tu nombre" required>
+        <input name="contacto" placeholder="Tu teléfono o mail" required>
+        <select name="exp">
+          <option>Nunca jugué</option>
+          <option>Jugué un poco</option>
+          <option>Tengo experiencia</option>
+        </select>
+        <textarea name="msg" rows="3" placeholder="Contanos algo (opcional)"></textarea>
+        <button class="btn" type="submit">Enviar por WhatsApp</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="brand"><img src="assets/logos/logo.png" alt="" onerror="this.style.display='none'"><span>ESCÁNDALO</span></div>
+  <div class="links">
+    <a id="ig" target="_blank" rel="noopener">Instagram</a>
+    <a id="mail">Email</a>
+    <a id="wa" target="_blank" rel="noopener">WhatsApp</a>
+  </div>
+  <small>© <span id="year"></span> Escándalo Ultimate</small>
+</footer>
+
+<div class="lightbox" id="lb"><img alt=""><button aria-label="Cerrar">✕</button></div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

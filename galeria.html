@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Galería — Escándalo Ultimate</title>
+  <meta name="description" content="Fotos y videos de Escándalo en la Copa Primavera 2026, Florida.">
+  <link rel="icon" href="assets/logos/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="nav solid" id="nav">
+  <a href="index.html" class="brand">
+    <img src="assets/logos/logo.png" alt="">
+    <span>ESCÁNDALO</span>
+  </a>
+  <button class="burger" id="burger" aria-label="Menú"><span></span><span></span></button>
+  <nav id="menu">
+    <a href="historia.html">Historia</a>
+    <a href="calendario.html">Calendario</a>
+    <a href="index.html#plantel">Plantel</a>
+    <a href="galeria.html">Galería</a>
+    <a href="index.html#unite" class="cta-link">Sumate</a>
+  </nav>
+</header>
+
+<main>
+  <section class="sec gpage">
+    <!-- Elegir torneo -->
+    <div id="torneos-view">
+      <h1 class="title">Galería</h1>
+      <p class="sub" style="margin-top:-20px">Elegí un torneo para ver sus fotos y videos.</p>
+      <div class="grid tcards" id="tcards"></div>
+    </div>
+
+    <!-- Dentro de un torneo -->
+    <div id="torneo-view" hidden>
+      <button class="chip back" id="back">‹ Todos los torneos</button>
+      <h1 class="title" id="t-titulo"></h1>
+      <p class="sub" id="t-sub" style="margin-top:-20px"></p>
+      <div class="filters" id="filters">
+        <button class="chip on" data-f="todo">Todo</button>
+        <button class="chip" data-f="foto">Fotos</button>
+        <button class="chip" data-f="video">Videos</button>
+        <button class="chip" data-f="1">Día 1</button>
+        <button class="chip" data-f="2">Día 2</button>
+        <button class="chip" data-f="previa">Práctica previa</button>
+      </div>
+      <div id="fotos-block">
+        <h3>Fotos <small id="n-fotos"></small></h3>
+        <div class="grid gallery" id="gallery"></div>
+      </div>
+      <div id="videos-block">
+        <div class="vhead"><h3>Videos <small id="n-videos"></small></h3>
+          <div class="vnav"><button id="v-prev" aria-label="Anteriores">‹</button><button id="v-next" aria-label="Siguientes">›</button></div></div>
+        <div class="vslider" id="vslider"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="uniformes" style="padding-top:0;max-width:1300px">
+    <h2 class="title">Nuestros <span>uniformes</span></h2>
+    <p class="sub">Diseño exclusivo de Escándalo, sublimado por Sublime Ultimate.</p>
+    <div class="grid uniforms" id="uniforms">
+      <video src="assets/uniformes/video1.mp4" controls playsinline preload="metadata"></video>
+      <video src="assets/uniformes/video2.mp4" controls playsinline preload="metadata"></video>
+      <img src="assets/uniformes/campera.jpg" alt="Campera Escándalo" loading="lazy">
+      <img src="assets/uniformes/short.jpg" alt="Short Escándalo" loading="lazy">
+      <img src="assets/uniformes/short-corto.jpg" alt="Short corto Escándalo" loading="lazy">
+      <img src="assets/uniformes/pantalon.jpg" alt="Pantalón Escándalo" loading="lazy">
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="brand"><img src="assets/logos/logo.png" alt=""><span>ESCÁNDALO</span></div>
+  <div class="links">
+    <a id="ig" target="_blank" rel="noopener">Instagram</a>
+    <a id="mail">Email</a>
+    <a id="wa" target="_blank" rel="noopener">WhatsApp</a>
+  </div>
+  <small>© <span id="year"></span> Escándalo Ultimate</small>
+</footer>
+
+<div class="lightbox" id="lb">
+  <img alt=""><video controls playsinline style="display:none"></video>
+  <button class="nav-btn prev" aria-label="Anterior">‹</button>
+  <button class="nav-btn next-btn" aria-label="Siguiente">›</button>
+  <button class="close" aria-label="Cerrar">✕</button>
+  <div class="count-lb"></div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/galeria.js"></script>
+</body>
+</html>
