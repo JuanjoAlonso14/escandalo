@@ -60,6 +60,7 @@ function abrirDia(iso) {
       <p>📅 ${rango(t)} &nbsp;·&nbsp; 📍 ${t.lugar}</p>
       ${t.logro && pasado(t) ? `<p class="dia-logro">${t.logro}</p>` : ""}
       ${!pasado(t) && f >= hoy ? `<p>Faltan ${Math.ceil((t.d - hoy) / 864e5)} días para que empiece.</p>` : ""}
+      <a class="btn ghost dia-mapa" href="/torneo#${t.id}">Ver torneo →</a>
     </div>`;
   if (partidos.length) html += `<div class="dia-bloque">
       <span class="dia-tag">Partidos de este día</span>
@@ -93,9 +94,9 @@ $("#dia-modal").addEventListener("click", (e) => { if (e.target.closest(".dia-x"
 document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("#dia-modal").classList.contains("open")) cerrarDia(); });
 pintarMes();
 $("#fixture").innerHTML = torneos.map((t) =>
-  `<div class="row ${pasado(t) ? "win" : ""}"><div class="date">${t.d.getDate()}<small>${MESES[t.d.getMonth()]}</small></div>
+  `<a class="row ${pasado(t) ? "win" : ""}" href="/torneo#${t.id}"><div class="date">${t.d.getDate()}<small>${MESES[t.d.getMonth()]}</small></div>
     <div class="info"><b>${t.nombre}</b><small>${rango(t)} · ${t.lugar}</small></div>
-    <div class="score small">${pasado(t) ? (t.logro || "Jugado") : "Próximo"}</div></div>`).join("");
+    <div class="score small">${pasado(t) ? (t.logro || "Jugado") : "Próximo"}</div></a>`).join("");
 
 // Resultados
 $("#results").innerHTML = RESULTADOS.map((r) => {
