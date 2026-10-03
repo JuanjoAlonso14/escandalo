@@ -1,7 +1,7 @@
 // Animaciones al hacer scroll: cada bloque entra suave cuando aparece en pantalla.
 // Los elementos de una misma grilla entran escalonados. Funciona también con lo que se dibuja después (galería, filtros).
 (() => {
-  const SEL = ".title, .sub, h3, .next, .pcard, .gitem, .tcard, .row, #train > div, .stats > div, .uniforms > *, .historia p, .presentacion, .cal, .filters, .join-box, .center .btn";
+  const SEL = ".title, .sub, h3, .next, .pcard, .gitem, .tcard, .row, #train > div, .stats > div, .uniforms > *, .historia p, .presentacion, .cal, .filters, .join-box, .center .btn, .recurso, .datos-ult > div, .grupo-ult, .intro-ult";
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
   const io = new IntersectionObserver((entradas) => entradas.forEach((e) => {
