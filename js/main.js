@@ -52,7 +52,7 @@ $("#players").innerHTML = JUGADORES.map((j) => `
   </article>`).join("");
 // Adelanto de galería: 4 fotos
 $("#teaser").innerHTML = GALERIA.filter((g) => g.tipo === "foto").slice(0, 4).map((g) =>
-  `<a class="gitem" href="galeria.html#primavera"><img src="assets/${g.src}" alt="Foto del equipo" loading="lazy"></a>`).join("");
+  `<a class="gitem" href="/galeria#primavera"><img src="assets/${g.src}" alt="Foto del equipo" loading="lazy"></a>`).join("");
 
 // Zoom de tarjetas de jugadores
 const lb = $("#lb");
