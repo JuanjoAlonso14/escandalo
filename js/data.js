@@ -5,7 +5,7 @@
 const TEAM = {
   nombre: "Escándalo",
   whatsapp: "59898489298",          // 098 489 298 en formato internacional de Uruguay (+598), sin + ni espacios
-  email: "juanjoalon2000@gmail.com",
+  email: "escandaloultimate@gmail.com",
   instagram: "https://www.instagram.com/escandaloultimate/",
   entrenamientos: [
     { dia: "Martes",  hora: "19:00", lugar: "Brigada de Comunicaciones 1", mapa: "https://maps.app.goo.gl/7HYpu15j2bMttqfC8" },
