@@ -21,7 +21,15 @@ function explotar() {
   hero.classList.remove("entrada"); void hero.offsetWidth; hero.classList.add("entrada");
   setTimeout(() => boom.remove(), 2200);
 }
-explotar();
+// Al cargar, solo explota si se entra arriba del inicio: no con un link a una sección (/#plantel)
+// ni al recargar o volver atrás estando más abajo (el navegador restaura esa posición).
+let scrollPrevio = 0;
+try { scrollPrevio = +sessionStorage.getItem("scrollInicio") || 0; } catch (e) {}
+addEventListener("pagehide", () => { try { sessionStorage.setItem("scrollInicio", scrollY); } catch (e) {} });
+const tipoCarga = performance.getEntriesByType("navigation")[0]?.type;
+const vuelveAbajo = tipoCarga && tipoCarga !== "navigate" && scrollPrevio > innerHeight / 2;
+if (!location.hash && !vuelveAbajo) explotar();
+
 document.querySelectorAll('a[href="/"]').forEach((a) => a.addEventListener("click", (e) => {
   e.preventDefault();
   scrollTo({ top: 0, behavior: "smooth" });
