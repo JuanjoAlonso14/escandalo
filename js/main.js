@@ -1,3 +1,13 @@
+// Video de fondo de la portada: tríptico horizontal en pantallas anchas, una columna en celular.
+// No se carga con "reducir movimiento" ni con ahorro de datos (queda la primera imagen fija).
+const heroVid = document.querySelector(".hero-video");
+if (heroVid) {
+  const base = "assets/portada/portada" + (matchMedia("(max-aspect-ratio: 1/1)").matches ? "-movil" : "");
+  heroVid.poster = base + ".webp";
+  const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches || navigator.connection?.saveData;
+  if (!quieto) { heroVid.src = base + ".mp4"; heroVid.play().catch(() => {}); }
+}
+
 // Explosión de entrada. Corre al cargar el inicio y cada vez que se toca "Inicio" (se omite con "reducir movimiento").
 function explotar() {
   document.querySelector(".boom")?.remove();

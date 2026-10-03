@@ -32,8 +32,8 @@ h1,h2,h3,.brand span,.stats b{font-family:Anton,Impact,sans-serif;font-weight:40
 /* HERO */
 .hero{position:relative;min-height:100vh;padding:90px 0 170px;display:grid;place-items:center;text-align:center;overflow:hidden;
   background:radial-gradient(circle at 70% 20%,#2a0f4a 0,transparent 55%),radial-gradient(circle at 20% 80%,#3a2400 0,transparent 50%),var(--bg)}
-.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,#0b0b10aa,#0b0b10 98%)}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85;filter:saturate(1.2) contrast(1.05)}
+.hero-overlay{position:absolute;inset:0;background:radial-gradient(ellipse at center,#0b0b1080 0,#0b0b10a6 70%),linear-gradient(180deg,#2a0f4a33,#0b0b1066 55%,#0b0b10 99%)}
 .disc{position:absolute;border-radius:50%;border:3px solid var(--b);opacity:.18;animation:float 9s ease-in-out infinite}
 .disc::after{content:"";position:absolute;inset:18%;border:2px solid var(--b);border-radius:50%}
 .d1{width:320px;height:320px;top:8%;right:-80px}
@@ -259,6 +259,7 @@ footer small{color:var(--mute)}
 
 /* MOVIL */
 @media(max-width:800px){
+  .scroll{display:none}
   .players{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;margin-inline:-5vw;padding:0 5vw 14px;scrollbar-width:none}
   .players::-webkit-scrollbar{display:none}
   .players .pcard{flex:0 0 68%;scroll-snap-align:center}
