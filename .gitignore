@@ -1,0 +1,10 @@
+# Archivos pesados o de trabajo que no van al sitio
+*.zip
+/uniformes/
+/WhatsApp Image*
+assets/logos/_originales/
+Thumbs.db
+.DS_Store
+.claude/
+_site/
+node_modules/
