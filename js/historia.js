@@ -6,7 +6,7 @@ $("#wa").href = "https://wa.me/" + TEAM.whatsapp;
 $("#burger").onclick = () => $("#menu").classList.toggle("open");
 $("#menu").addEventListener("click", () => $("#menu").classList.remove("open"));
 
-if ($("#historia-texto")) $("#historia-texto").innerHTML = HISTORIA.map((p) => `<p>${p}</p>`).join("");
+if ($("#historia-texto")) $("#historia-texto").innerHTML = HISTORIA.map((p) => `<p>${conIconos(p)}</p>`).join("");
 
 // Línea de tiempo: hitos propios + torneos (con su resultado si ya se jugaron)
 const lineaEl = $("#linea");
@@ -29,11 +29,11 @@ if (lineaEl) {
   lineaEl.innerHTML = items.map((it) => {
     const f = new Date(it.fecha + "T00:00");
     return `<li class="hito${it.futuro ? " futuro" : ""}">
-      <span class="hito-punto" aria-hidden="true">${it.icono || "⭐"}</span>
+      <span class="hito-punto" aria-hidden="true">${conIconos(it.icono || "⭐")}</span>
       <div class="hito-card">
         <time datetime="${it.fecha}">${f.getDate()} ${MC[f.getMonth()]} ${f.getFullYear()}</time>
         <h3>${it.titulo}</h3>
-        <p>${it.texto}</p>
+        <p>${conIconos(it.texto)}</p>
         ${it.link ? `<a href="${it.link}">${it.futuro ? "Ver torneo" : "Ver resumen"} →</a>` : ""}
       </div>
     </li>`;
