@@ -464,15 +464,6 @@ body:has(.quiz-modal.open,.dia-modal.open,.lightbox.open,#menu.open,.juego.open)
 .lightbox button .ico,.quiz-x .ico,.dia-x .ico,.juego-x .ico{width:1em;height:1em;vertical-align:middle}
 .juego-hud .ico{width:1.3em;height:1.3em;color:var(--b)}
 
-/* CINTAS ANIMADAS */
-.cinta{position:relative;z-index:3;overflow:hidden;margin:34px -3vw;padding:13px 0;transform:rotate(-2deg);background:linear-gradient(90deg,var(--a),#ff3fa4);color:#fff;box-shadow:0 12px 40px #b44cff55}
-.cinta.naranja{transform:rotate(1.6deg);background:linear-gradient(90deg,var(--b),#ff7a1c);color:#1a0f05;box-shadow:0 12px 40px #ff7a1c44}
-.cinta-pista{display:flex;align-items:center;width:max-content;animation:cinta 40s linear infinite}
-.cinta.naranja .cinta-pista{animation-direction:reverse}
-.cinta span{font-family:Anton,Impact,sans-serif;font-size:clamp(1.25rem,2.8vw,1.9rem);text-transform:uppercase;letter-spacing:.04em;padding:0 22px;white-space:nowrap}
-.cinta .ico{width:1.5em;height:1.5em;stroke-width:1.6}
-@keyframes cinta{to{transform:translateX(-50%)}}
-
 /* BARRA DE PROGRESO */
 .progreso{position:fixed;top:0;left:0;right:0;height:3px;z-index:70;pointer-events:none;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--a),#ff3fa4,var(--b));box-shadow:0 0 12px #b44cff99}
 
