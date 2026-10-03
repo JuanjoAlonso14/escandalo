@@ -3,7 +3,7 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const tipos = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".jpg": "image/jpeg", ".webp": "image/webp", ".ttf": "font/ttf", ".png": "image/png", ".mp4": "video/mp4", ".json": "application/json" };
+const tipos = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".jpg": "image/jpeg", ".webp": "image/webp", ".pdf": "application/pdf", ".ttf": "font/ttf", ".png": "image/png", ".mp4": "video/mp4", ".json": "application/json" };
 
 http.createServer((req, res) => {
   let ruta = decodeURIComponent(req.url.split("?")[0]);
