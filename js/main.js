@@ -1,3 +1,42 @@
+// Explosión de entrada. Corre al cargar el inicio y cada vez que se toca "Inicio" (se omite con "reducir movimiento").
+function explotar() {
+  document.querySelector(".boom")?.remove();
+  const boom = document.createElement("div");
+  boom.className = "boom";
+  boom.setAttribute("aria-hidden", "true");
+  boom.innerHTML = '<b class="whiteout"></b><b class="flash"></b><b class="ring"></b><b class="ring r2"></b><b class="ring r3"></b>';
+  const colores = ["#ffb81c", "#b44cff", "#ff7a1c", "#31c4ff", "#ffffff", "#ff3fa4"];
+  const R = Math.hypot(innerWidth, innerHeight) / 2;     // del centro a la esquina
+  for (let i = 0; i < 70; i++) {
+    const a = (i / 70) * Math.PI * 2 + Math.random() * 0.4, d = R * (0.35 + Math.random() * 0.8);
+    const s = document.createElement("i");
+    s.style.setProperty("--dx", Math.cos(a) * d + "px");
+    s.style.setProperty("--dy", Math.sin(a) * d + "px");
+    s.style.setProperty("--c", colores[i % colores.length]);
+    s.style.setProperty("--s", 6 + Math.random() * 12 + "px");
+    boom.appendChild(s);
+  }
+  document.body.prepend(boom);
+  const hero = document.querySelector(".hero");     // reinicia la entrada del logo, texto y botones
+  hero.classList.remove("entrada"); void hero.offsetWidth; hero.classList.add("entrada");
+  setTimeout(() => boom.remove(), 2200);
+}
+// Al cargar, solo explota si se entra arriba del inicio: no con un link a una sección (/#plantel)
+// ni al recargar o volver atrás estando más abajo (el navegador restaura esa posición).
+let scrollPrevio = 0;
+try { scrollPrevio = +sessionStorage.getItem("scrollInicio") || 0; } catch (e) {}
+addEventListener("pagehide", () => { try { sessionStorage.setItem("scrollInicio", scrollY); } catch (e) {} });
+const tipoCarga = performance.getEntriesByType("navigation")[0]?.type;
+const vuelveAbajo = tipoCarga && tipoCarga !== "navigate" && scrollPrevio > innerHeight / 2;
+if (!location.hash && !vuelveAbajo) explotar();
+
+document.querySelectorAll('a[href="/"]').forEach((a) => a.addEventListener("click", (e) => {
+  e.preventDefault();
+  scrollTo({ top: 0, behavior: "smooth" });
+  history.replaceState(null, "", "/");
+  explotar();
+}));
+
 const $ = (s) => document.querySelector(s);
 const MESES = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
 const toDate = (s) => new Date(s.includes(" ") ? s.replace(" ", "T") : s + "T00:00");
