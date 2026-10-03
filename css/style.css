@@ -55,9 +55,9 @@ h1,h2,h3,.brand span,.stats b{font-family:Anton,Impact,sans-serif;font-weight:40
 @keyframes bounce{50%{transform:translateY(8px)}}
 
 /* INTRO: explosión y aparición del logo */
-.hero-content{animation:shake .5s .3s}
-.hero-logo{animation:logo-in 1.2s cubic-bezier(.2,1.3,.4,1) .4s both}
-.eyebrow,.hero-btns{animation:fade-up .8s 1.3s both}
+.hero.play .hero-content{animation:shake .5s .3s}
+.hero.play .hero-logo{animation:logo-in 1.2s cubic-bezier(.2,1.3,.4,1) .4s both}
+.hero.play .eyebrow,.hero.play .hero-btns{animation:fade-up .8s 1.3s both}
 .boom{position:fixed;inset:0;pointer-events:none;z-index:200;overflow:hidden}
 .boom b{position:absolute;left:50%;top:50%;border-radius:50%;translate:-50% -50%}
 .boom .whiteout{inset:0;left:0;top:0;width:100%;height:100%;border-radius:0;translate:0;background:#fff;animation:whiteout .9s .3s ease-out both}
