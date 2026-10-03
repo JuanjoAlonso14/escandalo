@@ -18,7 +18,7 @@ function explotar() {
   }
   document.body.prepend(boom);
   const hero = document.querySelector(".hero");     // reinicia la entrada del logo, texto y botones
-  hero.classList.remove("play"); void hero.offsetWidth; hero.classList.add("play");
+  hero.classList.remove("entrada"); void hero.offsetWidth; hero.classList.add("entrada");
   setTimeout(() => boom.remove(), 2200);
 }
 explotar();
