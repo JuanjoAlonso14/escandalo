@@ -221,9 +221,17 @@ footer .links{display:flex;gap:24px}
 footer .links a{color:var(--mute);cursor:pointer}footer .links a:hover{color:var(--b)}
 footer small{color:var(--mute)}
 
-/* ANIMACION AL SCROLL */
-.reveal{opacity:0;transform:translateY(30px);transition:.8s cubic-bezier(.2,.7,.2,1)}
-.reveal.in{opacity:1;transform:none}
+/* ANIMACION AL SCROLL (js/animaciones.js): .anim = escondido sin transición; .visto = entra con transición */
+.anim{opacity:0;transform:translateY(46px) scale(.96)}
+.title.anim{transform:none}
+.pcard.anim,.tcard.anim{transform:translateY(70px) rotate(-3deg) scale(.92)}
+.gitem.anim,.uniforms>.anim{transform:scale(.85);filter:blur(6px)}
+.row.anim,#train>.anim{transform:translateX(-40px)}
+.next.anim,.cal.anim,.presentacion.anim,.join-box.anim{transform:translateY(40px) scale(.9)}
+.anim.visto,#train>.anim.visto,.uniforms>.anim.visto{opacity:1;transform:none;filter:none;transition:opacity .75s,transform .75s,filter .75s;transition-timing-function:cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i,0) * 70ms)}
+.anim:not(.visto){transition:none!important}
+.title.anim.visto{transition:none;animation:barrido .9s cubic-bezier(.7,0,.2,1) both}
+@keyframes barrido{from{clip-path:inset(-25% 100% -25% 0)}to{clip-path:inset(-25% -5% -25% 0)}}
 
 /* MOVIL */
 @media(max-width:800px){
@@ -241,4 +249,4 @@ footer small{color:var(--mute)}
   .teaser,.gpage .gallery,.uniforms{grid-template-columns:repeat(2,1fr)}
   .count div{min-width:0;flex:1}
 }
-@media(prefers-reduced-motion:reduce){.boom{display:none}*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.boom{display:none}*{animation:none!important;transition:none!important}.anim{opacity:1!important;transform:none!important;clip-path:none!important;filter:none!important}}
