@@ -29,6 +29,7 @@ function abrirTorneo(id) {
   document.querySelectorAll(".chip[data-f]").forEach((c) => c.classList.toggle("on", c.dataset.f === "todo"));
   $("#t-titulo").textContent = t.nombre;
   $("#t-sub").textContent = `${t.lugar} · ${t.fecha}${t.logro ? " · " + t.logro : ""}`;
+  $("#t-resumen").href = "/torneo#" + id;
   $("#torneos-view").hidden = true; $("#torneo-view").hidden = false;
   history.replaceState(null, "", "#" + id);
   pintar(); scrollTo(0, 0);
