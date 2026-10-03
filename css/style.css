@@ -203,6 +203,9 @@ footer small{color:var(--mute)}
 
 /* MOVIL */
 @media(max-width:800px){
+  .players{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;margin-inline:-5vw;padding:0 5vw 14px;scrollbar-width:none}
+  .players::-webkit-scrollbar{display:none}
+  .players .pcard{flex:0 0 68%;scroll-snap-align:center}
   .burger{display:block;z-index:60}
   #menu{position:fixed;inset:0;background:var(--bg);flex-direction:column;justify-content:center;font-size:1.5rem;gap:30px;translate:100% 0;transition:.4s}
   #menu.open{translate:0}
