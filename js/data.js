@@ -56,18 +56,18 @@ const RESULTADOS = [
 // numero, nacionalidad y dato (algo gracioso) se muestran al dar vuelta la carta.
 // foto: archivo dentro de assets/jugadores/ (las tarjetas ya traen nombre y apodo dibujados)
 const JUGADORES = [
-  { nombre: "Ainara Rodriguez", apodo: "Aini", foto: "ainara-rodriguez.webp", numero: 4, nacionalidad: "Uruguaya", dato: "Si el disco está en el aire, ya es suyo." },
-  { nombre: "Camila Couture", apodo: "Camilinha", foto: "camila-couture.webp", numero: 24, nacionalidad: "Uruguaya", dato: "Festeja cada punto como si fuera la final." },
-  { nombre: "Juanjo Alonso", apodo: "Juano", foto: "juanjo-alonso.webp", numero: 10, nacionalidad: "Uruguaya", dato: "Tiene un pase para cada ocasión… y un festejo para cada pase." },
-  { nombre: "Julieta Noguez", apodo: "Ju", foto: "julieta-noguez.webp", numero: 33, nacionalidad: "Uruguaya", dato: "Su marca no te deja ni respirar (con espíritu, eso sí)." },
-  { nombre: "Leandro Rodriguez", apodo: "Lean", foto: "leandro-rodriguez.webp", numero: 22, nacionalidad: "Uruguaya", dato: "Corre más que el disco. A veces, literalmente." },
-  { nombre: "Matilde Rodriguez", apodo: "Matildinha", foto: "matilde-rodriguez.webp", numero: 21, nacionalidad: "Uruguaya", dato: "Atrapa con una mano y saluda con la otra." },
-  { nombre: "Nicolas Cabana", apodo: "Nico", foto: "nicolas-cabana.webp", numero: 5, nacionalidad: "Uruguaya", dato: "Nunca se pierde un huddle." },
-  { nombre: "Rosina Cordero", apodo: "Rosi", foto: "rosina-cordero.webp", numero: 12, nacionalidad: "Uruguaya", dato: "Le encuentra el hueco a cualquier defensa." },
-  { nombre: "Santiago Rodriguez", apodo: "Santi", foto: "santiago-rodriguez.webp", numero: 9, nacionalidad: "Uruguaya", dato: "Hace layouts hasta en el pasto mojado." },
-  { nombre: "Sebastian Migdal", apodo: "Seba", foto: "sebastian-migdal.webp", numero: 30, nacionalidad: "Uruguaya", dato: "Le pide el disco hasta al árbitro… que no existe." },
-  { nombre: "Sofia Rodriguez", apodo: "Sofi", foto: "sofia-rodriguez.webp", numero: 27, nacionalidad: "Uruguaya", dato: "Lee el viento mejor que el pronóstico." },
-  { nombre: "Thiago Elizalde", apodo: "Facha", foto: "thiago-elizalde.webp", numero: 6, nacionalidad: "Uruguaya", dato: "El apodo lo dice todo." },
+  { nombre: "Ainara Rodriguez", apodo: "Aini", foto: "ainara-rodriguez.webp", numero: 4, nacionalidad: "Uruguaya", dato: "Mejor forehand que varios que juegan hace años…" },
+  { nombre: "Camila Couture", apodo: "Camilinha", foto: "camila-couture.webp", numero: 24, nacionalidad: "Uruguaya", dato: "La mamá del grupo, y gran handler cuando la obligamos." },
+  { nombre: "Juanjo Alonso", apodo: "Juano", foto: "juanjo-alonso.webp", numero: 10, nacionalidad: "Uruguaya", dato: "La persona más flexible que vas a conocer." },
+  { nombre: "Julieta Noguez", apodo: "Ju", foto: "julieta-noguez.webp", numero: 33, nacionalidad: "Uruguaya", dato: "Si se enoja, no la mires: temé por tu vida." },
+  { nombre: "Leandro Rodriguez", apodo: "Lean", foto: "leandro-rodriguez.webp", numero: 22, nacionalidad: "Uruguaya", dato: "Cuidado, que te salta por arriba." },
+  { nombre: "Matilde Rodriguez", apodo: "Matildinha", foto: "matilde-rodriguez.webp", numero: 21, nacionalidad: "Uruguaya", dato: "La real peque: es nuestra estrellita, aunque en el fondo es Chucky." },
+  { nombre: "Nicolas Cabana", apodo: "Nico", foto: "nicolas-cabana.webp", numero: 5, nacionalidad: "Uruguaya", dato: "El veterano del equipo." },
+  { nombre: "Rosina Cordero", apodo: "Rosi", foto: "rosina-cordero.webp", numero: 12, nacionalidad: "Uruguaya", dato: "Más rápida que el Correcaminos. La queremos." },
+  { nombre: "Santiago Rodriguez", apodo: "Santi", foto: "santiago-rodriguez.webp", numero: 9, nacionalidad: "Uruguaya", dato: "Si hace give and go, andá preparándote para atacar en el siguiente punto." },
+  { nombre: "Sebastian Migdal", apodo: "Seba", foto: "sebastian-migdal.webp", numero: 30, nacionalidad: "Uruguaya", dato: "El muñe, por su gran forehand." },
+  { nombre: "Sofia Rodriguez", apodo: "Sofi", foto: "sofia-rodriguez.webp", numero: 27, nacionalidad: "Uruguaya", dato: "Lentamente se transforma en el demonio de Tasmania, pero maneja mejor que vos." },
+  { nombre: "Thiago Elizalde", apodo: "Facha", foto: "thiago-elizalde.webp", numero: 6, nacionalidad: "Uruguaya", dato: "Llega tarde siempre, pero es el Facha." },
 ];
 
 // Torneos de la galería. id: se usa en los items de GALERIA (campo "torneo", por defecto "primavera").
