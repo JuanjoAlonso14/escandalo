@@ -224,8 +224,13 @@ form .btn{justify-self:center;margin-top:8px}
 
 /* FOOTER */
 footer{border-top:1px solid #ffffff14;padding:40px 5vw;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
-footer .links{display:flex;gap:24px}
-footer .links a{color:var(--mute);cursor:pointer}footer .links a:hover{color:var(--b)}
+footer .links{display:flex;gap:14px}
+footer .links a{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--card);border:1px solid #ffffff1a;color:var(--txt);cursor:pointer;transition:transform .25s,background .25s,color .25s,box-shadow .25s,border-color .25s}
+footer .links svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+footer .links a:hover{transform:translateY(-5px);border-color:transparent}
+footer #ig:hover{background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);box-shadow:0 10px 24px #d6297666}
+footer #wa:hover{background:#25d366;box-shadow:0 10px 24px #25d36666}
+footer #mail:hover{background:var(--b);color:#000;box-shadow:0 10px 24px #ffb81c66}
 footer small{color:var(--mute)}
 
 /* ANIMACION AL SCROLL (js/animaciones.js): .anim = escondido sin transición; .visto = entra con transición */
