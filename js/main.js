@@ -116,5 +116,3 @@ $("#burger").onclick = () => menu.classList.toggle("open");
 menu.addEventListener("click", () => menu.classList.remove("open"));
 addEventListener("scroll", () => $("#nav").classList.toggle("solid", scrollY > 40), { passive: true });
 
-const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add("in"), io.unobserve(e.target))), { threshold: .12 });
-document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
