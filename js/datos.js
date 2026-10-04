@@ -10,7 +10,7 @@
   const pedir = async (ruta) => {
     const r = await fetch(`${SUPABASE.url}/rest/v1/${ruta}`, {
       headers: { apikey: SUPABASE.key, Authorization: `Bearer ${SUPABASE.key}` },
-      signal: AbortSignal.timeout(2500),
+      signal: AbortSignal.timeout(SUPABASE.espera || 2500),
     });
     if (!r.ok) throw new Error(`${ruta}: HTTP ${r.status}`);
     return r.json();
