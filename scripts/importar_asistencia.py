@@ -3,9 +3,11 @@
 #   python scripts/importar_asistencia.py            (carga solo si la base no tiene prácticas)
 #   python scripts/importar_asistencia.py --reemplazar   (borra las prácticas de la base y las vuelve a cargar)
 #   python scripts/importar_asistencia.py --solo-lugares (no importa nada: completa el lugar de las prácticas que no lo tienen)
+#   python scripts/importar_asistencia.py --produccion   (carga en la base de PRODUCCIÓN; pide la clave secreta service_role sin mostrarla
+#                                                          y exige escribir PRODUCCION para confirmar. Se puede combinar con --reemplazar)
 # El lugar sale del día de la semana, con los mismos horarios de entrenamiento del sitio (TEAM.entrenamientos en js/data.js).
 # Reglas del Excel: 1 = fue, 0 = faltó, celda vacía = esa práctica no contaba para la persona (aún no estaba).
-import json, os, subprocess, sys, datetime, urllib.request, urllib.error
+import getpass, json, os, subprocess, sys, datetime, urllib.request, urllib.error
 import openpyxl
 
 RAIZ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
@@ -29,7 +31,8 @@ def entorno():
     return env
 
 def pedir(metodo, ruta, cuerpo=None, extra=None):
-    cab = {"apikey": KEY, "Authorization": f"Bearer {KEY}", "Content-Type": "application/json", **(extra or {})}
+    # Las claves nuevas (sb_secret_...) no son un JWT: van solo en "apikey". Las viejas (service_role) también en Authorization.
+    cab = {"apikey": KEY, **({} if KEY.startswith("sb_") else {"Authorization": f"Bearer {KEY}"}), "Content-Type": "application/json", **(extra or {})}
     req = urllib.request.Request(f"{URL}/rest/v1/{ruta}", method=metodo, headers=cab, data=json.dumps(cuerpo).encode() if cuerpo is not None else None)
     try:
         with urllib.request.urlopen(req) as r:
@@ -37,10 +40,18 @@ def pedir(metodo, ruta, cuerpo=None, extra=None):
     except urllib.error.HTTPError as e:
         print("Error", e.code, e.read().decode()); sys.exit(1)
 
-env = entorno()
-URL, KEY = env.get("API_URL"), env.get("SERVICE_ROLE_KEY")
-if not URL or not KEY: sys.exit("No pude leer la base local. ¿Está prendida? (npx supabase start)")
-if not URL.startswith(("http://127.0.0.1", "http://localhost")): sys.exit("Esto solo corre contra la base local.")
+if "--produccion" in sys.argv:
+    URL = os.environ.get("URL_SUPABASE", "https://efdlvrznaqbijyftwzgf.supabase.co").rstrip("/")
+    KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or getpass.getpass("Clave secreta service_role del proyecto (no se muestra): ").strip()
+    if not KEY: sys.exit("Hace falta la clave secreta (Project Settings → API Keys → secret / service_role).")
+    if sys.stdin.isatty() and "--solo-lugares" not in sys.argv:
+        print(f"Esto va a escribir en {URL}" + (" y BORRAR las prácticas que haya" if "--reemplazar" in sys.argv else ""))
+        if input("Escribí PRODUCCION para confirmar: ").strip() != "PRODUCCION": sys.exit("Cancelado.")
+else:
+    env = entorno()
+    URL, KEY = env.get("API_URL"), env.get("SERVICE_ROLE_KEY")
+    if not URL or not KEY: sys.exit("No pude leer la base local. ¿Está prendida? (npx supabase start)")
+    if not URL.startswith(("http://127.0.0.1", "http://localhost")): sys.exit("Esto solo corre contra la base local.")
 if not os.path.exists(ARCHIVO): sys.exit(f"No encuentro el Excel en {ARCHIVO}")
 
 DIAS_SEMANA = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
