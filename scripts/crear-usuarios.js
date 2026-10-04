@@ -15,6 +15,7 @@ if (!/^https?:\/\/(127\.0\.0\.1|localhost)/.test(URL)) { console.error("Esto sol
 
 const fs = require("fs");
 const CONTRASENA = "sunombre123";
+const ADMINS = ["juanjo-alonso"];            // quienes tienen rol admin
 const archivoClaves = path.join(raiz, "supabase", "claves-locales.json");
 const claves = fs.existsSync(archivoClaves) ? JSON.parse(fs.readFileSync(archivoClaves, "utf8")) : {};
 const cab = { apikey: CLAVE, Authorization: `Bearer ${CLAVE}`, "Content-Type": "application/json" };
@@ -28,6 +29,15 @@ const cab = { apikey: CLAVE, Authorization: `Bearer ${CLAVE}`, "Content-Type": "
     const cuerpo = JSON.stringify({ email, password, email_confirm: true, user_metadata: { jugador: j.slug, nombre: j.nombre } });
     const ya = existentes.find((u) => u.email === email);
     const r = await fetch(ya ? `${URL}/auth/v1/admin/users/${ya.id}` : `${URL}/auth/v1/admin/users`, { method: ya ? "PUT" : "POST", headers: cab, body: cuerpo });
-    console.log(`${r.ok ? "✓" : "✗"} ${j.nombre.padEnd(20)} ${ya ? "actualizado" : "creado"}${claves[j.slug] ? " (clave propia)" : ""}  (${email})${r.ok ? "" : " HTTP " + r.status}`);
+    // Perfil con rol: admin para quien figure en ADMINS, usuario para el resto
+    let rolTxt = "";
+    if (r.ok) {
+      const u = await r.clone().json();
+      const rol = ADMINS.includes(j.slug) ? "admin" : "usuario";
+      const p = await fetch(`${URL}/rest/v1/perfiles`, { method: "POST", headers: { ...cab, Prefer: "resolution=merge-duplicates" },
+        body: JSON.stringify({ id: u.id, jugador_slug: j.slug, rol }) });
+      rolTxt = p.ok ? ` [${rol}]` : ` [perfil HTTP ${p.status}]`;
+    }
+    console.log(`${r.ok ? "✓" : "✗"} ${j.nombre.padEnd(20)} ${ya ? "actualizado" : "creado"}${claves[j.slug] ? " (clave propia)" : ""}${rolTxt}  (${email})${r.ok ? "" : " HTTP " + r.status}`);
   }
 })();

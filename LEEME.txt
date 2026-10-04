@@ -54,3 +54,12 @@ Los usuarios viven en la base local (Supabase Auth). Crearlos o resetearlos:  no
 Contraseñas: todos usan sunombre123, salvo quien tenga una clave propia en supabase/claves-locales.json
 (archivo que NO se sube a Git, formato {"slug": "clave"}). Después de editarlo: node scripts/crear-usuarios.js
 La contraseña la valida la base de datos; distingue mayúsculas de minúsculas.
+
+ROLES Y PANEL DE ADMINISTRACION (solo en local por ahora)
+---------------------------------------------------------
+Rol admin: Juan Jose Alonso (definido en ADMINS de scripts/crear-usuarios.js). El resto: rol usuario.
+Al loguearse, arriba a la derecha aparece su nombre con un menú: Panel de administración (solo admin) y Cerrar sesión.
+Panel: /admin. Hoy gestiona jugadores (agregar, editar, ocultar, eliminar). Torneos y partidos vienen después.
+Los permisos los hace cumplir la base (reglas de seguridad por filas): un usuario común no puede modificar nada aunque abra /admin.
+Un jugador nuevo creado desde el panel necesita su imagen en assets/jugadores/ y, para poder loguearse, un usuario
+(node scripts/crear-usuarios.js lo crea). Después de `npx supabase migration up` o `db reset`, correr ese script.
