@@ -194,14 +194,14 @@ h3{font-size:1.5rem;text-transform:uppercase;margin-bottom:16px;color:var(--b)}
 .row .score.small{font-size:1rem;text-align:right}
 
 
-/* Fondo propio del plantel: rayos violeta y naranja como las tarjetas, rayas y el nombre gigante de marca de agua */
-#plantel{position:relative;background:
+/* Fondo propio del roster: rayos violeta y naranja como las tarjetas, rayas y el nombre gigante de marca de agua */
+#roster{position:relative;background:
   radial-gradient(45% 70% at 0% 45%,#b44cff40,transparent 70%),
   radial-gradient(45% 70% at 100% 55%,#ff6a1c38,transparent 70%),
   repeating-linear-gradient(135deg,#ffffff06 0 2px,transparent 2px 26px),
   linear-gradient(180deg,#17172299,#0e0e16cc)}
-#plantel::before{content:"ESCÁNDALO";position:absolute;left:50%;top:50%;translate:-50% -50%;font-family:Anton,Impact,sans-serif;font-size:24vw;line-height:1;white-space:nowrap;color:transparent;-webkit-text-stroke:2px #ffffff0d;pointer-events:none}
-#plantel>*{position:relative}
+#roster::before{content:"ESCÁNDALO";position:absolute;left:50%;top:50%;translate:-50% -50%;font-family:Anton,Impact,sans-serif;font-size:24vw;line-height:1;white-space:nowrap;color:transparent;-webkit-text-stroke:2px #ffffff0d;pointer-events:none}
+#roster>*{position:relative}
 
 /* Tarjetas con borde y brillo sutil */
 .row,#train div,.cal,.stats,.tcard,.next{border:1px solid var(--borde)}
