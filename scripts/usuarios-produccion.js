@@ -39,7 +39,8 @@ const limpiar = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
   if (!local && !/^https:\/\/[a-z0-9]{20}\.supabase\.co$/.test(URL)) { console.error("La dirección del proyecto no parece válida:", URL); process.exit(1); }
   let clave = process.env.SUPABASE_SERVICE_ROLE_KEY || (await preguntarOculto("Clave secreta service_role del proyecto (no se muestra): ")).trim();
   if (!clave) { console.error("Hace falta la clave secreta. Se encuentra en Project Settings → API Keys → secret / service_role."); process.exit(1); }
-  const cab = { apikey: clave, Authorization: `Bearer ${clave}`, "Content-Type": "application/json" };
+  // Las claves nuevas (sb_secret_…) no son un JWT: van solo en "apikey". Las viejas (service_role) también en Authorization.
+  const cab = { apikey: clave, ...(clave.startsWith("sb_") ? {} : { Authorization: `Bearer ${clave}` }), "Content-Type": "application/json" };
   const api = async (ruta, opciones = {}) => fetch(`${URL}${ruta}`, { ...opciones, headers: { ...cab, ...(opciones.headers || {}) }, signal: AbortSignal.timeout(15000) });
 
   const prueba = await api("/auth/v1/admin/users?per_page=1");

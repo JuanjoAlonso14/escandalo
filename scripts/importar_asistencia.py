@@ -31,7 +31,8 @@ def entorno():
     return env
 
 def pedir(metodo, ruta, cuerpo=None, extra=None):
-    cab = {"apikey": KEY, "Authorization": f"Bearer {KEY}", "Content-Type": "application/json", **(extra or {})}
+    # Las claves nuevas (sb_secret_...) no son un JWT: van solo en "apikey". Las viejas (service_role) también en Authorization.
+    cab = {"apikey": KEY, **({} if KEY.startswith("sb_") else {"Authorization": f"Bearer {KEY}"}), "Content-Type": "application/json", **(extra or {})}
     req = urllib.request.Request(f"{URL}/rest/v1/{ruta}", method=metodo, headers=cab, data=json.dumps(cuerpo).encode() if cuerpo is not None else None)
     try:
         with urllib.request.urlopen(req) as r:
