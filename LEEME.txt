@@ -45,3 +45,9 @@ En localhost: lee jugadores, torneos y partidos de la base local (si está prend
 Si la base no responde: usa la última copia guardada en el navegador, y si no hay, js/data.js.
 En escandaloultimate.com: usa js/data.js (todavía no hay base real). Se configura en js/config.js.
 Los textos de Nosotros, los hitos y la galería siguen en js/data.js.
+
+LOGIN (solo en local por ahora)
+-------------------------------
+Página: /login  (http://localhost:8080/login). Se elige el jugador y se entra con <nombre>123.
+Los usuarios viven en la base local (Supabase Auth). Crearlos o resetearlos:  node scripts/crear-usuarios.js
+(después de `npx supabase db reset` hay que volver a correrlo). Si el ingreso es correcto, va al inicio.
