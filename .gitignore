@@ -16,3 +16,6 @@ supabase/claves-locales.json
 # Datos privados (asistencia, planillas): nunca se suben, el repositorio es público
 supabase/privado/
 *.xlsx
+
+# Consultas que guarda el editor SQL de Studio (pueden tener datos reales)
+supabase/snippets/
