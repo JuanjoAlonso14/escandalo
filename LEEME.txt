@@ -38,3 +38,10 @@ Requiere Docker Desktop abierto.
   node scripts/generar-seed.js -> regenera supabase/seed.sql desde js/data.js
 Panel visual (Studio): http://127.0.0.1:54323     API: http://127.0.0.1:54321
 Consultas SQL: Studio -> SQL Editor, o:  docker exec -it supabase_db_escandalo psql -U postgres
+
+QUE DATOS USA EL SITIO
+----------------------
+En localhost: lee jugadores, torneos y partidos de la base local (si está prendida).
+Si la base no responde: usa la última copia guardada en el navegador, y si no hay, js/data.js.
+En escandaloultimate.com: usa js/data.js (todavía no hay base real). Se configura en js/config.js.
+Los textos de Nosotros, los hitos y la galería siguen en js/data.js.
