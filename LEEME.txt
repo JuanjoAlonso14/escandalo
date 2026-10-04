@@ -72,3 +72,14 @@ tiene 100% con su primera práctica. El porcentaje es "fue / prácticas que cont
 Importar el Excel (una vez): ponerlo en supabase/privado/Asistencia a practicas.xlsx y correr
    python scripts/importar_asistencia.py            (--reemplazar para volver a cargar)
 IMPORTANTE: el repositorio es público. La asistencia de cada persona NO se sube: el Excel y supabase/privado/ están ignorados por Git.
+
+PASAR A PRODUCCION (proyecto Supabase: efdlvrznaqbijyftwzgf.supabase.co)
+------------------------------------------------------------------------
+1. En el panel de Supabase: Authentication → Sign In / Providers → apagar "Allow new users to sign up" (el registro abierto
+   permite que cualquiera se cree una cuenta) y subir la longitud mínima de contraseña (Authentication → Sign In / Providers → Email).
+2. Estructura:    npx supabase login  ·  npx supabase link --project-ref efdlvrznaqbijyftwzgf
+                  npx supabase db push --dry-run   ·   npx supabase db push
+3. Usuarios con contraseñas reales:    node scripts/usuarios-produccion.js   (pide la clave secreta service_role sin mostrarla)
+4. Asistencia:    python scripts/importar_asistencia.py --produccion
+5. Recién ahí, publicar la rama conexion_produccion (js/config.js ya apunta al proyecto cuando el sitio se abre en escandaloultimate.com).
+La clave secreta (service_role) y la contraseña de la base NUNCA van al repositorio ni al chat.
