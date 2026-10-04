@@ -28,3 +28,47 @@ AGREGAR UN JUGADOR
 2. La misma carta en JPG en assets/jugadores/compartir/<nombre-apellido>.jpg (para compartir/descargar)
 3. Sus datos en JUGADORES, en js/data.js
 4. node scripts/jugadores.js  (genera su link para compartir: /jugador/<nombre-apellido>)
+
+BASE DE DATOS LOCAL (Supabase)
+------------------------------
+Requiere Docker Desktop abierto.
+  npx supabase start       -> levanta la base (la 1ª vez descarga imágenes)
+  npx supabase stop        -> la apaga
+  npx supabase db reset    -> la borra y la recrea con la estructura y los datos de prueba
+  node scripts/generar-seed.js -> regenera supabase/seed.sql desde js/data.js
+Panel visual (Studio): http://127.0.0.1:54323     API: http://127.0.0.1:54321
+Consultas SQL: Studio -> SQL Editor, o:  docker exec -it supabase_db_escandalo psql -U postgres
+
+QUE DATOS USA EL SITIO
+----------------------
+En localhost: lee jugadores, torneos y partidos de la base local (si está prendida).
+Si la base no responde: usa la última copia guardada en el navegador, y si no hay, js/data.js.
+En escandaloultimate.com: usa js/data.js (todavía no hay base real). Se configura en js/config.js.
+Los textos de Nosotros, los hitos y la galería siguen en js/data.js.
+
+LOGIN (solo en local por ahora)
+-------------------------------
+Página: /login  (http://localhost:8080/login). Se elige el jugador y se entra con la contraseña sunombre123 (la misma para todos).
+Los usuarios viven en la base local (Supabase Auth). Crearlos o resetearlos:  node scripts/crear-usuarios.js
+(después de `npx supabase db reset` hay que volver a correrlo). Si el ingreso es correcto, va al inicio.
+Contraseñas: todos usan sunombre123, salvo quien tenga una clave propia en supabase/claves-locales.json
+(archivo que NO se sube a Git, formato {"slug": "clave"}). Después de editarlo: node scripts/crear-usuarios.js
+La contraseña la valida la base de datos; distingue mayúsculas de minúsculas.
+
+ROLES Y PANEL DE ADMINISTRACION (solo en local por ahora)
+---------------------------------------------------------
+Rol admin: Juan Jose Alonso (definido en ADMINS de scripts/crear-usuarios.js). El resto: rol usuario.
+Al loguearse, arriba a la derecha aparece su nombre con un menú: Panel de administración (solo admin) y Cerrar sesión.
+Panel: /admin. Hoy gestiona jugadores (agregar, editar, ocultar, eliminar). Torneos y partidos vienen después.
+Los permisos los hace cumplir la base (reglas de seguridad por filas): un usuario común no puede modificar nada aunque abra /admin.
+Un jugador nuevo creado desde el panel necesita su imagen en assets/jugadores/ y, para poder loguearse, un usuario
+(node scripts/crear-usuarios.js lo crea). Después de `npx supabase migration up` o `db reset`, correr ese script.
+
+ASISTENCIA A PRACTICAS (solo en local por ahora)
+------------------------------------------------
+Página para jugadores con sesión (solo ver): /asistencia. Para el admin: /admin#asistencia (agregar, editar y borrar prácticas).
+Cada práctica guarda quién fue, quién faltó y a quién no le contaba (todavía no estaba en el equipo): por eso un jugador nuevo
+tiene 100% con su primera práctica. El porcentaje es "fue / prácticas que contaban para esa persona".
+Importar el Excel (una vez): ponerlo en supabase/privado/Asistencia a practicas.xlsx y correr
+   python scripts/importar_asistencia.py            (--reemplazar para volver a cargar)
+IMPORTANTE: el repositorio es público. La asistencia de cada persona NO se sube: el Excel y supabase/privado/ están ignorados por Git.
