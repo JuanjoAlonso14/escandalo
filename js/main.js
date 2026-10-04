@@ -8,6 +8,21 @@ if (heroVid) {
   if (!quieto) { heroVid.src = base + ".mp4"; heroVid.play().catch(() => {}); }
 }
 
+// Datos estructurados para buscadores (equipo deportivo)
+(() => {
+  const s = document.createElement("script");
+  s.type = "application/ld+json";
+  s.textContent = JSON.stringify({
+    "@context": "https://schema.org", "@type": "SportsTeam",
+    name: "Escándalo Ultimate", sport: "Ultimate Frisbee", url: "https://escandaloultimate.com/",
+    logo: "https://escandaloultimate.com/assets/og.jpg", image: "https://escandaloultimate.com/assets/og.jpg",
+    email: TEAM.email, sameAs: [TEAM.instagram], foundingDate: "2026-04-14",
+    location: { "@type": "Place", address: { "@type": "PostalAddress", addressCountry: "UY" } },
+    description: "Equipo uruguayo de Ultimate Frisbee, campeón de la Copa Primavera 2026.",
+  });
+  document.head.appendChild(s);
+})();
+
 // Links viejos a la sección (/#plantel) pasan a /#roster
 if (location.hash === "#plantel") history.replaceState(null, "", "#roster");
 

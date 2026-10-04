@@ -107,3 +107,17 @@ $("#results").innerHTML = RESULTADOS.map((r) => {
     <div class="score">${r.resultado ? (esV(r) ? "Victoria" : "Derrota") : r.nuestros + " - " + r.suyos}</div></div>`;
 }).join("");
 
+// Datos estructurados: cada torneo como evento deportivo
+(() => {
+  const s = document.createElement("script");
+  s.type = "application/ld+json";
+  s.textContent = JSON.stringify(torneos.map((t) => ({
+    "@context": "https://schema.org", "@type": "SportsEvent",
+    name: t.nombre, startDate: t.desde, endDate: t.hasta,
+    eventStatus: "https://schema.org/EventScheduled",
+    location: { "@type": "Place", name: t.lugar, address: t.lugar },
+    url: `https://escandaloultimate.com/torneo#${t.id}`,
+    organizer: { "@type": "Organization", name: "Escándalo Ultimate" },
+  })));
+  document.head.appendChild(s);
+})();
