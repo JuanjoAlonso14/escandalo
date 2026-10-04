@@ -12,3 +12,7 @@ assets/jugadores/_originales/
 
 # Contraseñas personales de la base local (nunca se suben)
 supabase/claves-locales.json
+
+# Datos privados (asistencia, planillas): nunca se suben, el repositorio es público
+supabase/privado/
+*.xlsx

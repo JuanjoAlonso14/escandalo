@@ -14,6 +14,7 @@
   }
   const mensajeError = async (r) => {
     let c = {}; try { c = await r.clone().json(); } catch (e) {}
+    if (c.code === "23505" && /fecha/.test(c.message + c.details)) return "Ya hay una práctica registrada en esa fecha.";
     if (c.code === "23505") return /numero/.test(c.message + c.details) ? "Ya hay otro jugador con ese número de camiseta." : "Ya existe un jugador con ese nombre.";
     if (r.status === 401 || r.status === 403) return "No tenés permiso para hacer eso.";
     return c.message || `Error ${r.status}`;
@@ -31,8 +32,22 @@
       raiz.innerHTML = `<div class="adm-vacio"><h1>Sin acceso</h1><p>Esta sección es solo para administradores.</p><a class="btn" href="/">Volver al inicio</a></div>`;
       return;
     }
-    await cargar();
+    await mostrar();
   }
+
+  // Secciones del panel: /admin (jugadores) y /admin#asistencia
+  let datosA = null;
+  const seccionActual = () => (location.hash === "#asistencia" ? "asistencia" : "jugadores");
+  async function mostrar() { return seccionActual() === "asistencia" ? cargarAsistencia() : cargar(); }
+  const lateral = (cual) => `
+        <aside class="adm-lateral">
+          <h2>Panel</h2>
+          <a class="${cual === "jugadores" ? "on" : ""}" href="/admin">${ico("usuario")} Jugadores</a>
+          <a class="${cual === "asistencia" ? "on" : ""}" href="/admin#asistencia">${ico("calendario")} Asistencia</a>
+          <span class="pronto">${ico("trofeo")} Torneos <small>Pronto</small></span>
+          <span class="pronto">${ico("disco")} Partidos <small>Pronto</small></span>
+        </aside>`;
+  addEventListener("hashchange", () => { if (document.querySelector(".adm")) mostrar(); });
 
   async function cargar() {
     try {
@@ -47,12 +62,7 @@
     const activos = jugadores.filter((j) => j.activo).length;
     raiz.innerHTML = `
       <div class="adm">
-        <aside class="adm-lateral">
-          <h2>Panel</h2>
-          <a class="on" href="/admin">${ico("usuario")} Jugadores</a>
-          <span class="pronto">${ico("trofeo")} Torneos <small>Pronto</small></span>
-          <span class="pronto">${ico("disco")} Partidos <small>Pronto</small></span>
-        </aside>
+        ${lateral("jugadores")}
         <section class="adm-main">
           <div class="adm-cab">
             <div><h1>Jugadores</h1><p>${jugadores.length} en total · ${activos} visibles en el sitio</p></div>
@@ -164,6 +174,128 @@
     } catch (er) { sw.checked = !sw.checked; aviso(er.message, true); }
   });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelector(".adm-modal")?.remove(); });
+
+  // ---------- Asistencia a prácticas ----------
+  const DIAS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+  const hoyISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+  const lugarSugerido = (iso) => (TEAM.entrenamientos.find((e) => e.dia === DIAS[new Date(iso + "T00:00").getDay()]) || {}).lugar || "";
+
+  async function cargarAsistencia() {
+    raiz.innerHTML = '<p class="adm-vacio">Cargando…</p>';
+    try { datosA = await Asistencia.cargar(); } catch (e) { raiz.innerHTML = `<p class="adm-vacio">No se pudo cargar: ${esc(e.message)}</p>`; return; }
+    pintarAsistencia();
+  }
+
+  function pintarAsistencia() {
+    const c = Asistencia.calcular(datosA);
+    const recientes = [...datosA.practicas].reverse();
+    raiz.innerHTML = `
+      <div class="adm">
+        ${lateral("asistencia")}
+        <section class="adm-main">
+          <div class="adm-cab">
+            <div><h1>Asistencia</h1><p>${datosA.practicas.length} prácticas · ${c.lista.length} jugadores con registros</p></div>
+            <button class="btn" data-nueva-practica>${ico("mas")} Agregar práctica</button>
+          </div>
+          <h2 class="adm-sub">Prácticas</h2>
+          <div class="adm-tabla adm-scroll"><table>
+            <thead><tr><th>Fecha</th><th class="adm-oculta">Lugar</th><th>Fueron</th><th></th></tr></thead>
+            <tbody>${recientes.map((p) => { const t = c.porPractica.get(p.id); return `
+              <tr data-practica="${p.id}">
+                <td><b>${esc(Asistencia.fecha(p.fecha, true))}</b></td>
+                <td class="adm-oculta">${esc(p.lugar || "–")}</td>
+                <td>${t.presentes}<small class="asi-de"> de ${t.total}</small></td>
+                <td class="adm-acc"><button class="adm-ic" data-editar-practica title="Editar" aria-label="Editar">${ico("editar")}</button><button class="adm-ic peligro" data-borrar-practica title="Eliminar" aria-label="Eliminar">${ico("basura")}</button></td>
+              </tr>`; }).join("")}</tbody></table></div>
+          <div id="asi-resumen"></div>
+        </section>
+      </div>`;
+    Asistencia.montar(raiz.querySelector("#asi-resumen"), datosA, {});
+  }
+
+  // Estados de cada jugador en una práctica: fue → faltó → no contaba → fue …
+  const ESTADOS = { fue: { txt: "Fue", sig: "falto" }, falto: { txt: "Faltó", sig: "nocuenta" }, nocuenta: { txt: "No contaba", sig: "fue" } };
+
+  function formularioPractica(p) {
+    const nueva = !p;
+    const marcas = new Map();
+    for (const a of datosA.asistencias) if (p && a.practica_id === p.id) marcas.set(a.jugador_slug, a.presente);
+    // En una práctica nueva: los jugadores visibles, todos como "faltó" (se marca quién fue). Al editar: los que tenían registro.
+    const lista = datosA.jugadores.filter((j) => (nueva ? j.activo : marcas.has(j.slug) || j.activo));
+    const estado = (j) => (nueva ? "falto" : marcas.has(j.slug) ? (marcas.get(j.slug) ? "fue" : "falto") : "nocuenta");
+    const iso = nueva ? hoyISO() : p.fecha;
+    const m = abrirModal(`
+      <div class="quiz-top"><span>${nueva ? "Agregar práctica" : "Editar práctica"}</span><button class="quiz-x" data-cerrar aria-label="Cerrar">${ico("cerrar")}</button></div>
+      <form class="adm-form" novalidate>
+        <div class="adm-fila">
+          <label>Fecha<input name="fecha" type="date" value="${iso}"></label>
+          <label>Lugar<input name="lugar" list="lugares" value="${esc(nueva ? lugarSugerido(iso) : p.lugar)}" placeholder="Ej: Facultad de Agronomía"></label>
+        </div>
+        <datalist id="lugares">${[...new Set(TEAM.entrenamientos.map((e) => e.lugar))].map((l) => `<option value="${esc(l)}">`).join("")}</datalist>
+        <label>Notas <small>(opcional)</small><textarea name="notas" rows="1">${esc(p?.notas)}</textarea></label>
+        <div class="asi-quienes-cab"><span>¿Quiénes fueron? <small>Tocá cada uno para cambiar</small></span>
+          <span class="asi-rapido"><button type="button" data-todos="fue">Todos fueron</button><button type="button" data-todos="falto">Nadie</button></span></div>
+        <div class="asi-chips">${lista.map((j) => `
+          <button type="button" class="asi-chip" data-slug="${esc(j.slug)}" data-estado="${estado(j)}">
+            <img src="assets/jugadores/${esc(j.foto)}" alt="" onerror="this.style.visibility='hidden'">
+            <span><b>${esc(j.apodo)}</b><small>${ESTADOS[estado(j)].txt}</small></span></button>`).join("")}</div>
+        <p class="asi-cuenta" aria-live="polite"></p>
+        <small class="adm-error" aria-live="polite"></small>
+        <div class="adm-botones"><button type="button" class="btn ghost" data-cerrar>Cancelar</button><button class="btn" type="submit">${nueva ? "Guardar práctica" : "Guardar cambios"}</button></div>
+      </form>`);
+    const f = m.querySelector("form"), err = f.querySelector(".adm-error"), cuenta = f.querySelector(".asi-cuenta");
+    const contar = () => {
+      const chips = [...f.querySelectorAll(".asi-chip")], fue = chips.filter((c) => c.dataset.estado === "fue").length;
+      cuenta.textContent = `${fue} de ${chips.filter((c) => c.dataset.estado !== "nocuenta").length} fueron`;
+    };
+    const poner = (chip, est) => { chip.dataset.estado = est; chip.querySelector("small").textContent = ESTADOS[est].txt; };
+    contar();
+    let lugarTocado = !nueva;
+    f.lugar.addEventListener("input", () => (lugarTocado = true));
+    f.fecha.addEventListener("change", () => { if (!lugarTocado) f.lugar.value = lugarSugerido(f.fecha.value); });
+    f.addEventListener("click", (e) => {
+      const chip = e.target.closest(".asi-chip"); if (chip) { poner(chip, ESTADOS[chip.dataset.estado].sig); contar(); return; }
+      const t = e.target.closest("[data-todos]"); if (t) { f.querySelectorAll(".asi-chip").forEach((c) => c.dataset.estado !== "nocuenta" && poner(c, t.dataset.todos)); contar(); }
+    });
+    f.addEventListener("submit", async (e) => {
+      e.preventDefault(); err.textContent = "";
+      if (!f.fecha.value) return (err.textContent = "Elegí la fecha de la práctica.");
+      const asist = [...f.querySelectorAll(".asi-chip")].filter((c) => c.dataset.estado !== "nocuenta").map((c) => ({ slug: c.dataset.slug, presente: c.dataset.estado === "fue" }));
+      if (!asist.length) return (err.textContent = "Marcá al menos a un jugador.");
+      const boton = f.querySelector('[type="submit"]'); boton.disabled = true;
+      try {
+        const r = await pedir("rpc/guardar_practica", { method: "POST", body: JSON.stringify({ p_id: p ? p.id : null, p_fecha: f.fecha.value,
+          p_lugar: f.lugar.value.trim() || null, p_notas: f.notas.value.trim() || null, p_asistencias: asist }) });
+        if (!r.ok) throw new Error(await mensajeError(r));
+        m.remove(); aviso(nueva ? "Práctica guardada ✓" : "Cambios guardados ✓"); await cargarAsistencia();
+      } catch (e2) { err.textContent = e2.message; boton.disabled = false; }
+    });
+  }
+
+  function confirmarBorradoPractica(p) {
+    const m = abrirModal(`
+      <div class="quiz-top"><span>Eliminar práctica</span><button class="quiz-x" data-cerrar aria-label="Cerrar">${ico("cerrar")}</button></div>
+      <p class="adm-confirma">¿Eliminar la práctica del <b>${esc(Asistencia.fecha(p.fecha, true))}</b>? Se borra también la asistencia de ese día y cambian los porcentajes. No se puede deshacer.</p>
+      <small class="adm-error"></small>
+      <div class="adm-botones"><button class="btn ghost" data-cerrar>Cancelar</button><button class="btn peligro" data-ok>Eliminar</button></div>`);
+    m.querySelector("[data-ok]").addEventListener("click", async (e) => {
+      e.target.disabled = true;
+      try {
+        const r = await pedir(`practicas?id=eq.${p.id}`, { method: "DELETE" });
+        if (!r.ok) throw new Error(await mensajeError(r));
+        if (!(await r.json()).length) throw new Error("No tenés permiso para hacer eso.");
+        m.remove(); aviso("Práctica eliminada"); await cargarAsistencia();
+      } catch (er) { m.querySelector(".adm-error").textContent = er.message; e.target.disabled = false; }
+    });
+  }
+
+  raiz.addEventListener("click", (e) => {
+    if (e.target.closest("[data-nueva-practica]")) return formularioPractica(null);
+    const fila = e.target.closest("tr[data-practica]"); if (!fila) return;
+    const p = datosA.practicas.find((x) => String(x.id) === fila.dataset.practica);
+    if (e.target.closest("[data-editar-practica]")) formularioPractica(p);
+    else if (e.target.closest("[data-borrar-practica]")) confirmarBorradoPractica(p);
+  });
 
   iniciar();
 })();
