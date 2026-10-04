@@ -1,4 +1,4 @@
-// Crea (o actualiza) un usuario por jugador en la base LOCAL, con contraseña <nombre>123.
+// Crea (o actualiza) un usuario por jugador en la base LOCAL. La contraseña es la misma para todos: sunombre123.
 // Es para desarrollo: la contraseña es adivinable a propósito. Antes de usar una base real, cambiar este esquema.
 //   node scripts/crear-usuarios.js        (con la base prendida: npx supabase start)
 const { execSync } = require("child_process");
@@ -12,7 +12,7 @@ const URL = env.API_URL, CLAVE = env.SERVICE_ROLE_KEY;
 if (!URL || !CLAVE) { console.error("No pude leer la base local. ¿Está prendida? (npx supabase start)"); process.exit(1); }
 if (!/^https?:\/\/(127\.0\.0\.1|localhost)/.test(URL)) { console.error("Esto solo corre contra la base local."); process.exit(1); }
 
-const limpiar = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+const CONTRASENA = "sunombre123";
 const cab = { apikey: CLAVE, Authorization: `Bearer ${CLAVE}`, "Content-Type": "application/json" };
 
 (async () => {
@@ -20,7 +20,7 @@ const cab = { apikey: CLAVE, Authorization: `Bearer ${CLAVE}`, "Content-Type": "
   const existentes = (await (await fetch(`${URL}/auth/v1/admin/users?per_page=500`, { headers: cab })).json()).users || [];
   for (const j of jugadores) {
     const email = `${j.slug}@escandalo.test`;
-    const password = limpiar(j.nombre.split(" ")[0]) + "123";
+    const password = CONTRASENA;
     const cuerpo = JSON.stringify({ email, password, email_confirm: true, user_metadata: { jugador: j.slug, nombre: j.nombre } });
     const ya = existentes.find((u) => u.email === email);
     const r = await fetch(ya ? `${URL}/auth/v1/admin/users/${ya.id}` : `${URL}/auth/v1/admin/users`, { method: ya ? "PUT" : "POST", headers: cab, body: cuerpo });
