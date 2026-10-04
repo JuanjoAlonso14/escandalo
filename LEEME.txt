@@ -28,3 +28,13 @@ AGREGAR UN JUGADOR
 2. La misma carta en JPG en assets/jugadores/compartir/<nombre-apellido>.jpg (para compartir/descargar)
 3. Sus datos en JUGADORES, en js/data.js
 4. node scripts/jugadores.js  (genera su link para compartir: /jugador/<nombre-apellido>)
+
+BASE DE DATOS LOCAL (Supabase)
+------------------------------
+Requiere Docker Desktop abierto.
+  npx supabase start       -> levanta la base (la 1ª vez descarga imágenes)
+  npx supabase stop        -> la apaga
+  npx supabase db reset    -> la borra y la recrea con la estructura y los datos de prueba
+  node scripts/generar-seed.js -> regenera supabase/seed.sql desde js/data.js
+Panel visual (Studio): http://127.0.0.1:54323     API: http://127.0.0.1:54321
+Consultas SQL: Studio -> SQL Editor, o:  docker exec -it supabase_db_escandalo psql -U postgres
