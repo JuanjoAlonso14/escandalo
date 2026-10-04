@@ -23,6 +23,9 @@ for (const m of data.matchAll(/foto:\s*"([^"]+)\.webp"/g))
 
 for (const f of fs.readdirSync(".").filter((x) => x.endsWith(".html"))) {
   const html = fs.readFileSync(f, "utf8");
+  for (const m of html.matchAll(/data-despues="([^"]*)"/g))
+    for (const s of m[1].split(",").filter(Boolean))
+      if (!fs.existsSync(path.join("js", s))) falla(`${f}: data-despues lista js/${s}, que no existe`);
   for (const m of html.matchAll(/(?:src|href)="\/?((?:assets|css|js)\/[^"#?]+)"/g))
     if (!fs.existsSync(m[1])) falla(`${f}: falta ${m[1]}`);
 }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' http://127.0.0.1:54321; object-src 'none'; base-uri 'self'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Escándalo Ultimate — Equipo de Ultimate Frisbee en Uruguay</title>
   <meta name="description" content="Equipo uruguayo de Ultimate Frisbee. Campeones de la Copa Primavera 2026. Roster, torneos, galería y cómo sumarte.">
@@ -135,11 +135,7 @@
 <div class="lightbox" id="lb"><img alt=""><button aria-label="Cerrar"><svg class="ico ico-cerrar" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 
 <script src="js/data.js"></script>
-<script src="js/iconos.js"></script>
-<script src="js/main.js"></script>
-<script src="js/animaciones.js"></script>
-<script src="js/juego.js"></script>
-<script src="js/tilt.js"></script>
-<script src="js/flotante.js"></script>
+<script src="js/config.js"></script>
+<script src="js/datos.js" data-despues="iconos.js,main.js,animaciones.js,juego.js,tilt.js,flotante.js"></script>
 </body>
 </html>
