@@ -28,9 +28,10 @@ jobs:
       - run: node scripts/verificar.js
       - name: Armar el sitio
         run: |
+          node scripts/jugadores.js
           mkdir _site
           cp *.html CNAME .nojekyll _site/
-          cp -r css js assets _site/
+          cp -r css js assets jugador _site/
       - name: Evitar caché vieja de CSS y JS
         run: |
           sed -i -E "s#(css/style\.css|js/[a-z]+\.js)\"#\1?v=${GITHUB_SHA::7}\"#g" _site/*.html
