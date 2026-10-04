@@ -9,8 +9,8 @@ const lista = document.querySelector("#login-jugador");
 const aviso = document.querySelector("#login-error");
 
 lista.innerHTML = '<option value="">Elegí tu nombre…</option>' +
-  [...JUGADORES].sort((a, b) => a.apodo.localeCompare(b.apodo, "es"))
-    .map((j) => `<option value="${slugDe(j)}">${j.apodo} · ${j.nombre}</option>`).join("");
+  [...JUGADORES].sort((a, b) => a.nombre.localeCompare(b.nombre, "es"))
+    .map((j) => `<option value="${slugDe(j)}">${j.nombre}</option>`).join("");
 
 if (typeof SUPABASE === "undefined" || !SUPABASE) {
   form.querySelectorAll("select,input,button").forEach((e) => (e.disabled = true));
