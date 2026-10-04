@@ -9,3 +9,6 @@ Thumbs.db
 _site/
 node_modules/
 assets/jugadores/_originales/
+
+# Contraseñas personales de la base local (nunca se suben)
+supabase/claves-locales.json
