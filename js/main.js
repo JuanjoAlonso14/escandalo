@@ -8,6 +8,9 @@ if (heroVid) {
   if (!quieto) { heroVid.src = base + ".mp4"; heroVid.play().catch(() => {}); }
 }
 
+// Links viejos a la sección (/#plantel) pasan a /#roster
+if (location.hash === "#plantel") history.replaceState(null, "", "#roster");
+
 // Explosión de entrada. Corre al cargar el inicio y cada vez que se toca "Inicio" (se omite con "reducir movimiento").
 function explotar() {
   document.querySelector(".boom")?.remove();
@@ -31,7 +34,7 @@ function explotar() {
   hero.classList.remove("entrada"); void hero.offsetWidth; hero.classList.add("entrada");
   setTimeout(() => boom.remove(), 2200);
 }
-// Al cargar, solo explota si se entra arriba del inicio: no con un link a una sección (/#plantel)
+// Al cargar, solo explota si se entra arriba del inicio: no con un link a una sección (/#roster)
 // ni al recargar o volver atrás estando más abajo (el navegador restaura esa posición).
 let scrollPrevio = 0;
 try { scrollPrevio = +sessionStorage.getItem("scrollInicio") || 0; } catch (e) {}
@@ -191,7 +194,7 @@ const linkCarta = location.hash.match(/^#j-([\w-]+)$/);
 if (linkCarta) {
   const carta = document.querySelector(`.pcard[data-slug="${linkCarta[1]}"]`);
   if (carta) {
-    $("#plantel").scrollIntoView();
+    $("#roster").scrollIntoView();
     lb.querySelector("img").src = carta.querySelector(".frente img").src;
     lb.classList.add("open");
   }
