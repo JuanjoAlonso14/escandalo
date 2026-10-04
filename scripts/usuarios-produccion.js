@@ -32,6 +32,14 @@ function preguntarOculto(texto) {
     process.stdin.on("data", alTeclear);
   });
 }
+// Guarda cada contraseña generada en el instante en que se crea el usuario, para no perderla si el script se corta después
+function guardarClave(linea) {
+  const carpeta = path.join(raiz, "supabase", "privado"); fs.mkdirSync(carpeta, { recursive: true });
+  const archivo = path.join(carpeta, local ? "credenciales-local-prueba.txt" : "credenciales-produccion.txt");
+  if (!guardarClave.encabezado) { fs.appendFileSync(archivo, `\n# ${new Date().toISOString().slice(0, 10)} — entran en /login eligiendo su nombre y esta contraseña\n`); guardarClave.encabezado = true; }
+  fs.appendFileSync(archivo, linea + "\n");
+  return archivo;
+}
 const generar = () => Array.from({ length: 12 }, () => "abcdefghjkmnpqrstuvwxyz23456789"[crypto.randomInt(31)]).join("");
 const limpiar = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
@@ -71,17 +79,15 @@ const limpiar = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
     const r = await api(ya ? `/auth/v1/admin/users/${ya.id}` : "/auth/v1/admin/users", { method: ya ? "PUT" : "POST", body: cuerpo });
     if (!r.ok) { console.log(`  ✗ ${j.nombre}: HTTP ${r.status} ${(await r.text()).slice(0, 120)}`); continue; }
     const u = await r.json();
+    if (!ADMINS.includes(j.slug)) { guardarClave(`${j.nombre}: ${password}`); creadas.push(j.nombre); }
     const rol = ADMINS.includes(j.slug) ? "admin" : "usuario";
     const p = await api("/rest/v1/perfiles", { method: "POST", headers: { Prefer: "resolution=merge-duplicates" }, body: JSON.stringify({ id: u.id, jugador_slug: j.slug, rol }) });
     console.log(`  ${p.ok ? "✓" : "✗"} ${j.nombre.padEnd(20)} ${ya ? "contraseña nueva" : "creado"} [${rol}]${p.ok ? "" : " perfil HTTP " + p.status}`);
-    if (!ADMINS.includes(j.slug) && p.ok) creadas.push(`${j.nombre}: ${password}`);
   }
 
   if (creadas.length) {
-    const carpeta = path.join(raiz, "supabase", "privado"); fs.mkdirSync(carpeta, { recursive: true });
-    const archivo = path.join(carpeta, local ? "credenciales-local-prueba.txt" : "credenciales-produccion.txt");
-    fs.appendFileSync(archivo, `\n# ${new Date().toISOString().slice(0, 10)} — entran en /login eligiendo su nombre y esta contraseña\n${creadas.join("\n")}\n`);
-    console.log(`\nContraseñas generadas guardadas en supabase/privado/${local ? "credenciales-local-prueba.txt" : "credenciales-produccion.txt"} (no se sube a Git).`);
+    console.log(`
+Contraseñas de ${creadas.length} jugadores guardadas en supabase/privado/${local ? "credenciales-local-prueba.txt" : "credenciales-produccion.txt"} (no se sube a Git).`);
     console.log("Pasale a cada jugador la suya por privado (WhatsApp 1 a 1), no por el grupo.");
   }
 })();
