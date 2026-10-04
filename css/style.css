@@ -635,7 +635,7 @@ footer small{color:var(--mute)}
 .cuenta-menu .ico{width:18px;height:18px;color:var(--b)}
 
 /* PANEL DE ADMINISTRACION */
-.adm{display:grid;grid-template-columns:210px 1fr;gap:26px;align-items:start}
+.adm{display:grid;grid-template-columns:210px minmax(0,1fr);gap:26px;align-items:start}
 .adm-lateral{display:grid;gap:6px;background:var(--card);border:1px solid var(--borde);border-radius:18px;padding:14px;position:sticky;top:84px}
 .adm-lateral h2{font-size:1.1rem;color:var(--mute);letter-spacing:.1em;text-transform:uppercase;padding:4px 10px 8px}
 .adm-lateral a,.adm-lateral .pronto{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;font-weight:600}
@@ -764,3 +764,4 @@ footer small{color:var(--mute)}
 .adm-modal .quiz-caja{max-height:calc(100dvh - 24px)}
 @media(max-width:800px){.asi-barra-celda{display:none}.asi-mapa td.m{width:13px;height:13px}}
 @media(max-width:800px){.asi-tarjetas{grid-template-columns:repeat(2,1fr);gap:10px}.asi-t{padding:14px 8px}.asi-t b{font-size:2rem}.asi-t span{font-size:.68rem}}
+.adm-main{min-width:0}
