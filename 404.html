@@ -4,7 +4,7 @@
   <meta name="robots" content="noindex">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' http://127.0.0.1:54321; object-src 'none'; base-uri 'self'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Página no encontrada — Escándalo Ultimate</title>
   <meta name="description" content="Cómo nació Escándalo, equipo uruguayo de Ultimate Frisbee.">
@@ -65,8 +65,7 @@
 </footer>
 
 <script src="/js/data.js"></script>
-<script src="/js/iconos.js"></script>
-<script src="/js/historia.js"></script>
-<script src="/js/flotante.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/datos.js" data-despues="iconos.js,sesion.js,historia.js,flotante.js"></script>
 </body>
 </html>

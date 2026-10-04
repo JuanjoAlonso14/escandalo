@@ -5,17 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' http://127.0.0.1:54321; object-src 'none'; base-uri 'self'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>Calendario — Escándalo Ultimate</title>
-  <meta name="description" content="Torneos y resultados de Escándalo Ultimate.">
-  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+  <title>Asistencia — Escándalo Ultimate</title>
+  <meta name="description" content="Asistencia a prácticas de Escándalo Ultimate.">
+  <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#0b0b10">
-  <link rel="canonical" href="https://escandaloultimate.com/calendario">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Escándalo Ultimate">
   <meta property="og:locale" content="es_UY">
-  <meta property="og:title" content="Calendario — Escándalo Ultimate">
-  <meta property="og:description" content="Torneos y resultados de Escándalo Ultimate.">
-  <meta property="og:url" content="https://escandaloultimate.com/calendario">
+  <meta property="og:title" content="Asistencia — Escándalo Ultimate">
+  <meta property="og:description" content="Resultados, fotos y videos de los torneos de Escándalo Ultimate.">
   <meta property="og:image" content="https://escandaloultimate.com/assets/og.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -45,30 +43,9 @@
 </header>
 
 <main>
-  <section class="sec gpage">
-    <h2 class="title">Calendario</h2>
-    <div class="cal">
-      <div class="cal-head">
-        <button id="mes-prev" aria-label="Mes anterior">‹</button>
-        <h3 id="mes-titulo"></h3>
-        <button id="mes-next" aria-label="Mes siguiente">›</button>
-        <button id="mes-hoy" class="chip">Hoy</button>
-      </div>
-      <div class="month-grid" id="month-grid"></div>
-      <p class="legend"><i class="lg t-future"></i> Torneo próximo <i class="lg t-past"></i> Torneo jugado <i class="lg tr"></i> Entrenamiento &nbsp;·&nbsp; Tocá un día marcado para ver el detalle</p>
-    </div>
-    <div class="cols">
-      <div class="">
-        <h3>Torneos</h3>
-        <div id="fixture" class="list"></div>
-      </div>
-      <div class="">
-        <h3>Resultados</h3>
-        <div id="results" class="list"></div>
-      </div>
-    </div>
-  </section>
+  <section class="sec gpage" id="asistencia"><p class="adm-vacio">Cargando…</p></section>
 </main>
+
 <footer>
   <div class="brand"><img src="assets/logos/logo.webp" alt=""><span>ESCÁNDALO</span></div>
   <div class="links">
@@ -79,10 +56,8 @@
   <small>© <span id="year"></span> Escándalo Ultimate</small>
 </footer>
 
-<div class="dia-modal" id="dia-modal" role="dialog" aria-modal="true" aria-label="Detalle del día"><div class="dia-info" id="dia-info"></div></div>
-
 <script src="js/data.js"></script>
 <script src="js/config.js"></script>
-<script src="js/datos.js" data-despues="iconos.js,sesion.js,calendario.js,animaciones.js,flotante.js"></script>
+<script src="js/datos.js" data-despues="iconos.js,sesion.js,asistencia.js"></script>
 </body>
 </html>
