@@ -153,8 +153,19 @@ h3{font-size:1.5rem;text-transform:uppercase;margin-bottom:16px;color:var(--b)}
 .dorso-datos b{text-align:right}
 .dorso-datos .dorso-dato{flex-direction:column;align-items:flex-start;gap:2px}
 .dorso-dato b{text-align:left;font-weight:500;font-style:italic;color:#f0e6ff;line-height:1.35}
-.dorso-zoom{margin-top:8px;align-self:flex-start;background:transparent;border:1px solid #ffffff55;color:#fff;border-radius:99px;padding:7px 14px;font:600 .8rem Inter,sans-serif;cursor:pointer}
-.dorso-zoom:hover{border-color:var(--b);color:var(--b)}
+.dorso-acciones{display:flex;gap:8px;margin-top:10px}
+.dorso{container-type:inline-size}
+@container (max-width:300px){.dorso-compartir span{display:none}.dorso-acciones{gap:6px}}
+.dorso-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;min-width:36px;padding:0 10px;border-radius:99px;background:#ffffff14;border:1px solid #ffffff40;color:#fff;font:700 .8rem Inter,sans-serif;cursor:pointer;transition:.2s}
+.dorso-btn .ico{width:17px;height:17px}
+.dorso-btn:hover{border-color:var(--b);color:var(--b)}
+.dorso-wa{background:#25d366;border-color:#25d366}
+.dorso-wa:hover{background:#2ee077;border-color:#2ee077;color:#fff}
+.dorso-compartir{flex:1;background:var(--b);border-color:var(--b);color:#000}
+.dorso-compartir:hover{background:#ffc94d;color:#000}
+.toast{position:fixed;left:50%;bottom:90px;translate:-50% 0;z-index:200;max-width:calc(100% - 32px);padding:12px 20px;border-radius:99px;background:#1d1d2b;border:1px solid #b44cff66;color:#fff;font-weight:600;box-shadow:0 10px 30px #000a;opacity:0;pointer-events:none;overflow-wrap:anywhere}
+.toast.ver{animation:toast 2.6s ease both}
+@keyframes toast{0%{opacity:0;transform:translateY(12px)}10%,80%{opacity:1;transform:none}100%{opacity:0}}
 .avatar{width:100%;height:100%;display:grid;place-items:center;font-family:Anton;font-size:5rem;color:#ffffff30;background:linear-gradient(160deg,#2a1020,#12122a)}
 .pcard .num{position:absolute;top:10px;right:14px;font-family:Anton;font-size:2.6rem;color:var(--b);text-shadow:0 2px 10px #000}
 .pcard .meta{position:absolute;inset:auto 0 0 0;padding:50px 16px 16px;background:linear-gradient(transparent,#000d)}
@@ -183,14 +194,14 @@ h3{font-size:1.5rem;text-transform:uppercase;margin-bottom:16px;color:var(--b)}
 .row .score.small{font-size:1rem;text-align:right}
 
 
-/* Fondo propio del plantel: rayos violeta y naranja como las tarjetas, rayas y el nombre gigante de marca de agua */
-#plantel{position:relative;background:
+/* Fondo propio del roster: rayos violeta y naranja como las tarjetas, rayas y el nombre gigante de marca de agua */
+#roster{position:relative;background:
   radial-gradient(45% 70% at 0% 45%,#b44cff40,transparent 70%),
   radial-gradient(45% 70% at 100% 55%,#ff6a1c38,transparent 70%),
   repeating-linear-gradient(135deg,#ffffff06 0 2px,transparent 2px 26px),
   linear-gradient(180deg,#17172299,#0e0e16cc)}
-#plantel::before{content:"ESCÁNDALO";position:absolute;left:50%;top:50%;translate:-50% -50%;font-family:Anton,Impact,sans-serif;font-size:24vw;line-height:1;white-space:nowrap;color:transparent;-webkit-text-stroke:2px #ffffff0d;pointer-events:none}
-#plantel>*{position:relative}
+#roster::before{content:"ESCÁNDALO";position:absolute;left:50%;top:50%;translate:-50% -50%;font-family:Anton,Impact,sans-serif;font-size:24vw;line-height:1;white-space:nowrap;color:transparent;-webkit-text-stroke:2px #ffffff0d;pointer-events:none}
+#roster>*{position:relative}
 
 /* Tarjetas con borde y brillo sutil */
 .row,#train div,.cal,.stats,.tcard,.next{border:1px solid var(--borde)}

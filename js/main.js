@@ -8,6 +8,9 @@ if (heroVid) {
   if (!quieto) { heroVid.src = base + ".mp4"; heroVid.play().catch(() => {}); }
 }
 
+// Links viejos a la sección (/#plantel) pasan a /#roster
+if (location.hash === "#plantel") history.replaceState(null, "", "#roster");
+
 // Explosión de entrada. Corre al cargar el inicio y cada vez que se toca "Inicio" (se omite con "reducir movimiento").
 function explotar() {
   document.querySelector(".boom")?.remove();
@@ -31,7 +34,7 @@ function explotar() {
   hero.classList.remove("entrada"); void hero.offsetWidth; hero.classList.add("entrada");
   setTimeout(() => boom.remove(), 2200);
 }
-// Al cargar, solo explota si se entra arriba del inicio: no con un link a una sección (/#plantel)
+// Al cargar, solo explota si se entra arriba del inicio: no con un link a una sección (/#roster)
 // ni al recargar o volver atrás estando más abajo (el navegador restaura esa posición).
 let scrollPrevio = 0;
 try { scrollPrevio = +sessionStorage.getItem("scrollInicio") || 0; } catch (e) {}
@@ -112,8 +115,13 @@ for (let i = mezclados.length - 1; i > 0; i--) {
   const k = Math.floor(Math.random() * (i + 1));
   [mezclados[i], mezclados[k]] = [mezclados[k], mezclados[i]];
 }
+const slugJugador = (j) => j.foto.replace(/\.[a-z0-9]+$/i, "");
+const SITIO = "https://escandaloultimate.com";
+const urlCarta = (j) => `${SITIO}/jugador/${slugJugador(j)}`;
+const textoCarta = (j) => `Conocé a ${j.apodo}${j.numero ? " (#" + j.numero + ")" : ""}, de Escándalo Ultimate`;
+const linkWhatsApp = (j) => "https://wa.me/?text=" + encodeURIComponent(`${textoCarta(j)} 👉 ${urlCarta(j)}`);
 $("#players").innerHTML = mezclados.map((j) => `
-  <article class="pcard" tabindex="0" aria-label="${j.nombre}: tocá para dar vuelta la carta">
+  <article class="pcard" tabindex="0" data-slug="${slugJugador(j)}" aria-label="${j.nombre}: tocá para dar vuelta la carta">
     <div class="pcard-in">
       <div class="cara frente">
         <img src="assets/jugadores/${j.foto}" alt="${j.nombre} (${j.apodo})" loading="lazy">
@@ -129,7 +137,12 @@ $("#players").innerHTML = mezclados.map((j) => `
           ${j.nacionalidad ? `<li><small>Nacionalidad</small><b>${j.nacionalidad}</b></li>` : ""}
           ${j.dato ? `<li class="dorso-dato"><small>Dato</small><b>${j.dato}</b></li>` : ""}
         </ul>
-        <button class="dorso-zoom" type="button">Ver carta completa</button>
+        <div class="dorso-acciones">
+          <button class="dorso-btn dorso-zoom" type="button" title="Ver carta completa" aria-label="Ver carta completa">${ico("ampliar")}</button>
+          <a class="dorso-btn" href="assets/jugadores/compartir/${slugJugador(j)}.jpg" download="Escandalo-${j.apodo}.jpg" title="Descargar carta" aria-label="Descargar carta">${ico("descargar")}</a>
+          <a class="dorso-btn dorso-wa" href="${linkWhatsApp(j)}" target="_blank" rel="noopener" title="Enviar por WhatsApp" aria-label="Enviar por WhatsApp">${ico("whatsapp")}</a>
+          <button class="dorso-btn dorso-compartir" type="button" title="Compartir link de la carta">${ico("compartir")}<span>Compartir</span></button>
+        </div>
       </div>
     </div>
   </article>`).join("");
@@ -141,6 +154,8 @@ $("#teaser").innerHTML = GALERIA.filter((g) => g.tipo === "foto").slice(0, 4).ma
 const lb = $("#lb");
 $("#players").addEventListener("click", (e) => {
   const carta = e.target.closest(".pcard"); if (!carta) return;
+  if (e.target.closest(".dorso-acciones a")) return;          // descargar: deja que el navegador baje la imagen
+  if (e.target.closest(".dorso-compartir")) { compartirCarta(carta.dataset.slug); return; }
   if (e.target.closest(".dorso-zoom")) {
     lb.querySelector("img").src = carta.querySelector(".frente img").src; lb.classList.add("open");
     return;
@@ -153,6 +168,37 @@ $("#players").addEventListener("keydown", (e) => {
 });
 lb.addEventListener("click", () => lb.classList.remove("open"));
 document.addEventListener("keydown", (e) => e.key === "Escape" && lb.classList.remove("open"));
+
+// Compartir el link de una carta (al abrirlo se ve la carta en grande): menú del celular o, si no hay, copiar
+function aviso(texto) {
+  let t = document.querySelector(".toast");
+  if (!t) { t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); document.body.appendChild(t); }
+  t.textContent = texto;
+  t.classList.remove("ver"); void t.offsetWidth; t.classList.add("ver");
+}
+async function compartirCarta(slug) {
+  const j = JUGADORES.find((x) => slugJugador(x) === slug); if (!j) return;
+  const url = urlCarta(j);
+  try {
+    if (navigator.share) { await navigator.share({ title: textoCarta(j), text: textoCarta(j), url }); return; }
+    await navigator.clipboard.writeText(url);
+    aviso("Link de la carta copiado ✓");
+  } catch (err) {
+    if (err && err.name === "AbortError") return;      // el usuario cerró el menú de compartir
+    try { await navigator.clipboard.writeText(url); aviso("Link de la carta copiado ✓"); } catch (e2) { aviso(url); }
+  }
+}
+
+// Link directo a una carta (/#j-slug, desde /jugador/slug): la muestra en grande
+const linkCarta = location.hash.match(/^#j-([\w-]+)$/);
+if (linkCarta) {
+  const carta = document.querySelector(`.pcard[data-slug="${linkCarta[1]}"]`);
+  if (carta) {
+    $("#roster").scrollIntoView();
+    lb.querySelector("img").src = carta.querySelector(".frente img").src;
+    lb.classList.add("open");
+  }
+}
 
 // Formulario → WhatsApp, con avisos propios en vez de los del navegador
 const REGLAS = {
