@@ -18,6 +18,9 @@ for (const m of data.matchAll(/(?:src|poster|portada|foto|pdf):\s*"([^"]+)"/g)) 
   if (!existe(ruta)) falla(`assets/${ruta} (referenciado en js/data.js) no existe`);
 }
 
+for (const m of data.matchAll(/foto:\s*"([^"]+)\.webp"/g))
+  if (!existe(`jugadores/compartir/${m[1]}.jpg`)) falla(`falta assets/jugadores/compartir/${m[1]}.jpg (imagen para compartir la carta)`);
+
 for (const f of fs.readdirSync(".").filter((x) => x.endsWith(".html"))) {
   const html = fs.readFileSync(f, "utf8");
   for (const m of html.matchAll(/(?:src|href)="\/?((?:assets|css|js)\/[^"#?]+)"/g))
