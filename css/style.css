@@ -154,9 +154,13 @@ h3{font-size:1.5rem;text-transform:uppercase;margin-bottom:16px;color:var(--b)}
 .dorso-datos .dorso-dato{flex-direction:column;align-items:flex-start;gap:2px}
 .dorso-dato b{text-align:left;font-weight:500;font-style:italic;color:#f0e6ff;line-height:1.35}
 .dorso-acciones{display:flex;gap:8px;margin-top:10px}
+.dorso{container-type:inline-size}
+@container (max-width:300px){.dorso-compartir span{display:none}.dorso-acciones{gap:6px}}
 .dorso-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;min-width:36px;padding:0 10px;border-radius:99px;background:#ffffff14;border:1px solid #ffffff40;color:#fff;font:700 .8rem Inter,sans-serif;cursor:pointer;transition:.2s}
 .dorso-btn .ico{width:17px;height:17px}
 .dorso-btn:hover{border-color:var(--b);color:var(--b)}
+.dorso-wa{background:#25d366;border-color:#25d366}
+.dorso-wa:hover{background:#2ee077;border-color:#2ee077;color:#fff}
 .dorso-compartir{flex:1;background:var(--b);border-color:var(--b);color:#000}
 .dorso-compartir:hover{background:#ffc94d;color:#000}
 .toast{position:fixed;left:50%;bottom:90px;translate:-50% 0;z-index:200;max-width:calc(100% - 32px);padding:12px 20px;border-radius:99px;background:#1d1d2b;border:1px solid #b44cff66;color:#fff;font-weight:600;box-shadow:0 10px 30px #000a;opacity:0;pointer-events:none;overflow-wrap:anywhere}
