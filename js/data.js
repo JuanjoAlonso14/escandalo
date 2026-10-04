@@ -61,7 +61,7 @@ const JUGADORES = [
   { nombre: "Juanjo Alonso", apodo: "Juano", foto: "juanjo-alonso.webp", numero: 10, nacionalidad: "Uruguaya", dato: "La persona más flexible que vas a conocer." },
   { nombre: "Julieta Noguez", apodo: "Ju", foto: "julieta-noguez.webp", numero: 33, nacionalidad: "Uruguaya", dato: "Si se enoja, no la mires: temé por tu vida." },
   { nombre: "Leandro Rodriguez", apodo: "Lean", foto: "leandro-rodriguez.webp", numero: 22, nacionalidad: "Uruguaya", dato: "Cuidado, que te salta por arriba." },
-  { nombre: "Luis Davila", apodo: "Luisito", foto: "luis-davila.webp", numero: 7, nacionalidad: "Uruguaya", dato: "La foto no está editada: el hombre realmente está así." },
+  { nombre: "Luis Davila", apodo: "Luisito", foto: "luis-davila.webp", numero: 7, nacionalidad: "Uruguaya", dato: "La foto no está editada, el hombre realmente está así." },
   { nombre: "Matilde Rodriguez", apodo: "Matildinha", foto: "matilde-rodriguez.webp", numero: 21, nacionalidad: "Uruguaya", dato: "La real peque: es nuestra estrellita, aunque en el fondo es Chucky." },
   { nombre: "Nicolas Cabana", apodo: "Nico", foto: "nicolas-cabana.webp", numero: 5, nacionalidad: "Uruguaya", dato: "El veterano del equipo." },
   { nombre: "Rosina Cordero", apodo: "Rosi", foto: "rosina-cordero.webp", numero: 12, nacionalidad: "Uruguaya", dato: "Más rápida que el Correcaminos. La queremos." },

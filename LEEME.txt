@@ -21,3 +21,10 @@ Si una foto no existe, la pagina muestra un reemplazo automaticamente (no se rom
 COLORES
 -------
 Estan al principio de css/style.css (--a rosa, --b lima). Se pueden cambiar por los colores del logo.
+
+AGREGAR UN JUGADOR
+------------------
+1. Su carta en assets/jugadores/<nombre-apellido>.webp (720x1280)
+2. La misma carta en JPG en assets/jugadores/compartir/<nombre-apellido>.jpg (para compartir/descargar)
+3. Sus datos en JUGADORES, en js/data.js
+4. node scripts/jugadores.js  (genera su link para compartir: /jugador/<nombre-apellido>)
