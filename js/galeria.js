@@ -6,8 +6,8 @@ $("#wa").href = "https://wa.me/" + TEAM.whatsapp;
 $("#burger").onclick = () => $("#menu").classList.toggle("open");
 $("#menu").addEventListener("click", () => $("#menu").classList.remove("open"));
 
-const fotoHtml = (g, i) => `<div class="gitem" data-i="${i}"><img src="assets/${g.src}" alt="Foto del equipo" loading="lazy"></div>`;
-const videoHtml = (g, i) => `<div class="gitem video" data-i="${i}"><img src="assets/${g.poster}" alt="Video del torneo" loading="lazy"><span class="play">▶</span></div>`;
+const fotoHtml = (g, i) => `<div class="gitem" data-i="${i}"><img src="assets/${g.src}" alt="Foto de Escándalo Ultimate en ${GALERIA_TORNEOS.find((t) => t.id === torneo)?.nombre || "un torneo"}" loading="lazy"></div>`;
+const videoHtml = (g, i) => `<div class="gitem video" data-i="${i}"><img src="assets/${g.poster}" alt="Video de Escándalo Ultimate en ${GALERIA_TORNEOS.find((t) => t.id === torneo)?.nombre || "un torneo"}" loading="lazy"><span class="play">▶</span></div>`;
 
 let torneo = null, filtro = "todo";
 let lista = [];                 // lo que se ve con el torneo y filtro actuales (el visor navega esta lista)
