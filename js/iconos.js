@@ -12,6 +12,7 @@ const ICONOS = {
   descargar: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
   compartir: '<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/>',
   ampliar: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+  whatsapp: '<path d="M3.5 20.5l1.3-4.2a8.5 8.5 0 1 1 3.1 3l-4.4 1.2z"/><path d="M9 8.6c.2-.6.8-.7 1.1-.4l.9 1.6c.1.3 0 .6-.2.8l-.5.5c.5 1.1 1.4 2 2.5 2.5l.5-.5c.2-.2.5-.3.8-.2l1.6.9c.3.3.2.9-.4 1.1-2.9.9-7.2-3.4-6.3-6.3z" fill="currentColor" stroke="none"/>',
   flecha: '<path d="M5 12h14M13 6l6 6-6 6"/>',
 };
 const ico = (n) => `<svg class="ico ico-${n}" viewBox="0 0 24 24" aria-hidden="true">${ICONOS[n] || ""}</svg>`;

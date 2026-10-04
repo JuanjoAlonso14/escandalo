@@ -113,6 +113,10 @@ for (let i = mezclados.length - 1; i > 0; i--) {
   [mezclados[i], mezclados[k]] = [mezclados[k], mezclados[i]];
 }
 const slugJugador = (j) => j.foto.replace(/\.[a-z0-9]+$/i, "");
+const SITIO = "https://escandaloultimate.com";
+const urlCarta = (j) => `${SITIO}/jugador/${slugJugador(j)}`;
+const textoCarta = (j) => `Conocé a ${j.apodo}${j.numero ? " (#" + j.numero + ")" : ""}, de Escándalo Ultimate`;
+const linkWhatsApp = (j) => "https://wa.me/?text=" + encodeURIComponent(`${textoCarta(j)} 👉 ${urlCarta(j)}`);
 $("#players").innerHTML = mezclados.map((j) => `
   <article class="pcard" tabindex="0" data-slug="${slugJugador(j)}" aria-label="${j.nombre}: tocá para dar vuelta la carta">
     <div class="pcard-in">
@@ -133,7 +137,8 @@ $("#players").innerHTML = mezclados.map((j) => `
         <div class="dorso-acciones">
           <button class="dorso-btn dorso-zoom" type="button" title="Ver carta completa" aria-label="Ver carta completa">${ico("ampliar")}</button>
           <a class="dorso-btn" href="assets/jugadores/compartir/${slugJugador(j)}.jpg" download="Escandalo-${j.apodo}.jpg" title="Descargar carta" aria-label="Descargar carta">${ico("descargar")}</a>
-          <button class="dorso-btn dorso-compartir" type="button" title="Compartir carta">${ico("compartir")}<span>Compartir</span></button>
+          <a class="dorso-btn dorso-wa" href="${linkWhatsApp(j)}" target="_blank" rel="noopener" title="Enviar por WhatsApp" aria-label="Enviar por WhatsApp">${ico("whatsapp")}</a>
+          <button class="dorso-btn dorso-compartir" type="button" title="Compartir link de la carta">${ico("compartir")}<span>Compartir</span></button>
         </div>
       </div>
     </div>
@@ -161,7 +166,7 @@ $("#players").addEventListener("keydown", (e) => {
 lb.addEventListener("click", () => lb.classList.remove("open"));
 document.addEventListener("keydown", (e) => e.key === "Escape" && lb.classList.remove("open"));
 
-// Compartir una carta: en el celular manda la imagen (WhatsApp, Instagram…); si no, comparte o copia el link
+// Compartir el link de una carta (al abrirlo se ve la carta en grande): menú del celular o, si no hay, copiar
 function aviso(texto) {
   let t = document.querySelector(".toast");
   if (!t) { t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); document.body.appendChild(t); }
@@ -170,15 +175,9 @@ function aviso(texto) {
 }
 async function compartirCarta(slug) {
   const j = JUGADORES.find((x) => slugJugador(x) === slug); if (!j) return;
-  const url = `${location.origin}/jugador/${slug}`;
-  const texto = `Conocé a ${j.apodo}${j.numero ? " (#" + j.numero + ")" : ""}, de Escándalo Ultimate`;
+  const url = urlCarta(j);
   try {
-    if (navigator.canShare) {
-      const blob = await (await fetch(`assets/jugadores/compartir/${slug}.jpg`)).blob();
-      const archivo = new File([blob], `Escandalo-${j.apodo}.jpg`, { type: "image/jpeg" });
-      if (navigator.canShare({ files: [archivo] })) { await navigator.share({ files: [archivo], title: texto, text: `${texto} 👉 ${url}` }); return; }
-    }
-    if (navigator.share) { await navigator.share({ title: texto, text: texto, url }); return; }
+    if (navigator.share) { await navigator.share({ title: textoCarta(j), text: textoCarta(j), url }); return; }
     await navigator.clipboard.writeText(url);
     aviso("Link de la carta copiado ✓");
   } catch (err) {
