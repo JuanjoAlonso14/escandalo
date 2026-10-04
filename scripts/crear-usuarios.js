@@ -1,4 +1,5 @@
-// Crea (o actualiza) un usuario por jugador en la base LOCAL. La contraseña es la misma para todos: sunombre123.
+// Crea (o actualiza) un usuario por jugador en la base LOCAL. Contraseña de todos: sunombre123.
+// Para darle otra a alguien, ponerla en supabase/claves-locales.json ({"slug": "clave"}); ese archivo no se sube a Git.
 // Es para desarrollo: la contraseña es adivinable a propósito. Antes de usar una base real, cambiar este esquema.
 //   node scripts/crear-usuarios.js        (con la base prendida: npx supabase start)
 const { execSync } = require("child_process");
@@ -12,7 +13,10 @@ const URL = env.API_URL, CLAVE = env.SERVICE_ROLE_KEY;
 if (!URL || !CLAVE) { console.error("No pude leer la base local. ¿Está prendida? (npx supabase start)"); process.exit(1); }
 if (!/^https?:\/\/(127\.0\.0\.1|localhost)/.test(URL)) { console.error("Esto solo corre contra la base local."); process.exit(1); }
 
+const fs = require("fs");
 const CONTRASENA = "sunombre123";
+const archivoClaves = path.join(raiz, "supabase", "claves-locales.json");
+const claves = fs.existsSync(archivoClaves) ? JSON.parse(fs.readFileSync(archivoClaves, "utf8")) : {};
 const cab = { apikey: CLAVE, Authorization: `Bearer ${CLAVE}`, "Content-Type": "application/json" };
 
 (async () => {
@@ -20,10 +24,10 @@ const cab = { apikey: CLAVE, Authorization: `Bearer ${CLAVE}`, "Content-Type": "
   const existentes = (await (await fetch(`${URL}/auth/v1/admin/users?per_page=500`, { headers: cab })).json()).users || [];
   for (const j of jugadores) {
     const email = `${j.slug}@escandalo.test`;
-    const password = CONTRASENA;
+    const password = claves[j.slug] || CONTRASENA;
     const cuerpo = JSON.stringify({ email, password, email_confirm: true, user_metadata: { jugador: j.slug, nombre: j.nombre } });
     const ya = existentes.find((u) => u.email === email);
     const r = await fetch(ya ? `${URL}/auth/v1/admin/users/${ya.id}` : `${URL}/auth/v1/admin/users`, { method: ya ? "PUT" : "POST", headers: cab, body: cuerpo });
-    console.log(`${r.ok ? "✓" : "✗"} ${j.nombre.padEnd(20)} ${ya ? "actualizado" : "creado"}  (${email})${r.ok ? "" : " HTTP " + r.status}`);
+    console.log(`${r.ok ? "✓" : "✗"} ${j.nombre.padEnd(20)} ${ya ? "actualizado" : "creado"}${claves[j.slug] ? " (clave propia)" : ""}  (${email})${r.ok ? "" : " HTTP " + r.status}`);
   }
 })();
