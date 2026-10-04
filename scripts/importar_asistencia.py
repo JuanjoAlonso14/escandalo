@@ -2,6 +2,8 @@
 # El Excel y los datos NO van al repositorio (es público): se guardan en supabase/privado/ (ignorada por Git).
 #   python scripts/importar_asistencia.py            (carga solo si la base no tiene prácticas)
 #   python scripts/importar_asistencia.py --reemplazar   (borra las prácticas de la base y las vuelve a cargar)
+#   python scripts/importar_asistencia.py --solo-lugares (no importa nada: completa el lugar de las prácticas que no lo tienen)
+# El lugar sale del día de la semana, con los mismos horarios de entrenamiento del sitio (TEAM.entrenamientos en js/data.js).
 # Reglas del Excel: 1 = fue, 0 = faltó, celda vacía = esa práctica no contaba para la persona (aún no estaba).
 import json, os, subprocess, sys, datetime, urllib.request, urllib.error
 import openpyxl
@@ -41,6 +43,27 @@ if not URL or not KEY: sys.exit("No pude leer la base local. ¿Está prendida? (
 if not URL.startswith(("http://127.0.0.1", "http://localhost")): sys.exit("Esto solo corre contra la base local.")
 if not os.path.exists(ARCHIVO): sys.exit(f"No encuentro el Excel en {ARCHIVO}")
 
+DIAS_SEMANA = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+
+def completar_lugares():
+    """Pone el lugar a las prácticas que no lo tienen, según el día de la semana."""
+    salida = subprocess.run(["node", "-e", "const vm=require('vm'),fs=require('fs');const {TEAM}=vm.runInNewContext(fs.readFileSync('js/data.js','utf8')+';({TEAM})');console.log(JSON.stringify(TEAM.entrenamientos))"],
+                            cwd=RAIZ, capture_output=True, text=True, encoding="utf-8").stdout
+    lugar_por_dia = {e["dia"]: e["lugar"] for e in json.loads(salida)}
+    sin_lugar = pedir("GET", "practicas?select=id,fecha&lugar=is.null")
+    grupos, sin_asignar = {}, []
+    for p in sin_lugar:
+        dia = DIAS_SEMANA[datetime.date.fromisoformat(p["fecha"]).weekday()]
+        if dia in lugar_por_dia: grupos.setdefault(lugar_por_dia[dia], []).append(p["id"])
+        else: sin_asignar.append(p["fecha"])
+    for lugar, ids in grupos.items():
+        pedir("PATCH", f"practicas?id=in.({','.join(map(str, ids))})", {"lugar": lugar})
+        print(f"  {len(ids):2} prácticas → {lugar}")
+    if sin_asignar: print("  Sin lugar fijo (se completan a mano en el panel):", ", ".join(sin_asignar))
+
+if "--solo-lugares" in sys.argv:
+    completar_lugares(); sys.exit(0)
+
 ws = openpyxl.load_workbook(ARCHIVO, data_only=True)[HOJA]
 fechas = {i: c.value.date() for i, c in enumerate(ws[2]) if isinstance(c.value, datetime.datetime)}
 filas, totales_hoja = [], {}
@@ -77,4 +100,5 @@ ids = {p["fecha"]: p["id"] for p in creadas}
 filas_asis = [{"practica_id": ids[f.isoformat()], "jugador_slug": s, "presente": p} for f, lista in registros.items() for s, p in lista]
 for k in range(0, len(filas_asis), 500): pedir("POST", "asistencias", filas_asis[k:k + 500])
 print(f"✓ {len(creadas)} prácticas y {len(filas_asis)} asistencias cargadas")
+completar_lugares()
 print("Mapeo de nombres:", ", ".join(f"{n.strip()} → {NOMBRES[n.strip().lower()]}" for n, _ in filas))
