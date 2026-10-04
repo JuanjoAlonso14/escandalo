@@ -48,6 +48,6 @@ Los textos de Nosotros, los hitos y la galería siguen en js/data.js.
 
 LOGIN (solo en local por ahora)
 -------------------------------
-Página: /login  (http://localhost:8080/login). Se elige el jugador y se entra con <nombre>123.
+Página: /login  (http://localhost:8080/login). Se elige el jugador y se entra con la contraseña sunombre123 (la misma para todos).
 Los usuarios viven en la base local (Supabase Auth). Crearlos o resetearlos:  node scripts/crear-usuarios.js
 (después de `npx supabase db reset` hay que volver a correrlo). Si el ingreso es correcto, va al inicio.
