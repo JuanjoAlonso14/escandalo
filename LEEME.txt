@@ -34,8 +34,8 @@ BASE DE DATOS LOCAL (Supabase)
 Requiere Docker Desktop abierto.
   npx supabase start       -> levanta la base (la 1ª vez descarga imágenes)
   npx supabase stop        -> la apaga
-  npx supabase db reset    -> la borra y la recrea con la estructura y los datos de prueba
-  node scripts/generar-seed.js -> regenera supabase/seed.sql desde js/data.js
+  npx supabase db reset    -> la borra y la recrea SOLO con las migraciones (estructura + datos públicos iniciales)
+                              después hay que volver a correr: node scripts/crear-usuarios.js  y  python scripts/importar_asistencia.py
 Panel visual (Studio): http://127.0.0.1:54323     API: http://127.0.0.1:54321
 Consultas SQL: Studio -> SQL Editor, o:  docker exec -it supabase_db_escandalo psql -U postgres
 
@@ -83,3 +83,14 @@ PASAR A PRODUCCION (proyecto Supabase: efdlvrznaqbijyftwzgf.supabase.co)
 4. Asistencia:    python scripts/importar_asistencia.py --produccion
 5. Recién ahí, publicar la rama conexion_produccion (js/config.js ya apunta al proyecto cuando el sitio se abre en escandaloultimate.com).
 La clave secreta (service_role) y la contraseña de la base NUNCA van al repositorio ni al chat.
+MIGRACIONES: COMO SE MANEJA LA BASE (LOCAL Y PRODUCCION)
+--------------------------------------------------------
+supabase/migrations/ es la fuente de verdad: local y producción aplican los mismos archivos, en el mismo orden.
+  - Estructura (tablas, reglas, funciones): siempre una migración nueva. NUNCA editar una ya aplicada.
+  - Datos públicos fijos de arranque: migración de datos iniciales (sin duplicar: on conflict do nothing).
+  - Datos que cambian (jugadores, resultados, prácticas): panel de administración.
+  - Datos PRIVADOS (asistencia) y contraseñas: nunca en migraciones (el repositorio es público). Van por scripts.
+  - No tocar la estructura a mano en el panel web de Supabase: se pierde la igualdad con local.
+Nueva migración:   npx supabase migration new nombre_del_cambio   (se escribe el SQL y se prueba con: npx supabase migration up)
+Ver diferencias:   npx supabase migration list      |      npx supabase db diff --linked
+Subir a producción (proyecto ya vinculado):   npx supabase db push --dry-run   y luego   npx supabase db push
