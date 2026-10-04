@@ -15,7 +15,7 @@ if (!/^https?:\/\/(127\.0\.0\.1|localhost)/.test(URL)) { console.error("Esto sol
 
 const fs = require("fs");
 const CONTRASENA = "sunombre123";
-const ADMINS = ["juanjo-alonso"];            // quienes tienen rol admin
+const ADMINS = ["juanjo-alonso", "camila-couture"];            // quienes tienen rol admin
 const archivoClaves = path.join(raiz, "supabase", "claves-locales.json");
 const claves = fs.existsSync(archivoClaves) ? JSON.parse(fs.readFileSync(archivoClaves, "utf8")) : {};
 const cab = { apikey: CLAVE, Authorization: `Bearer ${CLAVE}`, "Content-Type": "application/json" };

@@ -10,7 +10,7 @@ const path = require("path");
 const crypto = require("crypto");
 
 const raiz = path.join(__dirname, "..");
-const ADMINS = ["juanjo-alonso"];                                  // quienes tienen rol admin
+const ADMINS = ["juanjo-alonso", "camila-couture"];                                  // quienes tienen rol admin
 const URL = (process.env.URL_SUPABASE || "https://efdlvrznaqbijyftwzgf.supabase.co").replace(/\/$/, "");
 const local = /^https?:\/\/(127\.0\.0\.1|localhost)/.test(URL);
 const resetear = process.argv.includes("--resetear") ? process.argv[process.argv.indexOf("--resetear") + 1] : null;
@@ -56,10 +56,14 @@ const limpiar = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
     if (resetear && j.slug !== resetear) continue;
     const email = `${j.slug}@escandalo.test`;
     const ya = existentes.find((u) => u.email === email);
-    if (ya && !resetear) { console.log(`  · ${j.nombre.padEnd(20)} ya tiene usuario`); continue; }
+    if (ya && !resetear) {
+      const rolActual = ADMINS.includes(j.slug) ? "admin" : "usuario";
+      const p0 = await api("/rest/v1/perfiles", { method: "POST", headers: { Prefer: "resolution=merge-duplicates" }, body: JSON.stringify({ id: ya.id, jugador_slug: j.slug, rol: rolActual }) });
+      console.log(`  · ${j.nombre.padEnd(20)} ya tiene usuario [${rolActual}]${p0.ok ? "" : " (perfil HTTP " + p0.status + ")"}`); continue;
+    }
     let password;
     if (ADMINS.includes(j.slug)) {
-      password = process.env.CLAVE_ADMIN || (await preguntarOculto(`Contraseña para el ADMIN ${j.nombre} (mínimo 12 caracteres): `));
+      password = process.env["CLAVE_ADMIN_" + j.slug.toUpperCase().replace(/-/g, "_")] || (await preguntarOculto(`Contraseña para el ADMIN ${j.nombre} (mínimo 12 caracteres): `));
       if (password.length < 12) { console.error("La contraseña del admin tiene que tener al menos 12 caracteres."); process.exit(1); }
     } else password = generar();
     const cuerpo = JSON.stringify({ email, password, email_confirm: true, user_metadata: { jugador: j.slug, nombre: j.nombre } });
