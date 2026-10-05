@@ -44,7 +44,7 @@ form.addEventListener("submit", async (e) => {
 
   if (!escrito) return error("Escribí tu contraseña.");
 
-  const boton = form.querySelector("button");
+  const boton = form.querySelector('button[type="submit"]');
   boton.disabled = true; boton.textContent = "Entrando…";
   try {
     const r = await fetch(`${SUPABASE.url}/auth/v1/token?grant_type=password`, {
