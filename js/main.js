@@ -75,7 +75,6 @@ const hora = (d) => d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-
 $("#year").textContent = new Date().getFullYear();
 $("#ig").href = TEAM.instagram;
 $("#mail").href = "mailto:" + TEAM.email;
-$("#wa").href = "https://wa.me/" + TEAM.whatsapp;
 
 // Estadísticas
 const esV = (r) => r.resultado ? r.resultado === "V" : r.nuestros > r.suyos;
@@ -215,11 +214,11 @@ if (linkCarta) {
   }
 }
 
-// Formulario → WhatsApp, con avisos propios en vez de los del navegador
+// Formulario → llega a TEAM.email vía FormSubmit (sin abrir el mail del visitante)
 const REGLAS = {
   nombre: (v) => v.length >= 2 || "Contanos cómo te llamás",
-  contacto: (v) => !v ? "Dejanos un teléfono o mail para escribirte"
-    : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || /^\+?[\d\s()-]{8,}$/.test(v) || "Ese no parece un teléfono ni un mail válido",
+  contacto: (v) => !v ? "Dejanos tu mail para escribirte"
+    : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || "Ese no parece un mail válido",
 };
 function validar(input) {
   const r = REGLAS[input.name](input.value.trim());
@@ -230,15 +229,54 @@ function validar(input) {
   campo.querySelector(".aviso").textContent = r === true ? "" : r;
   return r === true;
 }
-const inputs = [...$("#form").querySelectorAll(".campo input")];
+const formSumate = $("#form");
+const formEstado = $("#form-estado");
+const inputs = [...formSumate.querySelectorAll(".campo input")];
 inputs.forEach((i) => i.addEventListener("input", () => i.closest(".campo").classList.contains("mal") && validar(i)));
-$("#form").addEventListener("submit", (e) => {
+formSumate.addEventListener("submit", async (e) => {
   e.preventDefault();
+  formEstado.textContent = ""; formEstado.className = "form-estado";
   const malos = inputs.filter((i) => !validar(i));
   if (malos.length) return malos[0].focus();
-  const f = new FormData(e.target);
-  const txt = `Hola Escándalo! Soy ${f.get("nombre")}. Contacto: ${f.get("contacto")}. Experiencia: ${f.get("exp")}. ${f.get("msg") || ""}`;
-  window.open(`https://wa.me/${TEAM.whatsapp}?text=${encodeURIComponent(txt)}`, "_blank");
+  if (formSumate.querySelector('[name="_honey"]')?.value) return;   // bots
+  const f = new FormData(formSumate);
+  const boton = formSumate.querySelector('[type="submit"]');
+  boton.disabled = true; boton.textContent = "Enviando…";
+  try {
+    const r = await fetch("https://formsubmit.co/ajax/" + TEAM.email, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        nombre: f.get("nombre"),
+        email: f.get("contacto"),
+        experiencia: f.get("exp"),
+        mensaje: f.get("msg") || "(sin mensaje)",
+        _subject: "Quiero sumarme a Escándalo",
+        _template: "table",
+        _captcha: false,
+        _replyto: f.get("contacto"),
+      }),
+      signal: AbortSignal.timeout(12000),
+    });
+    const d = await r.json().catch(() => ({}));
+    const msg = String(d.message || "");
+    // Primera vez: FormSubmit pide activar con un link que manda a TEAM.email
+    if (/activat/i.test(msg)) {
+      formEstado.textContent = "Falta un paso: abrí el mail de FormSubmit en " + TEAM.email + " y tocá “Activate Form”. Después ya llega solo.";
+      formEstado.classList.add("mal");
+      return;
+    }
+    if (!r.ok || d.success === "false") throw new Error(msg || "No se pudo enviar");
+    formSumate.reset();
+    formEstado.textContent = "¡Listo! Te vamos a escribir pronto.";
+    formEstado.classList.add("ok");
+  } catch (err) {
+    console.warn("Sumate:", err.message);
+    formEstado.textContent = "No se pudo enviar. Probá de nuevo o escribinos a " + TEAM.email;
+    formEstado.classList.add("mal");
+  } finally {
+    boton.disabled = false; boton.textContent = "Enviar";
+  }
 });
 
 // Menú móvil, nav al scrollear, animaciones

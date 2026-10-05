@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' http://127.0.0.1:54321 https://efdlvrznaqbijyftwzgf.supabase.co; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' http://127.0.0.1:54321 https://efdlvrznaqbijyftwzgf.supabase.co https://formsubmit.co; object-src 'none'; base-uri 'self'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Escándalo Ultimate — Equipo de Ultimate Frisbee en Uruguay</title>
   <meta name="description" content="Equipo uruguayo de Ultimate Frisbee. Campeones de la Copa Primavera 2026. Roster, torneos, galería y cómo sumarte.">
@@ -107,7 +107,7 @@
           <small class="aviso" id="aviso-nombre" aria-live="polite"></small>
         </div>
         <div class="campo">
-          <input name="contacto" placeholder="Tu teléfono o mail" autocomplete="tel" aria-describedby="aviso-contacto">
+          <input name="contacto" type="email" placeholder="Tu mail" autocomplete="email" inputmode="email" aria-describedby="aviso-contacto">
           <small class="aviso" id="aviso-contacto" aria-live="polite"></small>
         </div>
         <select name="exp">
@@ -116,7 +116,9 @@
           <option>Tengo experiencia</option>
         </select>
         <textarea name="msg" rows="3" placeholder="Contanos algo (opcional)"></textarea>
-        <button class="btn" type="submit">Enviar por WhatsApp</button>
+        <input class="sr-only" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn" type="submit">Enviar</button>
+        <p class="form-estado" id="form-estado" aria-live="polite"></p>
       </form>
     </div>
   </section>
@@ -126,7 +128,6 @@
   <div class="brand"><img src="assets/logos/logo.webp" alt=""><span>ESCÁNDALO</span></div>
   <div class="links">
     <a id="ig" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></svg></a>
-    <a id="wa" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 20.5l1.3-4.2a8.5 8.5 0 1 1 3.1 3l-4.4 1.2z"/><path d="M9 8.6c.2-.6.8-.7 1.1-.4l.9 1.6c.1.3 0 .6-.2.8l-.5.5c.5 1.1 1.4 2 2.5 2.5l.5-.5c.2-.2.5-.3.8-.2l1.6.9c.3.3.2.9-.4 1.1-2.9.9-7.2-3.4-6.3-6.3z" fill="currentColor" stroke="none"/></svg></a>
     <a id="mail" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7.5 12 13l8.5-5.5"/></svg></a>
   </div>
   <small>© <span id="year"></span> Escándalo Ultimate</small>
