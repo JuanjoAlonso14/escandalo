@@ -77,11 +77,15 @@ const Asistencia = (() => {
       if (!meses.length || meses[meses.length - 1].k !== k) meses.push({ k, nombre: `${MESES[m]} ${y.slice(2)}`, n: 0 });
       meses[meses.length - 1].n++;
     }
+    // En iOS las <td> vacías se colapsan aunque tengan width en CSS; el <i> fuerza el tamaño real.
+    const CEL = 20, NOM = 104;
     const celda = (j, p) => {
       const v = j.marcas.get(p.id), cls = v === undefined ? "na" : v ? "fue" : "falto";
-      return `<td class="m ${cls}" title="${esc(j.apodo)} · ${fecha(p.fecha)}: ${v === undefined ? "no contaba" : v ? "fue" : "faltó"}"></td>`;
+      return `<td class="m ${cls}" title="${esc(j.apodo)} · ${fecha(p.fecha)}: ${v === undefined ? "no contaba" : v ? "fue" : "faltó"}"><i></i></td>`;
     };
-    return `<div class="asi-mapa"><table>
+    const ancho = NOM + datos.practicas.length * CEL;
+    return `<div class="asi-mapa"><table style="width:${ancho}px;min-width:${ancho}px">
+      <colgroup><col class="nom"><col span="${datos.practicas.length}"></colgroup>
       <thead><tr><th></th>${meses.map((m) => `<th colspan="${m.n}" class="mes">${m.nombre}</th>`).join("")}</tr>
       <tr><th></th>${datos.practicas.map((p) => `<th class="dia">${+p.fecha.slice(8)}</th>`).join("")}</tr></thead>
       <tbody>${ordenar(c.lista, modo).map((j) => `<tr class="${j.slug === propio ? "yo" : ""}"><th class="nom">${esc(j.apodo)}</th>${datos.practicas.map((p) => celda(j, p)).join("")}</tr>`).join("")}</tbody>
