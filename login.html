@@ -51,7 +51,10 @@
       <label for="login-jugador">Jugador</label>
       <select id="login-jugador"></select>
       <label for="login-clave">Contraseña</label>
-      <input id="login-clave" type="password" autocomplete="current-password" placeholder="Tu contraseña">
+      <div class="clave-wrap">
+        <input id="login-clave" type="password" autocomplete="current-password" placeholder="Tu contraseña">
+        <button type="button" class="clave-ojito" aria-label="Mostrar contraseña" aria-controls="login-clave"></button>
+      </div>
       <small class="login-error" id="login-error" aria-live="polite"></small>
       <button class="btn" type="submit">Entrar</button>
     </form>
