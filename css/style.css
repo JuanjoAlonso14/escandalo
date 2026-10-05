@@ -775,7 +775,28 @@ footer small{color:var(--mute)}
 @media(max-width:800px){.asi-barra-celda{display:none}}
 @media(max-width:800px){.asi-tarjetas{grid-template-columns:repeat(2,1fr);gap:10px}.asi-t{padding:14px 8px}.asi-t b{font-size:2rem}.asi-t span{font-size:.68rem}}
 .adm-main{min-width:0}
-.asi-mapa,.asi-tabla,.adm-tabla{scrollbar-width:thin;scrollbar-color:#ffffff40 transparent}
-.asi-mapa::-webkit-scrollbar,.asi-tabla::-webkit-scrollbar,.adm-tabla::-webkit-scrollbar{height:9px;width:9px}
-.asi-mapa::-webkit-scrollbar-track,.asi-tabla::-webkit-scrollbar-track,.adm-tabla::-webkit-scrollbar-track{background:transparent}
-.asi-mapa::-webkit-scrollbar-thumb,.asi-tabla::-webkit-scrollbar-thumb,.adm-tabla::-webkit-scrollbar-thumb{background:#ffffff40;border-radius:9px}
+.caja-sub{color:var(--mute);margin:-18px 0 22px}
+.caja-acciones{display:flex;flex-wrap:wrap;gap:10px}
+.caja-acciones .btn{display:inline-flex;align-items:center;gap:8px}
+.caja-tabla{overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--card);border:1px solid var(--borde);border-radius:18px;margin-bottom:12px}
+.caja-tabla table{width:100%;border-collapse:collapse;min-width:640px}
+.caja-tabla th,.caja-tabla td{padding:10px 12px;border-bottom:1px solid #ffffff0d;text-align:right;white-space:nowrap}
+.caja-tabla thead th{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);background:#1d1d2b;text-align:right}
+.caja-tabla thead th:first-child,.caja-nom{text-align:left;position:sticky;left:0;z-index:1;background:#1d1d2b;box-shadow:6px 0 8px -4px #000a}
+.caja-tabla tbody th.caja-nom{background:#1d1d2b;color:#fff;font-weight:700}
+.caja-tabla tbody tr.caja-resaltar th.caja-nom{background:#222233}
+.caja-tabla .caja-num{font-variant-numeric:tabular-nums;font-weight:600}
+.caja-tabla .caja-edit{cursor:pointer;color:var(--b)}
+.caja-tabla .caja-edit:hover{background:#ffffff10}
+.caja-tabla tr.caja-resaltar th,.caja-tabla tr.caja-resaltar td{font-weight:800;border-top:1px solid #ffffff22;background:#ffffff08}
+.caja-tabla tr.caja-sep th{text-align:left;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--b);background:#161622;padding-top:14px}
+.caja-tabla .caja-vacio{text-align:left;color:var(--mute);font-weight:400}
+.caja-tabla .pos{color:#2ecc71}.caja-tabla .neg{color:#ff6b86}
+.caja-saldo{margin:4px 2px 28px;color:var(--mute)}
+.caja-saldo b{font-size:1.35rem;font-family:Anton,Impact,sans-serif;font-weight:400}
+.caja-saldo b.pos{color:#2ecc71}.caja-saldo b.neg{color:#ff6b86}
+.caja-ayuda{color:var(--mute);font-size:.82rem;margin:0}
+.asi-mapa,.asi-tabla,.adm-tabla,.caja-tabla{scrollbar-width:thin;scrollbar-color:#ffffff40 transparent}
+.asi-mapa::-webkit-scrollbar,.asi-tabla::-webkit-scrollbar,.adm-tabla::-webkit-scrollbar,.caja-tabla::-webkit-scrollbar{height:9px;width:9px}
+.asi-mapa::-webkit-scrollbar-track,.asi-tabla::-webkit-scrollbar-track,.adm-tabla::-webkit-scrollbar-track,.caja-tabla::-webkit-scrollbar-track{background:transparent}
+.asi-mapa::-webkit-scrollbar-thumb,.asi-tabla::-webkit-scrollbar-thumb,.adm-tabla::-webkit-scrollbar-thumb,.caja-tabla::-webkit-scrollbar-thumb{background:#ffffff40;border-radius:9px}

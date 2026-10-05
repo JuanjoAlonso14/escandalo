@@ -23,6 +23,7 @@ const ICONOS = {
   flecha: '<path d="M5 12h14M13 6l6 6-6 6"/>',
   ojo: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   "ojo-off": '<path d="M3 3l18 18M10.5 10.6a2.5 2.5 0 0 0 3 3M7 7.2C5 8.6 3.5 10.5 2 12c0 0 3.5 7 10 7 1.7 0 3.2-.4 4.5-1M14.1 5.2A10 10 0 0 1 12 5c-6.5 0-10 7-10 7a18 18 0 0 0 3.2 3.8M9.9 4.1A10.5 10.5 0 0 1 12 5c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.2 2.9"/>',
+  caja: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M3 11h18M12 7V4M8 15h2M14 15h2"/>',
 };
 const ico = (n) => `<svg class="ico ico-${n}" viewBox="0 0 24 24" aria-hidden="true">${ICONOS[n] || ""}</svg>`;
 const EMOJI_ICONO = { "🏆": "trofeo", "📅": "calendario", "📍": "pin", "🥏": "disco", "⭐": "estrella", "⏱": "reloj" };
