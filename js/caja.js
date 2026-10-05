@@ -20,9 +20,8 @@
     menu.addEventListener("click", () => menu.classList.remove("open"));
   }
   if (typeof TEAM !== "undefined") {
-    const ig = document.querySelector("#ig"), wa = document.querySelector("#wa"), mail = document.querySelector("#mail");
+    const ig = document.querySelector("#ig"), mail = document.querySelector("#mail");
     if (ig) ig.href = TEAM.instagram;
-    if (wa) wa.href = "https://wa.me/" + TEAM.whatsapp;
     if (mail) mail.href = "mailto:" + TEAM.email;
   }
 

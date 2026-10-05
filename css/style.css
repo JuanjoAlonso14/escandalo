@@ -400,15 +400,6 @@ body:has(.juego.open){overflow:hidden}
 .juego-pts b{display:block;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:4rem;line-height:1;color:var(--b)}
 .juego-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
-/* BOTON FLOTANTE WHATSAPP */
-.wa-flot{position:fixed;right:20px;bottom:20px;z-index:90;display:flex;align-items:center;height:58px;padding:0 17px;border-radius:99px;background:#25d366;color:#fff;box-shadow:0 10px 30px #25d36659;transition:transform .3s,box-shadow .3s;animation:wa-in .5s 1.5s both}
-.wa-flot svg{width:24px;height:24px;flex:none;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.wa-flot span{max-width:0;overflow:hidden;white-space:nowrap;font-weight:700;transition:max-width .35s,margin .35s}
-.wa-flot:hover{transform:translateY(-3px);box-shadow:0 14px 34px #25d36680}
-.wa-flot:hover span,.wa-flot:focus-visible span{max-width:200px;margin-left:10px}
-@keyframes wa-in{from{opacity:0;transform:scale(.4)}}
-body:has(.quiz-modal.open,.dia-modal.open,.lightbox.open,#menu.open,.juego.open) .wa-flot{display:none}
-
 /* LINEA DE TIEMPO (Nosotros) */
 .linea{--prog:0%;list-style:none;position:relative;display:grid;gap:26px;margin:0 0 70px;padding:6px 0}
 .linea::before,.linea::after{content:"";position:absolute;left:50%;top:0;width:4px;translate:-50% 0;border-radius:4px}
@@ -506,6 +497,9 @@ html::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 .join{clip-path:polygon(0 0,100% var(--corte),100% 100%,0 100%);padding-top:calc(60px + var(--corte))}
 .join-box{max-width:620px;margin:0 auto;text-align:center}
 .join-box p{color:var(--mute);margin-bottom:28px}
+.form-estado{min-height:1.4em;margin-top:12px;font-weight:600}
+.form-estado.ok{color:#2ecc71}
+.form-estado.mal{color:#ff7a93}
 form{display:grid;gap:12px;text-align:left}
 input,select,textarea{width:100%;background:var(--card);border:1px solid #ffffff22;color:var(--txt);padding:14px 16px;border-radius:12px;font:inherit}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--b);border-color:transparent}
@@ -525,7 +519,6 @@ footer .links a{width:48px;height:48px;border-radius:50%;display:grid;place-item
 footer .links svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 footer .links a:hover{transform:translateY(-5px);border-color:transparent}
 footer #ig:hover{background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);box-shadow:0 10px 24px #d6297666}
-footer #wa:hover{background:#25d366;box-shadow:0 10px 24px #25d36666}
 footer #mail:hover{background:var(--b);color:#000;box-shadow:0 10px 24px #ffb81c66}
 footer small{color:var(--mute)}
 
@@ -550,7 +543,6 @@ footer small{color:var(--mute)}
   .t-stats{grid-template-columns:repeat(2,1fr)}
   .t-stats .t-stat:last-child{grid-column:span 2}
   .t-fotos{grid-template-columns:repeat(2,1fr)}
-  .wa-flot{right:14px;bottom:14px;height:52px;padding:0 14px}
   /* el desenfoque de la barra encierra al menú fijo dentro de ella: en celular se usa fondo opaco */
   .nav.solid{backdrop-filter:none;-webkit-backdrop-filter:none;background:#0b0b10f5}
   #menu{height:100dvh}
