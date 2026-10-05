@@ -1,6 +1,8 @@
 // =====================================================
-//  DATOS DEL EQUIPO — editá solo este archivo
-//  Las fotos van en las carpetas de /assets (ver LEEME.txt)
+//  DATOS DEL EQUIPO — respaldo local
+//  En producción, js/datos.js pisa TEAM / PARTIDOS / HISTORIA / HITOS /
+//  TORNEOS / JUGADORES / RESULTADOS con lo que hay en la base.
+//  Galería y recursos siguen acá. Fotos en /assets (ver LEEME.txt).
 // =====================================================
 const TEAM = {
   nombre: "Escándalo",

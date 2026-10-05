@@ -96,7 +96,10 @@
         <h3>Diseño secreto</h3>
         <p>Por ahora solo lo pueden ver los campeones de la Copa Primavera 😉</p>
         <div class="uni-campo">
-          <input type="password" id="uni-clave" placeholder="Contraseña" autocomplete="off" aria-label="Contraseña">
+          <div class="clave-wrap">
+            <input type="password" id="uni-clave" placeholder="Contraseña" autocomplete="off" aria-label="Contraseña">
+            <button type="button" class="clave-ojito" aria-label="Mostrar contraseña" aria-controls="uni-clave"></button>
+          </div>
           <button class="btn" type="submit">Desbloquear</button>
         </div>
         <small class="uni-error" id="uni-error" aria-live="polite"></small>

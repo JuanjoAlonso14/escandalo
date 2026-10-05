@@ -120,6 +120,17 @@ function desbloquearUniformes(animar) {
   });
 }
 try { if (localStorage.getItem("uniformes-ok") === "1") desbloquearUniformes(false); } catch (e) {}
+(function cablearOjito(wrap) {
+  if (!wrap) return;
+  const input = wrap.querySelector("input"), btn = wrap.querySelector(".clave-ojito");
+  const pintar = () => {
+    const ver = input.type === "text";
+    btn.innerHTML = ico(ver ? "ojo-off" : "ojo");
+    btn.setAttribute("aria-label", ver ? "Ocultar contraseña" : "Mostrar contraseña");
+  };
+  pintar();
+  btn.addEventListener("click", () => { input.type = input.type === "password" ? "text" : "password"; pintar(); });
+})($("#uni-candado .clave-wrap"));
 $("#uni-candado").addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.currentTarget, clave = $("#uni-clave").value.trim().toLowerCase();
