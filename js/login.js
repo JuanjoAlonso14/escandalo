@@ -8,6 +8,18 @@ const form = document.querySelector("#login-form");
 const lista = document.querySelector("#login-jugador");
 const aviso = document.querySelector("#login-error");
 
+(function cablearOjito(wrap) {
+  if (!wrap) return;
+  const input = wrap.querySelector("input"), btn = wrap.querySelector(".clave-ojito");
+  const pintar = () => {
+    const ver = input.type === "text";
+    btn.innerHTML = ico(ver ? "ojo-off" : "ojo");
+    btn.setAttribute("aria-label", ver ? "Ocultar contraseña" : "Mostrar contraseña");
+  };
+  pintar();
+  btn.addEventListener("click", () => { input.type = input.type === "password" ? "text" : "password"; pintar(); });
+})(form.querySelector(".clave-wrap"));
+
 lista.innerHTML = '<option value="">Elegí tu nombre…</option>' +
   [...JUGADORES].sort((a, b) => a.nombre.localeCompare(b.nombre, "es"))
     .map((j) => `<option value="${slugDe(j)}">${j.nombre}</option>`).join("");
