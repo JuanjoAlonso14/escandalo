@@ -67,6 +67,7 @@
       <div class="cuenta-menu" role="menu" hidden>
         <div class="cuenta-quien"><b>${esc(s.nombre)}</b><small class="rol-${esc(rolActual || "usuario")}">${etiqueta(rolActual)}</small></div>
         <a role="menuitem" href="/asistencia">${ico("calendario")} Asistencia a prácticas</a>
+        <a role="menuitem" href="/caja">${ico("caja")} Caja del equipo</a>
         ${rolActual === "admin" ? `<a role="menuitem" href="/admin">${ico("panel")} Panel de administración</a>` : ""}
         <button role="menuitem" type="button" data-salir>${ico("salir")} Cerrar sesión</button>
       </div>`;
