@@ -730,24 +730,28 @@ footer small{color:var(--mute)}
 .asi-pct.alto{color:#2ecc71}.asi-pct.medio{color:var(--b)}.asi-pct.bajo{color:#ff6b86}
 .asi-nota{color:var(--mute);font-size:.82rem;margin:10px 2px 34px}
 .asi-mapa{overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--card);border:1px solid var(--borde);border-radius:18px;padding:12px 0 8px}
-/* width:max-content evita que Safari/mobile aplaste las columnas vacías al ancho de la pantalla */
-.asi-mapa table{border-collapse:separate;border-spacing:0;width:max-content;max-width:none}
+/* table-layout:fixed + ancho en px (lo pone JS) es lo que iOS respeta; max-content solo alcanza en desktop */
+.asi-mapa table{table-layout:fixed;border-collapse:separate;border-spacing:0;max-width:none}
+.asi-mapa col.nom{width:104px}
+.asi-mapa colgroup col:not(.nom){width:20px}
 /* los estilos de las tablas del panel (.adm th/td) no deben tocar esta grilla */
 .asi-mapa th,.asi-mapa td{padding:0;border:0;text-transform:none;letter-spacing:0;font-weight:500}
 .asi-mapa thead th{background:#1d1d2b}
-.asi-mapa th.mes{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--b);text-align:left;padding:0 0 3px 2px;border-bottom:1px solid #ffffff1f}
-.asi-mapa th.dia{font-size:.58rem;color:var(--mute);text-align:center;width:20px;min-width:20px;max-width:20px;box-sizing:border-box}
+.asi-mapa th.mes{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--b);text-align:left;padding:0 0 3px 2px;border-bottom:1px solid #ffffff1f;overflow:hidden}
+.asi-mapa th.dia{font-size:.58rem;color:var(--mute);text-align:center;line-height:1.2;padding:0 0 2px}
 /* columna de nombres fija: tapa por completo lo que pasa por debajo al deslizar */
 .asi-mapa thead tr th:first-child,.asi-mapa th.nom{position:sticky;left:0;z-index:2;background:#1d1d2b;box-shadow:6px 0 8px -4px #000a}
-.asi-mapa th.nom{text-align:left;font-size:.82rem;font-weight:700;padding:0 14px 0 16px;white-space:nowrap;color:#fff}
+.asi-mapa th.nom{text-align:left;font-size:.82rem;font-weight:700;padding:0 12px 0 14px;white-space:nowrap;color:#fff;overflow:hidden;text-overflow:ellipsis}
 .asi-mapa tr.yo th.nom{color:var(--b)}
-/* cada celda deja 2px a su alrededor sin dibujar fondo: así no hay huecos por donde se vea lo que pasa por debajo */
-.asi-mapa td.m{width:20px;min-width:20px;max-width:20px;height:19px;padding:2px;box-sizing:border-box;background-clip:content-box;border-radius:6px}
-.asi-mapa td.fue,.asi-leyenda i.fue{background-color:#2ecc71}
-.asi-mapa td.falto,.asi-leyenda i.falto{background-color:#ff4d6d66}
-.asi-mapa td.na,.asi-leyenda i.na{background-color:#ffffff0a;box-shadow:inset 0 0 0 1px #ffffff1a}
-.asi-mapa td.na{box-shadow:none;background-color:#ffffff0d}
-.asi-mapa tr.yo td.fue{outline:2px solid #b44cff;outline-offset:-2px}
+/* el color va en el <i> interno: en iPhone las td vacías se aplastan a 0 aunque tengan width */
+.asi-mapa td.m{padding:2px;vertical-align:middle}
+.asi-mapa td.m i{display:block;width:16px;height:15px;margin:0 auto;border-radius:4px}
+.asi-mapa td.fue i,.asi-leyenda i.fue{background-color:#2ecc71}
+.asi-mapa td.falto i,.asi-leyenda i.falto{background-color:#ff4d6d66}
+.asi-mapa td.na i,.asi-leyenda i.na{background-color:#ffffff0d}
+.asi-mapa td.na i{box-shadow:none}
+.asi-leyenda i.na{background-color:#ffffff0a;box-shadow:inset 0 0 0 1px #ffffff1a}
+.asi-mapa tr.yo td.fue i{box-shadow:0 0 0 2px #b44cff}
 .asi-leyenda{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--mute);font-size:.8rem;margin-top:10px}
 .asi-leyenda i{display:inline-block;width:13px;height:13px;border-radius:4px}
 .asi-leyenda i+i{margin-left:10px}
