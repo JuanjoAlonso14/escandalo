@@ -48,11 +48,58 @@
   }
 
   window.Sesion = { actual: leer, token, rol, cerrar, headers: async () => ({ apikey: SUPABASE.key, Authorization: `Bearer ${await token()}`, "Content-Type": "application/json" }) };
+
+  const nav = document.querySelector("header.nav");
+  const brand = nav && nav.querySelector(".brand");
+  const menuSitio = nav && nav.querySelector("#menu");
+  let flechaMenu = null;
+
+  // Logueado: el logo sigue yendo al inicio; solo la flecha abre el menú del sitio
+  if (document.documentElement.dataset.cuenta && brand && menuSitio) {
+    const nosotros = menuSitio.querySelector('a[href="/historia"]');
+    if (nosotros) { nosotros.href = "/jugadas"; nosotros.textContent = "Jugadas"; }
+    const ultimate = menuSitio.querySelector('a[href="/ultimate"]');
+    if (ultimate) ultimate.textContent = "Reglas";
+
+    const wrap = document.createElement("div");
+    wrap.className = "brand-wrap";
+    brand.replaceWith(wrap);
+    wrap.appendChild(brand);
+    flechaMenu = document.createElement("button");
+    flechaMenu.type = "button";
+    flechaMenu.className = "brand-flecha";
+    flechaMenu.setAttribute("aria-label", "Abrir menú");
+    flechaMenu.setAttribute("aria-haspopup", "true");
+    flechaMenu.setAttribute("aria-expanded", "false");
+    flechaMenu.setAttribute("aria-controls", "menu");
+    wrap.appendChild(flechaMenu);
+
+    const cerrarSitio = () => {
+      menuSitio.classList.remove("open");
+      flechaMenu.setAttribute("aria-expanded", "false");
+      flechaMenu.setAttribute("aria-label", "Abrir menú");
+    };
+    flechaMenu.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const abre = !menuSitio.classList.contains("open");
+      menuSitio.classList.toggle("open", abre);
+      flechaMenu.setAttribute("aria-expanded", String(abre));
+      flechaMenu.setAttribute("aria-label", abre ? "Cerrar menú" : "Abrir menú");
+      const cm = nav.querySelector(".cuenta-menu");
+      if (abre && cm) cm.hidden = true;
+    });
+    menuSitio.addEventListener("click", (e) => { if (e.target.closest("a")) cerrarSitio(); });
+    document.addEventListener("click", (e) => {
+      if (!wrap.contains(e.target) && !menuSitio.contains(e.target)) cerrarSitio();
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") cerrarSitio(); });
+  }
+
   if (!hay || !leer()) return;
 
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const etiqueta = (r) => (r === "admin" ? "Administrador" : "Jugador");
-  const nav = document.querySelector("header.nav");
   if (!nav) return;
   const cuenta = document.createElement("div");
   cuenta.className = "cuenta";
@@ -82,7 +129,18 @@
   cuenta.addEventListener("click", (e) => {
     const btn = e.target.closest(".cuenta-btn");
     const menu = cuenta.querySelector(".cuenta-menu");
-    if (btn) { menu.hidden = !menu.hidden; btn.setAttribute("aria-expanded", String(!menu.hidden)); return; }
+    if (btn) {
+      menu.hidden = !menu.hidden;
+      btn.setAttribute("aria-expanded", String(!menu.hidden));
+      if (!menu.hidden && menuSitio) {
+        menuSitio.classList.remove("open");
+        if (flechaMenu) {
+          flechaMenu.setAttribute("aria-expanded", "false");
+          flechaMenu.setAttribute("aria-label", "Abrir menú");
+        }
+      }
+      return;
+    }
     if (e.target.closest("[data-salir]")) cerrar();
   });
   document.addEventListener("click", (e) => { if (!cuenta.contains(e.target)) { const m = cuenta.querySelector(".cuenta-menu"); if (m) m.hidden = true; } });
