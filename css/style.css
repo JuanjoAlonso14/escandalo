@@ -908,3 +908,65 @@ header.nav:has(> .cuenta:not(.cuenta-boot)) .cuenta-boot{display:none!important}
 .asi-mapa::-webkit-scrollbar,.asi-tabla::-webkit-scrollbar,.adm-tabla::-webkit-scrollbar,.caja-tabla::-webkit-scrollbar{height:9px;width:9px}
 .asi-mapa::-webkit-scrollbar-track,.asi-tabla::-webkit-scrollbar-track,.adm-tabla::-webkit-scrollbar-track,.caja-tabla::-webkit-scrollbar-track{background:transparent}
 .asi-mapa::-webkit-scrollbar-thumb,.asi-tabla::-webkit-scrollbar-thumb,.adm-tabla::-webkit-scrollbar-thumb,.caja-tabla::-webkit-scrollbar-thumb{background:#ffffff40;border-radius:9px}
+
+/* JUGADAS (pizarra tactica) */
+#pz-defs{position:absolute;width:0;height:0;overflow:hidden}
+.jg-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+.jg-card{display:grid;gap:12px;align-content:start;padding:14px;border-radius:var(--r);background:var(--card);border:1px solid var(--borde);transition:.25s}
+.jg-card:hover{border-color:#b44cff55;transform:translateY(-3px);box-shadow:0 14px 34px #0007}
+.jg-mini{position:relative;display:block;padding:0;border:1px solid #ffffff14;border-radius:12px;background:#0d1a12;cursor:pointer;overflow:hidden;line-height:0}
+.jg-mini .pz-campo{width:100%;height:auto}
+.jg-lupa{position:absolute;inset:0;display:grid;place-items:center;background:#0000005c;opacity:0;transition:.2s}
+.jg-lupa .ico{width:26px;height:26px;color:var(--b)}
+.jg-mini:hover .jg-lupa,.jg-mini:focus-visible .jg-lupa{opacity:1}
+.jg-info{display:grid;gap:6px;min-width:0}
+.jg-info h3{font-size:1.1rem;line-height:1.25}
+.jg-info p{color:#d6d6e2;font-size:.9rem;overflow-wrap:anywhere}
+.jg-info p i{color:var(--mute)}
+.jg-info small{color:var(--mute);font-size:.78rem}
+.jg-acc{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:4px}
+.jg-acc .btn{padding:9px 16px;font-size:.85rem;border-width:1px}
+.jg-desc{color:#d6d6e2;margin:-4px 0 12px;overflow-wrap:anywhere}
+
+.pz-modal .quiz-caja{width:min(920px,100%)}
+.pz-campo{display:block;width:100%;height:auto;touch-action:none}
+.pz-pasto{fill:#13331f;stroke:#ffffff26;stroke-width:.35}
+.pz-zona{fill:#ffffff0a}
+.pz-linea{stroke:#ffffff44;stroke-width:.3;fill:none}
+.pz-brick{stroke:#ffffff3d;stroke-width:.3;fill:none}
+.pz-f{cursor:grab}
+.pz-f .pz-agarre{fill:transparent}
+.pz-atk .pz-aro{fill:#ffb81c;stroke:#00000066;stroke-width:.3}
+.pz-atk text{fill:#17170c;font:700 2.8px Inter,sans-serif;text-anchor:middle}
+.pz-def path{stroke:#58c7ff;stroke-width:.85;stroke-linecap:round;fill:none}
+.pz-def text{fill:#9fdcff;font:700 2.4px Inter,sans-serif;text-anchor:middle}
+.pz-disco ellipse{fill:#f4f4f7;stroke:#00000055;stroke-width:.25}
+.pz-disco .pz-disco-in{fill:none;stroke:#b0b0c0;stroke-width:.25}
+.pz-f.sel .pz-aro,.pz-f.sel ellipse{filter:drop-shadow(0 0 1.6px #b44cff)}
+.pz-f.sel .pz-agarre{fill:#b44cff33;stroke:#b44cff;stroke-width:.3}
+.pz-flecha{stroke:#ffd36b;stroke-width:.5;opacity:.85}
+.pz-flecha.pase{stroke:#f4f4f7;stroke-dasharray:2 1.6}
+.pz-grande{margin:0 auto;border-radius:12px;background:#0d1a12}
+
+.pz-barra{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px}
+.pz-barra-acc{display:flex;flex-wrap:wrap;gap:6px}
+.pz-barra .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;font-size:.85rem;border-width:1px}
+.pz-barra .btn .ico{width:16px;height:16px}
+.pz-pasos{display:flex;flex-wrap:wrap;gap:6px}
+.pz-chip{min-width:34px;padding:7px 10px;border-radius:99px;border:1px solid #ffffff22;background:#ffffff0a;color:var(--mute);font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;transition:.2s}
+.pz-chip:hover{border-color:var(--b);color:#fff}
+.pz-chip.on{background:var(--b);border-color:var(--b);color:#17170c}
+.pz-tools{display:flex;align-items:flex-end;flex-wrap:wrap;gap:8px;margin:14px 0 12px}
+.pz-tools .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 14px;font-size:.82rem;border-width:1px}
+.pz-tools .btn .ico{width:15px;height:15px}
+.pz-tools .adm-ic{margin-left:0}
+.pz-etq{display:grid;gap:4px;margin-left:auto;font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mute)}
+.pz-etq input{width:62px;padding:9px 10px;text-align:center}
+.pz-form{margin-bottom:4px}
+.pz-ayuda{color:var(--mute);font-size:.8rem;margin:10px 0 0}
+@media(max-width:800px){
+  .jg-grid{grid-template-columns:1fr}
+  .pz-modal .quiz-caja{padding:16px}
+  .pz-etq{margin-left:0}
+  .pz-barra{justify-content:center}
+}
