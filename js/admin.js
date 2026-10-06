@@ -210,7 +210,7 @@
           <div id="asi-resumen"></div>
         </section>
       </div>`;
-    Asistencia.montar(raiz.querySelector("#asi-resumen"), datosA, {});
+    Asistencia.montar(raiz.querySelector("#asi-resumen"), datosA, { admin: true });
   }
 
   // Estados de cada jugador en una práctica: fue → faltó → no contaba → fue …
