@@ -104,9 +104,9 @@ if (futuros.length) {
   const p = futuros[0];
   next.innerHTML = `
     <div>
-      <p>${p.fechas ? p.fechas : p.torneo + " · " + p.f.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" }) + " · " + hora(p.f)}</p>
-      <h4>${p.rival ? "ESCÁNDALO vs " + p.rival : p.torneo}</h4>
-      <p>${ico("pin")} ${p.lugar}</p>
+      <p>${escHtml(p.fechas ? p.fechas : p.torneo + " · " + p.f.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" }) + " · " + hora(p.f))}</p>
+      <h4>${p.rival ? "ESCÁNDALO vs " + escHtml(p.rival) : escHtml(p.torneo)}</h4>
+      <p>${ico("pin")} ${escHtml(p.lugar)}</p>
     </div>
     <div class="count" id="count"></div>`;
   const tick = () => {
@@ -120,7 +120,10 @@ if (futuros.length) {
 }
 
 // Entrenamientos
-$("#train").innerHTML = TEAM.entrenamientos.map((e) => `<div><b>${e.dia}</b> ${e.hora} hs · ${e.lugar}${e.mapa ? ` · <a href="${e.mapa}" target="_blank" rel="noopener">${ico("pin")} Ver ubicación</a>` : ""}</div>`).join("");
+$("#train").innerHTML = TEAM.entrenamientos.map((e) => {
+  const mapaOk = e.mapa && /^https?:\/\//i.test(e.mapa) ? e.mapa : "";
+  return `<div><b>${escHtml(e.dia)}</b> ${escHtml(e.hora)} hs · ${escHtml(e.lugar)}${mapaOk ? ` · <a href="${escHtml(mapaOk)}" target="_blank" rel="noopener">${ico("pin")} Ver ubicación</a>` : ""}</div>`;
+}).join("");
 
 // Plantel
 // Orden aleatorio en cada carga (Fisher-Yates), para que nadie quede siempre primero
@@ -139,27 +142,29 @@ const textoCarta = (j) => `Conocé a ${j.apodo}${j.numero ? " (#" + j.numero + "
 const linkWhatsApp = (j) => "https://wa.me/?text=" + encodeURIComponent(`${textoCarta(j)} 👉 ${urlCarta(j)}`);
 $("#players").innerHTML = mezclados.map((j) => {
   const slug = slugJugador(j), mia = miSlug && slug === miSlug;
+  const foto = escHtml(j.foto), nom = escHtml(j.nombre), apo = escHtml(j.apodo);
+  const num = j.numero != null && j.numero !== "" ? escHtml(j.numero) : "";
   return `
-  <article class="pcard${mia ? " mia" : ""}" tabindex="0" data-slug="${slug}" aria-label="${j.nombre}: tocá para dar vuelta la carta">
+  <article class="pcard${mia ? " mia" : ""}" tabindex="0" data-slug="${escHtml(slug)}" aria-label="${nom}: tocá para dar vuelta la carta">
     <div class="pcard-in">
       <div class="cara frente">
-        <img src="assets/jugadores/${j.foto}" alt="${j.nombre} (${j.apodo})" loading="lazy">
+        <img src="assets/jugadores/${foto}" alt="${nom} (${apo})" loading="lazy">
         <span class="pcard-giro" aria-hidden="true">↻</span>
       </div>
       <div class="cara dorso">
         <img class="dorso-logo" src="assets/logos/logo.webp" alt="">
-        ${j.numero ? `<span class="dorso-num" aria-hidden="true">${j.numero}</span>` : ""}
-        <span class="dorso-apodo">${j.apodo}</span>
-        <b class="dorso-nombre">${j.nombre}</b>
+        ${num ? `<span class="dorso-num" aria-hidden="true">${num}</span>` : ""}
+        <span class="dorso-apodo">${apo}</span>
+        <b class="dorso-nombre">${nom}</b>
         <ul class="dorso-datos">
-          ${j.numero ? `<li><small>Camiseta</small><b>#${j.numero}</b></li>` : ""}
-          ${j.nacionalidad ? `<li><small>Nacionalidad</small><b>${j.nacionalidad}</b></li>` : ""}
-          ${j.dato ? `<li class="dorso-dato"><small>Dato</small><b>${j.dato}</b></li>` : ""}
+          ${num ? `<li><small>Camiseta</small><b>#${num}</b></li>` : ""}
+          ${j.nacionalidad ? `<li><small>Nacionalidad</small><b>${escHtml(j.nacionalidad)}</b></li>` : ""}
+          ${j.dato ? `<li class="dorso-dato"><small>Dato</small><b>${escHtml(j.dato)}</b></li>` : ""}
         </ul>
         <div class="dorso-acciones">
           <button class="dorso-btn dorso-zoom" type="button" title="Ver carta completa" aria-label="Ver carta completa">${ico("ampliar")}</button>
-          <a class="dorso-btn" href="assets/jugadores/compartir/${slugJugador(j)}.jpg" download="Escandalo-${j.apodo}.jpg" title="Descargar carta" aria-label="Descargar carta">${ico("descargar")}</a>
-          <a class="dorso-btn dorso-wa" href="${linkWhatsApp(j)}" target="_blank" rel="noopener" title="Enviar por WhatsApp" aria-label="Enviar por WhatsApp">${ico("whatsapp")}</a>
+          <a class="dorso-btn" href="assets/jugadores/compartir/${escHtml(slug)}.jpg" download="Escandalo-${apo}.jpg" title="Descargar carta" aria-label="Descargar carta">${ico("descargar")}</a>
+          <a class="dorso-btn dorso-wa" href="${escHtml(linkWhatsApp(j))}" target="_blank" rel="noopener" title="Enviar por WhatsApp" aria-label="Enviar por WhatsApp">${ico("whatsapp")}</a>
           <button class="dorso-btn dorso-compartir" type="button" title="Compartir link de la carta">${ico("compartir")}<span>Compartir</span></button>
         </div>
       </div>

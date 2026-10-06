@@ -111,28 +111,19 @@
     const lote = cola.splice(0, COLA_MAX);
     mandando = true;
     try {
-      const headers = { apikey: SUPABASE.key, Authorization: `Bearer ${SUPABASE.key}`, "Content-Type": "application/json", Prefer: "return=minimal" };
-      try {
-        if (typeof Sesion !== "undefined" && Sesion.token) {
-          const t = await Sesion.token();
-          if (t) headers.Authorization = `Bearer ${t}`;
-        }
-      } catch (e) {}
-      const cuerpo = JSON.stringify(lote);
-      if (forzar && navigator.sendBeacon) {
-        const url = `${SUPABASE.url}/rest/v1/event?apikey=${encodeURIComponent(SUPABASE.key)}`;
-        const ok = navigator.sendBeacon(url, new Blob([cuerpo], { type: "application/json" }));
-        if (!ok) throw new Error("beacon");
-      } else {
-        const r = await fetch(`${SUPABASE.url}/rest/v1/event`, {
-          method: "POST",
-          headers,
-          body: cuerpo,
-          keepalive: !!forzar,
-          signal: forzar ? undefined : AbortSignal.timeout(8000),
-        });
-        if (!r.ok) throw new Error("HTTP " + r.status);
-      }
+      // RLS: solo JWT del jugador (no anon key / sendBeacon sin Authorization)
+      let t = null;
+      try { t = typeof Sesion !== "undefined" && Sesion.token ? await Sesion.token() : null; } catch (e) {}
+      if (!t) throw new Error("sin sesión");
+      const headers = { apikey: SUPABASE.key, Authorization: `Bearer ${t}`, "Content-Type": "application/json", Prefer: "return=minimal" };
+      const r = await fetch(`${SUPABASE.url}/rest/v1/event`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(lote),
+        keepalive: !!forzar,
+        signal: forzar ? undefined : AbortSignal.timeout(8000),
+      });
+      if (!r.ok) throw new Error("HTTP " + r.status);
     } catch (e) {
       cola = lote.concat(cola).slice(0, COLA_MAX * 2);
       console.warn("eventos:", e.message || e);
