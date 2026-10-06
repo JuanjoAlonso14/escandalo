@@ -51,11 +51,11 @@ LOGIN (solo en local por ahora)
 Página: /login  (http://localhost:8080/login). Se elige el jugador y se entra con la contraseña sunombre123 (la misma para todos).
 Los usuarios viven en la base local (Supabase Auth). Crearlos o resetearlos:  node scripts/crear-usuarios.js
 (después de `npx supabase db reset` hay que volver a correrlo). Si el ingreso es correcto, va al inicio.
-Contraseñas: todos usan sunombre123, salvo quien tenga una clave propia en supabase/claves-locales.json
-(archivo que NO se sube a Git, formato {"slug": "clave"}). Después de editarlo: node scripts/crear-usuarios.js
-El script también guarda el hash en la tabla privada jugadores_claves (el sitio no puede leerla).
-La contraseña la valida Supabase Auth; distingue mayúsculas de minúsculas.
-Admins locales típicos: Juanjo → Solsitoalonso14 · Camila → floresamarillas24 (en claves-locales.json).
+Contraseñas: todos usan sunombre123 por defecto. El hash de referencia vive en jugadores.password_hash
+(el sitio no puede leer esa columna). La contraseña la valida Supabase Auth; distingue mayúsculas de minúsculas.
+Admins (Juanjo, Camila): el hash ya está en la base; para resetear Auth usá env CLAVE_ADMIN_JUANJO_ALONSO /
+CLAVE_ADMIN_CAMILA_COUTURE o, solo en tu máquina, supabase/claves-locales.json (no se sube a Git).
+Sin eso, crear-usuarios.js no pisa la contraseña de un admin que ya exista.
 
 ROLES Y PANEL DE ADMINISTRACION (solo en local por ahora)
 ---------------------------------------------------------

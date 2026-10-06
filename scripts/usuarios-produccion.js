@@ -5,8 +5,9 @@
 //
 // Admins (juanjo, camila): contraseña desde
 //   1) env CLAVE_ADMIN_JUANJO_ALONSO / CLAVE_ADMIN_CAMILA_COUTURE
-//   2) supabase/claves-locales.json (mismo archivo que local; no se sube a Git)
+//   2) supabase/claves-locales.json (opcional, local; no se sube a Git)
 //   3) pregunta oculta por pantalla
+// El hash de referencia queda en jugadores.password_hash (no se lee ni se escribe por el sitio).
 // Resto: contraseña aleatoria → supabase/privado/credenciales-produccion.txt
 //
 // Pide la service_role por pantalla (o SUPABASE_SERVICE_ROLE_KEY). Nunca la subas a Git ni al chat.
@@ -78,7 +79,7 @@ async function claveAdmin(j) {
   if (!prueba.ok) { console.error(`La clave no sirve para ${URL} (HTTP ${prueba.status}). ¿Copiaste la clave secreta de ese proyecto?`); process.exit(1); }
   console.log(`Conectado a ${URL}${local ? " (local)" : " (PRODUCCIÓN)"}${todos ? " — reseteando TODOS" : ""}`);
 
-  const jr = await api("/rest/v1/jugadores?select=slug,nombre&order=nombre");
+  const jr = await api("/rest/v1/jugadores?select=id,slug,nombre&order=nombre");
   const jugadores = jr.ok ? await jr.json() : [];
   if (!jugadores.length) { console.error("No hay jugadores en la base. ¿Corriste antes `npx supabase db push`?"); process.exit(1); }
   const existentes = (await (await api("/auth/v1/admin/users?per_page=1000")).json()).users || [];
@@ -91,7 +92,7 @@ async function claveAdmin(j) {
     const hayQuePisar = todos || (resetear && j.slug === resetear);
     if (ya && !hayQuePisar) {
       const rolActual = ADMINS.includes(j.slug) ? "admin" : "usuario";
-      const p0 = await api("/rest/v1/perfiles", { method: "POST", headers: { Prefer: "resolution=merge-duplicates" }, body: JSON.stringify({ id: ya.id, jugador_slug: j.slug, rol: rolActual }) });
+      const p0 = await api("/rest/v1/perfiles", { method: "POST", headers: { Prefer: "resolution=merge-duplicates" }, body: JSON.stringify({ id: ya.id, jugador_id: j.id, rol: rolActual }) });
       console.log(`  · ${j.nombre.padEnd(20)} ya tiene usuario [${rolActual}]${p0.ok ? "" : " (perfil HTTP " + p0.status + ")"}`); continue;
     }
     let password;
@@ -99,7 +100,7 @@ async function claveAdmin(j) {
       password = await claveAdmin(j);
       if (!password || password.length < 12) { console.error(`La contraseña del admin ${j.nombre} tiene que tener al menos 12 caracteres.`); process.exit(1); }
     } else password = generar();
-    const cuerpo = JSON.stringify({ email, password, email_confirm: true, user_metadata: { jugador: j.slug, nombre: j.nombre } });
+    const cuerpo = JSON.stringify({ email, password, email_confirm: true, user_metadata: { jugador: j.slug, jugador_id: j.id, nombre: j.nombre } });
     const r = await api(ya ? `/auth/v1/admin/users/${ya.id}` : "/auth/v1/admin/users", { method: ya ? "PUT" : "POST", body: cuerpo });
     if (!r.ok) { console.log(`  ✗ ${j.nombre}: HTTP ${r.status} ${(await r.text()).slice(0, 120)}`); continue; }
     const u = await r.json();
@@ -110,7 +111,7 @@ async function claveAdmin(j) {
       creadas.push(j.nombre);
     }
     const rol = ADMINS.includes(j.slug) ? "admin" : "usuario";
-    const p = await api("/rest/v1/perfiles", { method: "POST", headers: { Prefer: "resolution=merge-duplicates" }, body: JSON.stringify({ id: u.id, jugador_slug: j.slug, rol }) });
+    const p = await api("/rest/v1/perfiles", { method: "POST", headers: { Prefer: "resolution=merge-duplicates" }, body: JSON.stringify({ id: u.id, jugador_id: j.id, rol }) });
     console.log(`  ${p.ok ? "✓" : "✗"} ${j.nombre.padEnd(20)} ${ya ? "contraseña nueva" : "creado"} [${rol}]${ADMINS.includes(j.slug) ? " (clave fija)" : ""}${p.ok ? "" : " perfil HTTP " + p.status}`);
   }
 
@@ -121,5 +122,6 @@ async function claveAdmin(j) {
   } else if (fs.existsSync(archivo)) {
     console.log(`\nArchivo de credenciales: ${archivo}`);
   }
-  console.log("Admins: Juanjo y Camila usan la clave de claves-locales.json / CLAVE_ADMIN_* (no van en el archivo de aleatorias).");
+  console.log("Admins: Juanjo y Camila usan CLAVE_ADMIN_* o claves-locales.json (no van en el archivo de aleatorias).");
 })();
+
