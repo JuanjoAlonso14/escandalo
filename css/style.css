@@ -380,6 +380,7 @@ body:has(.quiz-modal.open){overflow:hidden}
 .quiz-nivel{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:14px;text-align:left;background:#ffffff08;border:1px solid #ffffff1a;border-radius:16px;padding:16px 18px;color:var(--txt);font:inherit;cursor:pointer;transition:.2s}
 .quiz-nivel:hover{transform:translateY(-3px);border-color:var(--c)}
 .quiz-nivel.n1{--c:#2ecc71}.quiz-nivel.n2{--c:var(--b)}.quiz-nivel.n3{--c:#ff4d6d}
+.quiz-nivel.n4{--c:#b44cff}.quiz-nivel.n5{--c:#31c4ff}
 .quiz-dots{grid-row:span 2;align-self:center;color:var(--c);letter-spacing:2px;font-size:1rem}
 .quiz-nivel b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:1.4rem;text-transform:uppercase;color:var(--c)}
 .quiz-nivel small{color:var(--mute);font-size:.88rem}
@@ -610,6 +611,9 @@ footer small{color:var(--mute)}
 .uni-wrap{position:relative}
 .uni-wrap .uniforms>*{transition:filter .9s}
 .uni-wrap.bloqueado .uniforms>*{filter:blur(40px) saturate(1.4) brightness(.8)!important;pointer-events:none;user-select:none}
+/* Logueado: sin blur ni candado desde el primer frame (data-cuenta viene del boot en <head>) */
+html[data-cuenta] .uni-wrap.bloqueado .uniforms>*{filter:none!important;pointer-events:auto;user-select:auto}
+html[data-cuenta] .uni-candado{display:none!important}
 .uni-candado{position:absolute;inset:0;z-index:2;margin:auto;height:fit-content;width:min(450px,calc(100% - 32px));text-align:center;background:linear-gradient(160deg,#20203af2,#141420f2);border:1px solid #b44cff66;border-radius:22px;padding:26px 22px;box-shadow:0 30px 80px #000c}
 .uni-wrap:not(.bloqueado) .uni-candado{display:none}
 .uni-candado.mal{animation:temblor .35s}
@@ -642,6 +646,37 @@ footer small{color:var(--mute)}
 .login-error{display:block;min-height:1.3em;color:#ff7a93;font-weight:600;opacity:0;transition:opacity .2s}
 .login-error.ver{opacity:1}
 .login-caja .btn{justify-self:center;margin-top:6px}
+
+/* Logueado: menú del sitio como desplegable (solo la flecha; el logo va al inicio) */
+html[data-cuenta] .burger{display:none!important}
+html[data-cuenta] .brand-wrap{display:flex;align-items:center;gap:2px}
+html[data-cuenta] .brand-flecha{
+  display:grid;place-items:center;width:34px;height:34px;margin:0;padding:0;
+  border:0;border-radius:10px;background:transparent;color:#fff;cursor:pointer;transition:.2s;
+}
+html[data-cuenta] .brand-flecha::before{
+  content:"";width:7px;height:7px;margin-top:-3px;
+  border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  transform:rotate(45deg);opacity:.8;transition:transform .2s,margin .2s,opacity .2s;
+}
+html[data-cuenta] .brand-flecha:hover{background:#ffffff14;color:var(--b)}
+html[data-cuenta] .nav:has(#menu.open) .brand-flecha{background:#ffffff14;color:var(--b)}
+html[data-cuenta] .nav:has(#menu.open) .brand-flecha::before{
+  transform:rotate(-135deg);margin-top:3px;opacity:1;
+}
+html[data-cuenta] #menu{
+  position:absolute;left:5vw;right:auto;top:calc(100% + 8px);bottom:auto;z-index:80;
+  display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:2px;
+  min-width:220px;width:min(260px,calc(100vw - 10vw));height:auto;padding:8px;border-radius:16px;
+  background:linear-gradient(160deg,#20203a,#141420);border:1px solid #b44cff55;
+  box-shadow:0 20px 50px #000b;font-size:.95rem;translate:none;
+}
+html[data-cuenta] #menu.open{display:flex;translate:none}
+html[data-cuenta] #menu a{
+  display:block;padding:10px 14px;border-radius:10px;opacity:1;
+}
+html[data-cuenta] #menu a:hover{background:#ffffff12;color:var(--b)}
+html[data-cuenta] body:has(#menu.open){overflow:auto}
 
 /* MENU DE CUENTA (arriba a la derecha) */
 .cuenta{position:relative;margin-left:18px}
