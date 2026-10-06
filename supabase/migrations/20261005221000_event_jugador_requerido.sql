@@ -8,6 +8,7 @@ alter table public.event
   on delete cascade on update cascade;
 
 drop policy if exists "cualquiera inserta eventos" on public.event;
+drop policy if exists "jugadores insertan sus eventos" on public.event;
 create policy "jugadores insertan sus eventos" on public.event
   for insert to anon, authenticated
   with check (jugador_id is not null);
