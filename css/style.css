@@ -619,6 +619,13 @@ footer small{color:var(--mute)}
 
 /* MENU DE CUENTA (arriba a la derecha) */
 .cuenta{position:relative;margin-left:18px}
+/* Placeholder visible desde el primer frame si hay sesión (sesion-boot.js) */
+.cuenta-boot{display:none}
+html[data-cuenta] .cuenta-boot{display:block}
+html[data-cuenta] .cuenta-boot .cuenta-avatar::after{content:var(--cuenta-ini)}
+html[data-cuenta] .cuenta-boot .cuenta-nombre::after{content:var(--cuenta-nom)}
+html[data-cuenta] .cuenta-boot .cuenta-btn::after{content:"";width:5px;height:5px;margin-left:2px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);opacity:.8}
+header.nav:has(> .cuenta:not(.cuenta-boot)) .cuenta-boot{display:none!important}
 .cuenta-btn{display:flex;align-items:center;gap:8px;height:42px;padding:0 12px 0 5px;border-radius:99px;background:#ffffff12;border:1px solid #ffffff2e;color:#fff;font:600 .92rem Inter,sans-serif;cursor:pointer;transition:.2s}
 .cuenta-btn:hover{border-color:var(--b)}
 .cuenta-avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--a),#ff7a1c);font-family:Anton,Impact,sans-serif;font-size:1.1rem;text-transform:uppercase}
@@ -711,6 +718,9 @@ footer small{color:var(--mute)}
 .asi-tabla tr:last-child td{border-bottom:0}
 .asi-tabla tr.yo td{background:#b44cff1f}
 .asi-tabla tr.yo td:first-child{box-shadow:inset 4px 0 var(--a)}
+.asi-tabla tr.asi-ver{cursor:pointer}
+.asi-tabla tr.asi-ver:hover td{background:#ffffff0d}
+.asi-tabla tr.asi-ver.yo:hover td{background:#b44cff33}
 .asi-pos{color:var(--mute);font-weight:700;width:34px}
 .asi-quien{display:flex;align-items:center;gap:11px}
 .asi-quien img{width:30px;height:30px;border-radius:50%;object-fit:cover;object-position:top;background:#000;flex:none}
@@ -733,6 +743,8 @@ footer small{color:var(--mute)}
 .asi-cab,.asi-fila{display:flex;align-items:stretch;flex:none}
 .asi-mapa .nom{flex:0 0 104px;width:104px;position:sticky;left:0;z-index:2;box-sizing:border-box;background:#1d1d2b;box-shadow:6px 0 8px -4px #000a;padding:0 12px 0 14px;font-size:.82rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center}
 .asi-fila.yo .nom{color:var(--b)}
+.asi-fila.asi-ver{cursor:pointer}
+.asi-fila.asi-ver:hover .nom{color:var(--b)}
 .asi-mapa .meses,.asi-mapa .celdas{display:flex;flex:none}
 .asi-mapa .mes{flex:none;box-sizing:border-box;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--b);text-align:left;padding:0 0 3px 2px;border-bottom:1px solid #ffffff1f;overflow:hidden;white-space:nowrap}
 .asi-mapa .dia{flex:0 0 20px;width:20px;box-sizing:border-box;font-size:.58rem;color:var(--mute);text-align:center;line-height:1.2;padding:0 0 2px}
@@ -764,6 +776,49 @@ footer small{color:var(--mute)}
 .asi-chip[data-estado="nocuenta"] small{color:var(--mute)}
 .asi-cuenta{color:var(--b);font-weight:700;margin-top:2px}
 .adm-modal .quiz-caja{max-height:calc(100dvh - 24px)}
+.asi-evo{max-width:520px;width:min(520px,100%);text-align:left}
+.asi-evo-cab{display:flex;align-items:center;gap:14px;margin:4px 0 16px}
+.asi-evo-cab img{width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:top;background:#000;flex:none}
+.asi-evo-cab>div{display:grid;line-height:1.25;min-width:0;flex:1}
+.asi-evo-cab b{font-size:1.15rem}
+.asi-evo-cab small{color:var(--mute)}
+.asi-evo-tot{text-align:right;flex:none}
+.asi-evo-tot strong{display:block;font-family:Anton,Impact,sans-serif;font-size:2rem;line-height:1;font-weight:400}
+.asi-evo-tot span{color:var(--mute);font-size:.78rem}
+.asi-evo-tot.alto strong{color:#2ecc71}.asi-evo-tot.medio strong{color:var(--b)}.asi-evo-tot.bajo strong{color:#ff6b86}
+.asi-evo-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.asi-evo-stats>div{background:#ffffff0a;border:1px solid var(--borde);border-radius:12px;padding:10px 8px;text-align:center}
+.asi-evo-stats b{display:block;font-family:Anton,Impact,sans-serif;font-size:1.5rem;font-weight:400;line-height:1.1}
+.asi-evo-stats span{color:var(--mute);font-size:.68rem;text-transform:uppercase;letter-spacing:.05em}
+.asi-evo-chart{position:relative;margin-top:2px}
+.asi-evo-chart svg{display:block;width:100%;height:auto;overflow:visible;touch-action:none}
+.asi-evo-chart .g{stroke:#ffffff18;stroke-width:1}
+.asi-evo-chart .gl{fill:var(--mute);font-size:10px;text-anchor:end;font-family:Inter,system-ui,sans-serif}
+.asi-evo-chart .xl{fill:#c8c8d4;font-size:10px;text-anchor:middle;font-family:Inter,system-ui,sans-serif}
+.asi-evo-chart .area{fill:#ffb81c2e}
+.asi-evo-chart .linea{fill:none;stroke:var(--b);stroke-width:2.8;stroke-linejoin:round;stroke-linecap:round}
+.asi-evo-chart .asi-evo-cursor{stroke:#ffffff55;stroke-width:1;stroke-dasharray:3 3;pointer-events:none}
+.asi-evo-chart .hit{fill:transparent;cursor:pointer}
+.asi-evo-chart .dot{stroke:#0b0b10;stroke-width:1.5;pointer-events:none;transition:r .12s}
+.asi-evo-chart .dot.fue{fill:#2ecc71}
+.asi-evo-chart .dot.falto{fill:#ff4d6d}
+.asi-evo-chart .asi-evo-punto.on .dot{stroke:#fff;stroke-width:2}
+.asi-evo-tip{position:absolute;z-index:5;min-width:160px;max-width:240px;padding:10px 12px;border-radius:12px;background:#14141f;border:1px solid #ffffff2a;box-shadow:0 10px 28px #000a;pointer-events:none;display:grid;gap:2px}
+.asi-evo-tip[hidden]{display:none!important}
+.asi-evo-tip b{font-size:.88rem;text-transform:capitalize;line-height:1.25}
+.asi-evo-tip .est{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.asi-evo-tip.fue .est{color:#2ecc71}.asi-evo-tip.falto .est{color:#ff7a93}
+.asi-evo-tip .pct{font-size:.82rem;color:#fff}
+.asi-evo-tip small{color:var(--mute);font-size:.74rem}
+.asi-evo-tira{display:flex;gap:2px;margin-top:12px;height:14px}
+.asi-evo-cel{flex:1;min-width:3px;padding:0;border:0;border-radius:3px;cursor:pointer;opacity:.85}
+.asi-evo-cel.fue{background:#2ecc71}.asi-evo-cel.falto{background:#ff4d6d99}
+.asi-evo-cel:hover,.asi-evo-cel.on{opacity:1;outline:2px solid #fff;outline-offset:1px;z-index:1;position:relative}
+.asi-evo-ley{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--mute);font-size:.75rem;margin-top:10px}
+.asi-evo-ley i{display:inline-block;width:10px;height:10px;border-radius:3px}
+.asi-evo-ley i.fue{background:#2ecc71}.asi-evo-ley i.falto{background:#ff4d6d}
+.asi-evo-ley span{opacity:.85}
+.asi-evo-vacio{color:var(--mute);padding:28px 4px;text-align:center;margin:0}
 @media(max-width:800px){.asi-barra-celda{display:none}}
 @media(max-width:800px){.asi-tarjetas{grid-template-columns:repeat(2,1fr);gap:10px}.asi-t{padding:14px 8px}.asi-t b{font-size:2rem}.asi-t span{font-size:.68rem}}
 .adm-main{min-width:0}
