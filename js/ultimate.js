@@ -22,16 +22,16 @@ document.querySelector("#recursos").innerHTML = GRUPOS.map(([g, titulo, sub]) =>
   <h2 class="grupo-ult">${titulo} <small>${sub}</small></h2>
   <div class="grid recursos">${RECURSOS.filter((r) => r.grupo === g).map((r) => `
     <article class="recurso">
-      <a class="recurso-tapa" href="assets/${r.pdf}" target="_blank" rel="noopener" aria-label="Ver ${r.titulo}">
-        <img src="assets/${r.portada}" alt="" loading="lazy">
+      <a class="recurso-tapa" href="assets/${escHtml(r.pdf)}" target="_blank" rel="noopener" aria-label="Ver ${escHtml(r.titulo)}">
+        <img src="assets/${escHtml(r.portada)}" alt="" loading="lazy">
       </a>
       <div class="recurso-info">
-        <div class="etiquetas"><span>${r.idioma === "ES" ? "Español" : "Inglés"}</span><span>${r.paginas} ${r.paginas === 1 ? "página" : "páginas"}</span></div>
-        <h3>${r.titulo}</h3>
-        <p>${r.desc}</p>
+        <div class="etiquetas"><span>${r.idioma === "ES" ? "Español" : "Inglés"}</span><span>${escHtml(r.paginas)} ${r.paginas === 1 ? "página" : "páginas"}</span></div>
+        <h3>${escHtml(r.titulo)}</h3>
+        <p>${escHtml(r.desc)}</p>
         <div class="recurso-acciones">
-          <a class="btn" href="assets/${r.pdf}" target="_blank" rel="noopener">Ver</a>
-          <a class="btn ghost" href="assets/${r.pdf}" download>Descargar</a>
+          <a class="btn" href="assets/${escHtml(r.pdf)}" target="_blank" rel="noopener">Ver</a>
+          <a class="btn ghost" href="assets/${escHtml(r.pdf)}" download>Descargar</a>
         </div>
       </div>
     </article>`).join("")}${g === "reglas" ? TARJETA_QUIZ : ""}
