@@ -129,13 +129,18 @@ for (let i = mezclados.length - 1; i > 0; i--) {
   const k = Math.floor(Math.random() * (i + 1));
   [mezclados[i], mezclados[k]] = [mezclados[k], mezclados[i]];
 }
-const slugJugador = (j) => j.foto.replace(/\.[a-z0-9]+$/i, "");
+const slugJugador = (j) => j.slug || j.foto.replace(/\.[a-z0-9]+$/i, "");
+const miSlug = (() => {
+  try { return (typeof Sesion !== "undefined" && Sesion.actual() || {}).jugador || ""; } catch (e) { return ""; }
+})();
 const SITIO = "https://escandaloultimate.com";
 const urlCarta = (j) => `${SITIO}/jugador/${slugJugador(j)}`;
 const textoCarta = (j) => `Conocé a ${j.apodo}${j.numero ? " (#" + j.numero + ")" : ""}, de Escándalo Ultimate`;
 const linkWhatsApp = (j) => "https://wa.me/?text=" + encodeURIComponent(`${textoCarta(j)} 👉 ${urlCarta(j)}`);
-$("#players").innerHTML = mezclados.map((j) => `
-  <article class="pcard" tabindex="0" data-slug="${slugJugador(j)}" aria-label="${j.nombre}: tocá para dar vuelta la carta">
+$("#players").innerHTML = mezclados.map((j) => {
+  const slug = slugJugador(j), mia = miSlug && slug === miSlug;
+  return `
+  <article class="pcard${mia ? " mia" : ""}" tabindex="0" data-slug="${slug}" aria-label="${j.nombre}: tocá para dar vuelta la carta">
     <div class="pcard-in">
       <div class="cara frente">
         <img src="assets/jugadores/${j.foto}" alt="${j.nombre} (${j.apodo})" loading="lazy">
@@ -159,7 +164,8 @@ $("#players").innerHTML = mezclados.map((j) => `
         </div>
       </div>
     </div>
-  </article>`).join("");
+  </article>`;
+}).join("");
 // Adelanto de galería: 4 fotos
 $("#teaser").innerHTML = GALERIA.filter((g) => g.tipo === "foto").slice(0, 4).map((g) =>
   `<a class="gitem" href="/galeria#primavera"><img src="assets/${g.src}" alt="Foto del equipo" loading="lazy"></a>`).join("");
@@ -231,8 +237,9 @@ function validar(input) {
 }
 const formSumate = $("#form");
 const formEstado = $("#form-estado");
-const botonSumate = formSumate.querySelector('[type="submit"]');
-const inputs = [...formSumate.querySelectorAll(".campo input")];
+const botonSumate = formSumate && formSumate.querySelector('[type="submit"]');
+const inputs = formSumate ? [...formSumate.querySelectorAll(".campo input")] : [];
+if (formSumate && botonSumate && !document.documentElement.dataset.cuenta) {
 inputs.forEach((i) => i.addEventListener("input", () => i.closest(".campo").classList.contains("mal") && validar(i)));
 botonSumate.disabled = false;
 formSumate.addEventListener("submit", async (e) => {
@@ -279,6 +286,7 @@ formSumate.addEventListener("submit", async (e) => {
     botonSumate.disabled = false; botonSumate.textContent = "Enviar";
   }
 });
+}
 
 // Menú móvil, nav al scrollear, animaciones
 const menu = $("#menu");
