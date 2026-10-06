@@ -36,6 +36,11 @@ h1,h2,h3,.brand span,.stats b{font-family:Anton,Impact,sans-serif;font-weight:40
 #menu a:hover{opacity:1;color:var(--b)}
 .cta-link{background:var(--a);padding:8px 18px;border-radius:99px;opacity:1!important}
 .cta-link:hover{color:#fff!important;background:#9a35e0}
+/* Logueado: no tiene sentido “sumate” ni el formulario de contacto */
+html[data-cuenta] .cta-link,
+html[data-cuenta] #unite,
+html[data-cuenta] .hero-btns a[href="/#unite"],
+html[data-cuenta] .hero-btns a[href="#unite"]{display:none!important}
 .burger{display:none;background:none;border:0;width:34px;height:34px;position:relative;cursor:pointer}
 .burger span{position:absolute;left:5px;right:5px;height:2px;background:#fff;transition:.3s}
 .burger span:first-child{top:12px}.burger span:last-child{top:20px}
@@ -135,8 +140,29 @@ h3{font-size:1.5rem;text-transform:uppercase;margin-bottom:16px;color:var(--b)}
 .pcard:focus-visible .cara{outline:3px solid var(--b);outline-offset:3px}
 .pcard-in{position:absolute;inset:0;transition:transform .75s cubic-bezier(.3,1.3,.5,1);transform-style:preserve-3d}
 .pcard.girada .pcard-in{transform:rotateY(180deg)}
-.cara{position:absolute;inset:0;border-radius:var(--r);overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);transition:box-shadow .3s}
+.cara{position:absolute;inset:0;border-radius:var(--r);overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);transition:box-shadow .3s,border-color .3s}
 .pcard:hover .cara{box-shadow:0 18px 40px #b44cff40}
+/* Carta del jugador logueado: anillo dorado + violeta */
+.pcard.mia{z-index:1}
+.pcard.mia::before{
+  content:"";position:absolute;inset:-4px;border-radius:calc(var(--r) + 4px);z-index:0;pointer-events:none;
+  background:conic-gradient(from 210deg,var(--b),#ff7a1c,#b44cff,#ffd36b,var(--b));
+  box-shadow:0 0 18px #ffb81c55,0 0 36px #b44cff40;
+  animation:mia-pulso 2.8s ease-in-out infinite;
+}
+.pcard.mia::after{
+  content:"";position:absolute;inset:-1px;border-radius:calc(var(--r) + 1px);z-index:0;pointer-events:none;
+  background:var(--bg);box-shadow:inset 0 0 0 1px #ffffff18;
+}
+.pcard.mia .pcard-in{z-index:1;filter:drop-shadow(0 8px 20px #0008)}
+.pcard.mia .cara{box-shadow:inset 0 0 0 1px #ffb81c55,0 14px 32px #b44cff40}
+.pcard.mia:hover{--ty:-10px}
+.pcard.mia:hover::before{animation:none;box-shadow:0 0 28px #ffb81c88,0 0 52px #b44cff66}
+@keyframes mia-pulso{
+  0%,100%{box-shadow:0 0 16px #ffb81c44,0 0 32px #b44cff33;filter:brightness(1)}
+  50%{box-shadow:0 0 26px #ffb81c77,0 0 48px #b44cff55;filter:brightness(1.12)}
+}
+@media (prefers-reduced-motion:reduce){.pcard.mia::before{animation:none}}
 .frente img{width:100%;height:100%;object-fit:cover;transition:.5s}
 .pcard:hover .frente img{transform:scale(1.06)}
 .pcard-giro{position:absolute;right:10px;bottom:10px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#000b;border:1px solid #ffffff33;color:#fff;font-size:1rem;transition:transform .4s}
