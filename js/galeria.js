@@ -102,8 +102,7 @@ $("#uniforms").addEventListener("click", (e) => {
   lb.classList.add("open", "solo");
 });
 
-// Uniformes con candado. Es un juego, no seguridad real: los archivos son públicos;
-// el hash solo evita que la contraseña quede escrita a la vista en el código.
+// Uniformes con candado (sin sesión). Con sesión se ven siempre, sin contraseña.
 const HASH_UNIFORMES = "107b42b9255bada2509d9742387eda2a76270b22073b733dab292355d436dd7f";
 const uniWrap = $("#uni-wrap");
 async function sha256(texto) {
@@ -118,28 +117,33 @@ function desbloquearUniformes(animar) {
     el.src = el.dataset.src;
   });
 }
-try { if (localStorage.getItem("uniformes-ok") === "1") desbloquearUniformes(false); } catch (e) {}
-(function cablearOjito(wrap) {
-  if (!wrap) return;
-  const input = wrap.querySelector("input"), btn = wrap.querySelector(".clave-ojito");
-  const pintar = () => {
-    const ver = input.type === "text";
-    btn.innerHTML = ico(ver ? "ojo-off" : "ojo");
-    btn.setAttribute("aria-label", ver ? "Ocultar contraseña" : "Mostrar contraseña");
-  };
-  pintar();
-  btn.addEventListener("click", () => { input.type = input.type === "password" ? "text" : "password"; pintar(); });
-})($("#uni-candado .clave-wrap"));
-$("#uni-candado").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const form = e.currentTarget, clave = $("#uni-clave").value.trim().toLowerCase();
-  const ok = clave && window.crypto && crypto.subtle && (await sha256(clave)) === HASH_UNIFORMES;
-  if (ok) {
-    try { localStorage.setItem("uniformes-ok", "1"); } catch (err) {}
-    desbloquearUniformes(true);
-  } else {
-    $("#uni-error").textContent = "Contraseña incorrecta. ¿Seguro que sos campeón?";
-    form.classList.remove("mal"); void form.offsetWidth; form.classList.add("mal");
-    $("#uni-clave").select();
-  }
-});
+const logueado = !!document.documentElement.dataset.cuenta || !!(typeof Sesion !== "undefined" && Sesion.actual && Sesion.actual());
+if (logueado) {
+  desbloquearUniformes(false);
+} else {
+  try { if (localStorage.getItem("uniformes-ok") === "1") desbloquearUniformes(false); } catch (e) {}
+  (function cablearOjito(wrap) {
+    if (!wrap) return;
+    const input = wrap.querySelector("input"), btn = wrap.querySelector(".clave-ojito");
+    const pintar = () => {
+      const ver = input.type === "text";
+      btn.innerHTML = ico(ver ? "ojo-off" : "ojo");
+      btn.setAttribute("aria-label", ver ? "Ocultar contraseña" : "Mostrar contraseña");
+    };
+    pintar();
+    btn.addEventListener("click", () => { input.type = input.type === "password" ? "text" : "password"; pintar(); });
+  })($("#uni-candado .clave-wrap"));
+  $("#uni-candado").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget, clave = $("#uni-clave").value.trim().toLowerCase();
+    const ok = clave && window.crypto && crypto.subtle && (await sha256(clave)) === HASH_UNIFORMES;
+    if (ok) {
+      try { localStorage.setItem("uniformes-ok", "1"); } catch (err) {}
+      desbloquearUniformes(true);
+    } else {
+      $("#uni-error").textContent = "Contraseña incorrecta. ¿Seguro que sos campeón?";
+      form.classList.remove("mal"); void form.offsetWidth; form.classList.add("mal");
+      $("#uni-clave").select();
+    }
+  });
+}

@@ -20,6 +20,7 @@
     "/admin": "admin",
     "/asistencia": "asistencia",
     "/caja": "caja",
+    "/jugadas": "jugadas",
     "/torneo": "torneo",
   };
 
