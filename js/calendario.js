@@ -55,23 +55,26 @@ function abrirDia(iso) {
     <button class="dia-x" aria-label="Cerrar">${ico("cerrar")}</button></div>`;
   if (t) html += `<div class="dia-bloque ${pasado(t) ? "jugado" : "proximo"}">
       <span class="dia-tag">${pasado(t) ? "Torneo jugado" : "Torneo próximo"}</span>
-      <b>${t.nombre}</b>
-      <p>${ico("calendario")} ${rango(t)} &nbsp;·&nbsp; ${ico("pin")} ${t.lugar}</p>
+      <b>${escHtml(t.nombre)}</b>
+      <p>${ico("calendario")} ${escHtml(rango(t))} &nbsp;·&nbsp; ${ico("pin")} ${escHtml(t.lugar)}</p>
       ${t.logro && pasado(t) ? `<p class="dia-logro">${conIconos(t.logro)}</p>` : ""}
       ${!pasado(t) && f >= hoy ? `<p>Faltan ${Math.ceil((t.d - hoy) / 864e5)} días para que empiece.</p>` : ""}
-      <a class="btn ghost dia-mapa" href="/torneo#${t.id}">Ver torneo →</a>
+      <a class="btn ghost dia-mapa" href="/torneo#${escHtml(t.id)}">Ver torneo →</a>
     </div>`;
   if (partidos.length) html += `<div class="dia-bloque">
       <span class="dia-tag">Partidos de este día</span>
       ${partidos.map((r) => `<div class="dia-partido ${esV(r) ? "win" : esD(r) ? "loss" : ""}">
-        <span>vs <b>${r.rival}</b><small>${r.torneo.split(" · ").slice(1).join(" · ") || r.torneo}</small></span>
-        <strong>${r.resultado ? (esV(r) ? "Victoria" : "Derrota") : r.nuestros + " - " + r.suyos}</strong></div>`).join("")}
+        <span>vs <b>${escHtml(r.rival)}</b><small>${escHtml(r.torneo.split(" · ").slice(1).join(" · ") || r.torneo)}</small></span>
+        <strong>${r.resultado ? (esV(r) ? "Victoria" : "Derrota") : escHtml(r.nuestros) + " - " + escHtml(r.suyos)}</strong></div>`).join("")}
     </div>`;
-  if (entrenos.length) html += entrenos.map((e) => `<div class="dia-bloque entreno">
+  if (entrenos.length) html += entrenos.map((e) => {
+    const mapaOk = e.mapa && /^https?:\/\//i.test(e.mapa) ? e.mapa : "";
+    return `<div class="dia-bloque entreno">
       <span class="dia-tag">Entrenamiento</span>
-      <b>${e.hora} hs · ${e.lugar}</b>
-      ${e.mapa ? `<a class="btn ghost dia-mapa" href="${e.mapa}" target="_blank" rel="noopener">${ico("pin")} Cómo llegar</a>` : ""}
-    </div>`).join("");
+      <b>${escHtml(e.hora)} hs · ${escHtml(e.lugar)}</b>
+      ${mapaOk ? `<a class="btn ghost dia-mapa" href="${escHtml(mapaOk)}" target="_blank" rel="noopener">${ico("pin")} Cómo llegar</a>` : ""}
+    </div>`;
+  }).join("");
   elegido = iso;
   pintarMes();
   const panel = $("#dia-info");
@@ -93,8 +96,8 @@ $("#dia-modal").addEventListener("click", (e) => { if (e.target.closest(".dia-x"
 document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("#dia-modal").classList.contains("open")) cerrarDia(); });
 pintarMes();
 $("#fixture").innerHTML = torneos.map((t) =>
-  `<a class="row ${pasado(t) ? "win" : ""}" href="/torneo#${t.id}"><div class="date">${t.d.getDate()}<small>${MESES[t.d.getMonth()]}</small></div>
-    <div class="info"><b>${t.nombre}</b><small>${rango(t)} · ${t.lugar}</small></div>
+  `<a class="row ${pasado(t) ? "win" : ""}" href="/torneo#${escHtml(t.id)}"><div class="date">${t.d.getDate()}<small>${MESES[t.d.getMonth()]}</small></div>
+    <div class="info"><b>${escHtml(t.nombre)}</b><small>${escHtml(rango(t))} · ${escHtml(t.lugar)}</small></div>
     <div class="score small">${pasado(t) ? (t.logro ? conIconos(t.logro) : "Jugado") : "Próximo"}</div></a>`).join("");
 
 // Resultados
@@ -102,8 +105,8 @@ $("#results").innerHTML = RESULTADOS.map((r) => {
   const { d, m } = parts(toDate(r.fecha));
   const cls = esV(r) ? "win" : esD(r) ? "loss" : "";
   return `<div class="row ${cls}"><div class="date">${d}<small>${m}</small></div>
-    <div class="info"><b>vs ${r.rival}</b><small>${r.torneo}</small></div>
-    <div class="score">${r.resultado ? (esV(r) ? "Victoria" : "Derrota") : r.nuestros + " - " + r.suyos}</div></div>`;
+    <div class="info"><b>vs ${escHtml(r.rival)}</b><small>${escHtml(r.torneo)}</small></div>
+    <div class="score">${r.resultado ? (esV(r) ? "Victoria" : "Derrota") : escHtml(r.nuestros) + " - " + escHtml(r.suyos)}</div></div>`;
 }).join("");
 
 // Datos estructurados: cada torneo como evento deportivo

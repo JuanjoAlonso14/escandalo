@@ -24,6 +24,8 @@ for (const j of JUGADORES) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>${esc(titulo)}</title>
   <meta name="description" content="${esc(desc)}">
   <link rel="canonical" href="${BASE}/jugador/${slug}">

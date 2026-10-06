@@ -5,8 +5,8 @@ $("#mail").href = "mailto:" + TEAM.email;
 $("#burger").onclick = () => $("#menu").classList.toggle("open");
 $("#menu").addEventListener("click", () => $("#menu").classList.remove("open"));
 
-const fotoHtml = (g, i) => `<div class="gitem" data-i="${i}"><img src="assets/${g.src}" alt="Foto de Escándalo Ultimate en ${GALERIA_TORNEOS.find((t) => t.id === torneo)?.nombre || "un torneo"}" loading="lazy"></div>`;
-const videoHtml = (g, i) => `<div class="gitem video" data-i="${i}"><img src="assets/${g.poster}" alt="Video de Escándalo Ultimate en ${GALERIA_TORNEOS.find((t) => t.id === torneo)?.nombre || "un torneo"}" loading="lazy"><span class="play">▶</span></div>`;
+const fotoHtml = (g, i) => `<div class="gitem" data-i="${i}"><img src="assets/${escHtml(g.src)}" alt="Foto de Escándalo Ultimate en ${escHtml(GALERIA_TORNEOS.find((t) => t.id === torneo)?.nombre || "un torneo")}" loading="lazy"></div>`;
+const videoHtml = (g, i) => `<div class="gitem video" data-i="${i}"><img src="assets/${escHtml(g.poster)}" alt="Video de Escándalo Ultimate en ${escHtml(GALERIA_TORNEOS.find((t) => t.id === torneo)?.nombre || "un torneo")}" loading="lazy"><span class="play">▶</span></div>`;
 
 let torneo = null, filtro = "todo";
 let lista = [];                 // lo que se ve con el torneo y filtro actuales (el visor navega esta lista)
@@ -27,7 +27,7 @@ function abrirTorneo(id) {
   torneo = id; filtro = "todo";
   document.querySelectorAll(".chip[data-f]").forEach((c) => c.classList.toggle("on", c.dataset.f === "todo"));
   $("#t-titulo").textContent = t.nombre;
-  $("#t-sub").innerHTML = `${t.lugar} · ${t.fecha}${t.logro ? " · " + conIconos(t.logro) : ""}`;
+  $("#t-sub").innerHTML = `${escHtml(t.lugar)} · ${escHtml(t.fecha)}${t.logro ? " · " + conIconos(t.logro) : ""}`;
   $("#t-resumen").href = "/torneo#" + id;
   $("#torneos-view").hidden = true; $("#torneo-view").hidden = false;
   history.replaceState(null, "", "#" + id);
@@ -40,8 +40,8 @@ function volver() {
 }
 $("#tcards").innerHTML = GALERIA_TORNEOS.map((t) => {
   const n = GALERIA.filter((g) => (g.torneo || "primavera") === t.id);
-  return `<button class="tcard" data-t="${t.id}"><img src="assets/${t.portada}" alt="" loading="lazy">
-    <div><b>${t.nombre}</b><small>${t.lugar} · ${t.fecha}</small>
+  return `<button class="tcard" data-t="${escHtml(t.id)}"><img src="assets/${escHtml(t.portada)}" alt="" loading="lazy">
+    <div><b>${escHtml(t.nombre)}</b><small>${escHtml(t.lugar)} · ${escHtml(t.fecha)}</small>
     <small>${n.filter((g) => g.tipo === "foto").length} fotos · ${n.filter((g) => g.tipo === "video").length} videos</small></div></button>`;
 }).join("");
 $("#tcards").addEventListener("click", (e) => { const c = e.target.closest(".tcard"); if (c) abrirTorneo(c.dataset.t); });
