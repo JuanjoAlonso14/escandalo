@@ -1,11 +1,15 @@
 // Página Ultimate: tarjetas de recursos agrupadas
+const quizLogueado = !!document.documentElement.dataset.cuenta
+  || !!(typeof Sesion !== "undefined" && Sesion.actual && Sesion.actual());
 const TARJETA_QUIZ = `
     <article class="recurso quiz-tarjeta">
       <div class="recurso-tapa quiz-tapa" aria-hidden="true"><span>V</span><span>F</span></div>
       <div class="recurso-info">
-        <div class="etiquetas"><span>Interactivo</span><span>10 preguntas</span></div>
+        <div class="etiquetas"><span>Interactivo</span><span>${quizLogueado ? "Hasta 12 preguntas" : "10 preguntas"}</span></div>
         <h3>Quiz de reglas</h3>
-        <p>Poné a prueba lo que sabés con preguntas de verdadero o falso. Elegí nivel: fácil, intermedio o experto.</p>
+        <p>Poné a prueba lo que sabés con preguntas de verdadero o falso. Elegí nivel: ${quizLogueado
+          ? "fácil, intermedio, experto, maestro o leyenda."
+          : "fácil, intermedio o experto."}</p>
         <div class="recurso-acciones"><button class="btn" data-quiz>Empezar quiz</button></div>
       </div>
     </article>`;
