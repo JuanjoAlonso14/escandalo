@@ -30,7 +30,7 @@
     return {
       TORNEOS: torneos.map((t) => ({ id: t.id, nombre: t.nombre, desde: t.desde, hasta: t.hasta, lugar: t.lugar,
         ...(t.logro && { logro: t.logro }), ...(t.hito && { hito: t.hito }) })),
-      JUGADORES: jugadores.map((j) => ({ nombre: j.nombre, apodo: j.apodo, foto: j.foto,
+      JUGADORES: jugadores.map((j) => ({ id: j.id, slug: j.slug, nombre: j.nombre, apodo: j.apodo, foto: j.foto,
         ...(j.numero != null && { numero: j.numero }), ...(j.nacionalidad && { nacionalidad: j.nacionalidad }), ...(j.dato && { dato: j.dato }) })),
       RESULTADOS: partidos.filter((p) => porId[p.torneo_id]).map((p) => ({ fecha: p.fecha, rival: p.rival, nuestros: p.nuestros, suyos: p.suyos,
         torneo: baseNombre(porId[p.torneo_id]) + (p.fase ? ` · ${p.fase}` : "") })),
@@ -74,7 +74,7 @@
       try {
         const [torneos, jugadores, partidos, equipo, entrenamientos, proximos, historia, hitos] = await Promise.all([
           pedir("torneos?select=*&order=desde.asc"),
-          pedir("jugadores?select=*&activo=eq.true&order=nombre.asc"),
+          pedir("jugadores?select=id,slug,nombre,apodo,foto,numero,nacionalidad,dato,activo&activo=eq.true&order=nombre.asc"),
           pedir("partidos?select=*&order=fecha.asc,id.asc"),
           pedir("equipo?select=*&id=eq.1"),
           pedir("entrenamientos?select=*&order=orden.asc,id.asc"),

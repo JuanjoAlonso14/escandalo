@@ -1,8 +1,7 @@
 // Página /login: se elige un jugador de la lista y se escribe su contraseña (por ahora sin registro).
 // La contraseña la valida la base de datos; acá no hay ninguna escrita.
 // Si el login es correcto, guarda la sesión y manda al inicio.
-const limpiar = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
-const slugDe = (j) => j.foto.replace(/\.[a-z0-9]+$/i, "");
+const slugDe = (j) => j.slug || j.foto.replace(/\.[a-z0-9]+$/i, "");
 
 const form = document.querySelector("#login-form");
 const lista = document.querySelector("#login-jugador");
@@ -22,7 +21,7 @@ const aviso = document.querySelector("#login-error");
 
 lista.innerHTML = '<option value="">Elegí tu nombre…</option>' +
   [...JUGADORES].sort((a, b) => a.nombre.localeCompare(b.nombre, "es"))
-    .map((j) => `<option value="${slugDe(j)}">${j.nombre}</option>`).join("");
+    .map((j) => `<option value="${slugDe(j)}" data-id="${j.id || ""}">${j.nombre}</option>`).join("");
 
 if (typeof SUPABASE === "undefined" || !SUPABASE) {
   form.querySelectorAll("select,input,button").forEach((e) => (e.disabled = true));
@@ -41,6 +40,8 @@ form.addEventListener("submit", async (e) => {
   const slug = lista.value, escrito = document.querySelector("#login-clave").value;
   const j = JUGADORES.find((x) => slugDe(x) === slug);
   if (!j) return error("Elegí tu nombre de la lista.");
+  const jugadorId = j.id != null ? Number(j.id) : Number(lista.selectedOptions[0]?.dataset.id);
+  if (!jugadorId) return error("Falta el id del jugador. Recargá la página.");
 
   if (!escrito) return error("Escribí tu contraseña.");
 
@@ -57,7 +58,7 @@ form.addEventListener("submit", async (e) => {
     if (r.status === 400) { boton.disabled = false; boton.textContent = "Entrar"; return error("Contraseña incorrecta."); }
     if (!r.ok || !datos.access_token) throw new Error(datos.msg || datos.error_description || "HTTP " + r.status);
     try { localStorage.setItem("escandalo-sesion", JSON.stringify({ access_token: datos.access_token, refresh_token: datos.refresh_token,
-      expires_at: datos.expires_at, jugador: slug, nombre: j.nombre })); } catch (err) {}
+      expires_at: datos.expires_at, jugador: slug, jugador_id: jugadorId, nombre: j.nombre })); } catch (err) {}
     location.href = "/";
   } catch (err) {
     console.warn("Login:", err.message);

@@ -79,8 +79,8 @@
 
     const filasJug = jugadores.map((j) => {
       const montos = MESES.map((m) => {
-        const fila = ingresos.find((x) => x.jugador_slug === j.slug && x.mes === m.n);
-        return celdaNum(fila?.monto, `data-aporte data-slug="${esc(j.slug)}" data-mes="${m.n}" data-monto="${fila ? fila.monto : ""}"`);
+        const fila = ingresos.find((x) => x.jugador_id === j.id && x.mes === m.n);
+        return celdaNum(fila?.monto, `data-aporte data-id="${j.id}" data-mes="${m.n}" data-monto="${fila ? fila.monto : ""}"`);
       }).join("");
       return `<tr><th class="caja-nom">${esc(j.nombre)}</th>${montos}</tr>`;
     }).join("");
@@ -149,8 +149,8 @@
       </table></div>`;
   }
 
-  function formAporte({ slug, invitado, mes, monto } = {}) {
-    const optsJug = jugadores.map((j) => `<option value="${esc(j.slug)}" ${j.slug === slug ? "selected" : ""}>${esc(j.nombre)}</option>`).join("");
+  function formAporte({ id, invitado, mes, monto } = {}) {
+    const optsJug = jugadores.map((j) => `<option value="${j.id}" ${j.id === Number(id) ? "selected" : ""}>${esc(j.nombre)}</option>`).join("");
     const optsMes = MESES.map((m) => `<option value="${m.n}" ${m.n === Number(mes) ? "selected" : ""}>${m.nom}</option>`).join("");
     const tipo = invitado ? "invitado" : "jugador";
     const m = abrirModal(`
@@ -162,7 +162,7 @@
             <option value="invitado" ${tipo === "invitado" ? "selected" : ""}>Jugador invitado</option>
           </select>
         </label>
-        <label data-campo="jugador">Jugador<select name="slug"><option value="">Elegí…</option>${optsJug}</select></label>
+        <label data-campo="jugador">Jugador<select name="jugador_id"><option value="">Elegí…</option>${optsJug}</select></label>
         <label data-campo="invitado" hidden>Nombre del invitado<input name="invitado" value="${esc(invitado || "")}" placeholder="Ej: Tonga"></label>
         <div class="adm-fila">
           <label>Mes<select name="mes">${optsMes}</select></label>
@@ -184,17 +184,17 @@
       e.preventDefault(); err.textContent = "";
       const mesN = Number(f.mes.value), montoN = f.monto.value === "" ? 0 : Number(f.monto.value);
       if (!Number.isFinite(montoN) || montoN < 0) return (err.textContent = "El monto no es válido.");
-      let jugador_slug = null, inv = null;
+      let jugador_id = null, inv = null;
       if (f.tipo.value === "jugador") {
-        jugador_slug = f.slug.value || null;
-        if (!jugador_slug) return (err.textContent = "Elegí el jugador.");
+        jugador_id = f.jugador_id.value ? Number(f.jugador_id.value) : null;
+        if (!jugador_id) return (err.textContent = "Elegí el jugador.");
       } else {
         inv = f.invitado.value.trim();
         if (!inv) return (err.textContent = "Escribí el nombre del invitado.");
       }
       const boton = f.querySelector('[type="submit"]'); boton.disabled = true;
       try {
-        await rpc("guardar_caja_ingreso", { p_anio: ANIO, p_mes: mesN, p_monto: montoN || null, p_jugador_slug: jugador_slug, p_invitado: inv });
+        await rpc("guardar_caja_ingreso", { p_anio: ANIO, p_mes: mesN, p_monto: montoN || null, p_jugador_id: jugador_id, p_invitado: inv });
         m.remove(); await cargar();
       } catch (er) { err.textContent = er.message; boton.disabled = false; }
     });
@@ -236,7 +236,7 @@
     if (!cel || !esAdmin) return;
     if (cel.hasAttribute("data-aporte")) {
       return formAporte({
-        slug: cel.dataset.slug || "",
+        id: cel.dataset.id || "",
         invitado: cel.dataset.invitado || "",
         mes: cel.dataset.mes,
         monto: cel.dataset.monto,
@@ -249,7 +249,7 @@
 
   async function cargar() {
     const [rJ, rI, rE] = await Promise.all([
-      pedir("jugadores?select=slug,nombre,apodo,activo&activo=eq.true&order=nombre.asc"),
+      pedir("jugadores?select=id,slug,nombre,apodo,activo&activo=eq.true&order=nombre.asc"),
       pedir(`caja_ingresos?select=*&anio=eq.${ANIO}&order=mes.asc`),
       pedir(`caja_egresos?select=*&anio=eq.${ANIO}&order=mes.asc`),
     ]);

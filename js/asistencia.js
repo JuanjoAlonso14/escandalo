@@ -19,18 +19,18 @@ const Asistencia = (() => {
   const cargar = async () => {
     const [practicas, jugadores, asistencias] = await Promise.all([
       pedirTodo("practicas?select=id,fecha,lugar,notas&order=fecha.asc,id.asc"),
-      pedirTodo("jugadores?select=slug,nombre,apodo,foto,activo&order=nombre.asc"),
-      pedirTodo("asistencias?select=practica_id,jugador_slug,presente&order=practica_id.asc,jugador_slug.asc"),
+      pedirTodo("jugadores?select=id,slug,nombre,apodo,foto,activo&order=nombre.asc"),
+      pedirTodo("asistencias?select=practica_id,jugador_id,presente&order=practica_id.asc,jugador_id.asc"),
     ]);
     return { practicas, jugadores, asistencias };
   };
 
   // Totales por jugador, por práctica y del equipo. "Disponibles" = prácticas que contaban para esa persona.
   function calcular({ practicas, jugadores, asistencias }) {
-    const porJugador = new Map(jugadores.map((j) => [j.slug, { ...j, disponibles: 0, fue: 0, marcas: new Map() }]));
+    const porJugador = new Map(jugadores.map((j) => [j.id, { ...j, disponibles: 0, fue: 0, marcas: new Map() }]));
     const porPractica = new Map(practicas.map((p) => [p.id, { presentes: 0, total: 0 }]));
     for (const a of asistencias) {
-      const j = porJugador.get(a.jugador_slug), p = porPractica.get(a.practica_id);
+      const j = porJugador.get(a.jugador_id), p = porPractica.get(a.practica_id);
       if (!j || !p) continue;
       j.disponibles++; p.total++; j.marcas.set(a.practica_id, a.presente);
       if (a.presente) { j.fue++; p.presentes++; }
@@ -41,9 +41,10 @@ const Asistencia = (() => {
   }
   const ordenar = (lista, modo) => [...lista].sort((a, b) => (modo === "cantidad" ? b.fue - a.fue || b.pct - a.pct : b.pct - a.pct || b.fue - a.fue) || a.nombre.localeCompare(b.nombre, "es"));
   const clasePct = (p) => (p >= 80 ? "alto" : p >= 60 ? "medio" : "bajo");
+  const esYo = (j, propio) => propio != null && (j.slug === propio || j.id === propio);
 
   function tarjetas(datos, c, propio) {
-    const yo = propio && c.lista.find((j) => j.slug === propio);
+    const yo = propio != null && c.lista.find((j) => esYo(j, propio));
     const ult = datos.practicas[datos.practicas.length - 1], u = ult && c.porPractica.get(ult.id);
     return `<div class="asi-tarjetas">
       <div class="asi-t"><b>${datos.practicas.length}</b><span>Prácticas registradas</span></div>
@@ -54,7 +55,7 @@ const Asistencia = (() => {
   }
 
   function tabla(c, propio, modo) {
-    const fila = (j, i) => `<tr class="${j.slug === propio ? "yo" : ""}">
+    const fila = (j, i) => `<tr class="${esYo(j, propio) ? "yo" : ""}">
       <td class="asi-pos">${i + 1}</td>
       <td><div class="asi-quien"><img src="assets/jugadores/${esc(j.foto)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span><b>${esc(j.apodo)}</b><small>${esc(j.nombre)}</small></span></div></td>
       <td class="asi-num">${j.fue}<small> de ${j.disponibles}</small></td>
@@ -83,7 +84,7 @@ const Asistencia = (() => {
       const v = j.marcas.get(p.id), cls = v === undefined ? "na" : v ? "fue" : "falto";
       return `<i class="${cls}" title="${esc(j.apodo)} · ${fecha(p.fecha)}: ${v === undefined ? "no contaba" : v ? "fue" : "faltó"}"></i>`;
     };
-    const filas = ordenar(c.lista, modo).map((j) => `<div class="asi-fila${j.slug === propio ? " yo" : ""}"><span class="nom">${esc(j.apodo)}</span><span class="celdas">${datos.practicas.map((p) => celda(j, p)).join("")}</span></div>`).join("");
+    const filas = ordenar(c.lista, modo).map((j) => `<div class="asi-fila${esYo(j, propio) ? " yo" : ""}"><span class="nom">${esc(j.apodo)}</span><span class="celdas">${datos.practicas.map((p) => celda(j, p)).join("")}</span></div>`).join("");
     return `<div class="asi-mapa"><div class="asi-mapa-pista" style="width:${ancho}px">
       <div class="asi-cab"><span class="nom"></span><span class="meses">${meses.map((m) => `<span class="mes" style="width:${m.n * CEL}px">${m.nombre}</span>`).join("")}</span></div>
       <div class="asi-cab"><span class="nom"></span><span class="celdas">${datos.practicas.map((p) => `<span class="dia">${+p.fecha.slice(8)}</span>`).join("")}</span></div>
