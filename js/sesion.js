@@ -1,6 +1,8 @@
 // Sesión del usuario: menú de cuenta arriba a la derecha (nombre, panel de admin y cerrar sesión).
 // Expone window.Sesion para que lo use el panel de administración. Sin base configurada no hace nada.
+// Ideal: cargar este archivo justo después del <header> para que no parpadee el menú al navegar.
 (() => {
+  if (window.Sesion) return;   // no inicializar dos veces
   const CLAVE = "escandalo-sesion";
   const hay = typeof SUPABASE !== "undefined" && SUPABASE;
   const leer = () => { try { return JSON.parse(localStorage.getItem(CLAVE) || "null"); } catch (e) { return null; } };
@@ -54,7 +56,9 @@
   if (!nav) return;
   const cuenta = document.createElement("div");
   cuenta.className = "cuenta";
+  // Primero montamos la cuenta real y después sacamos el placeholder del boot (evita un frame vacío)
   nav.appendChild(cuenta);
+  nav.querySelectorAll(".cuenta-boot").forEach((el) => el.remove());
 
   function pintar(rolActual) {
     const s = leer(); if (!s) { cuenta.remove(); return; }
