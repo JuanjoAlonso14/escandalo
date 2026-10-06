@@ -9,3 +9,9 @@ const SUPABASE = ["localhost", "127.0.0.1"].includes(location.hostname)
   : ["escandaloultimate.com", "www.escandaloultimate.com"].includes(location.hostname)
     ? { url: "https://efdlvrznaqbijyftwzgf.supabase.co", key: "sb_publishable_sm-zM-7vH4P4nL36mvwtoQ_ZKBcvnje", espera: 1200 }
     : null;
+
+// El form Sumate vive en el HTML antes de que main.js cargue (datos.js espera a la base).
+// Sin esto, un click temprano hace submit nativo y choca con CSP form-action 'none'.
+document.addEventListener("submit", (e) => {
+  if (e.target && e.target.id === "form") e.preventDefault();
+}, true);

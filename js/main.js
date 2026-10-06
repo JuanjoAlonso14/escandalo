@@ -231,8 +231,10 @@ function validar(input) {
 }
 const formSumate = $("#form");
 const formEstado = $("#form-estado");
+const botonSumate = formSumate.querySelector('[type="submit"]');
 const inputs = [...formSumate.querySelectorAll(".campo input")];
 inputs.forEach((i) => i.addEventListener("input", () => i.closest(".campo").classList.contains("mal") && validar(i)));
+botonSumate.disabled = false;
 formSumate.addEventListener("submit", async (e) => {
   e.preventDefault();
   formEstado.textContent = ""; formEstado.className = "form-estado";
@@ -240,8 +242,7 @@ formSumate.addEventListener("submit", async (e) => {
   if (malos.length) return malos[0].focus();
   if (formSumate.querySelector('[name="_honey"]')?.value) return;   // bots
   const f = new FormData(formSumate);
-  const boton = formSumate.querySelector('[type="submit"]');
-  boton.disabled = true; boton.textContent = "Enviando…";
+  botonSumate.disabled = true; botonSumate.textContent = "Enviando…";
   try {
     const r = await fetch("https://formsubmit.co/ajax/" + TEAM.email, {
       method: "POST",
@@ -260,9 +261,9 @@ formSumate.addEventListener("submit", async (e) => {
     });
     const d = await r.json().catch(() => ({}));
     const msg = String(d.message || "");
-    // Primera vez: FormSubmit pide activar con un link que manda a TEAM.email
+    // Primera vez por dominio: FormSubmit manda un link a TEAM.email (activar también escandaloultimate.com)
     if (/activat/i.test(msg)) {
-      formEstado.textContent = "Falta un paso: abrí el mail de FormSubmit en " + TEAM.email + " y tocá “Activate Form”. Después ya llega solo.";
+      formEstado.textContent = "Falta activar FormSubmit: mirá el mail en " + TEAM.email + " (asunto Activate Form) del dominio " + location.hostname + " y tocá el link.";
       formEstado.classList.add("mal");
       return;
     }
@@ -275,7 +276,7 @@ formSumate.addEventListener("submit", async (e) => {
     formEstado.textContent = "No se pudo enviar. Probá de nuevo o escribinos a " + TEAM.email;
     formEstado.classList.add("mal");
   } finally {
-    boton.disabled = false; boton.textContent = "Enviar";
+    botonSumate.disabled = false; botonSumate.textContent = "Enviar";
   }
 });
 

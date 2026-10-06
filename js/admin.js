@@ -51,7 +51,7 @@
 
   async function cargar() {
     try {
-      const r = await pedir("jugadores?select=*&order=nombre.asc");
+      const r = await pedir("jugadores?select=id,slug,nombre,apodo,foto,numero,nacionalidad,dato,activo,creado_en&order=nombre.asc");
       if (!r.ok) throw new Error(await mensajeError(r));
       jugadores = await r.json();
     } catch (e) { raiz.innerHTML = `<p class="adm-vacio">No se pudo cargar: ${esc(e.message)}</p>`; return; }
@@ -72,7 +72,7 @@
             <table>
               <thead><tr><th>Jugador</th><th>Apodo</th><th>N°</th><th class="adm-oculta">Nacionalidad</th><th>Visible</th><th></th></tr></thead>
               <tbody>${jugadores.map((j) => `
-                <tr class="${j.activo ? "" : "inactivo"}" data-slug="${esc(j.slug)}">
+                <tr class="${j.activo ? "" : "inactivo"}" data-id="${j.id}">
                   <td><div class="adm-quien"><img src="assets/jugadores/${esc(j.foto)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><b>${esc(j.nombre)}</b></div></td>
                   <td>${esc(j.apodo)}</td>
                   <td>${j.numero ?? "–"}</td>
@@ -130,7 +130,7 @@
       const boton = f.querySelector('[type="submit"]'); boton.disabled = true;
       try {
         const r = nuevo ? await pedir("jugadores", { method: "POST", body: JSON.stringify({ slug, ...cuerpo }) })
-                        : await pedir(`jugadores?slug=eq.${encodeURIComponent(j.slug)}`, { method: "PATCH", body: JSON.stringify(cuerpo) });
+                        : await pedir(`jugadores?id=eq.${j.id}`, { method: "PATCH", body: JSON.stringify(cuerpo) });
         if (!r.ok) throw new Error(await mensajeError(r));
         const filas = await r.json();
         if (!filas.length) throw new Error("No tenés permiso para hacer eso.");
@@ -149,7 +149,7 @@
     m.querySelector("[data-ok]").addEventListener("click", async (e) => {
       e.target.disabled = true;
       try {
-        const r = await pedir(`jugadores?slug=eq.${encodeURIComponent(j.slug)}`, { method: "DELETE" });
+        const r = await pedir(`jugadores?id=eq.${j.id}`, { method: "DELETE" });
         if (!r.ok) throw new Error(await mensajeError(r));
         if (!(await r.json()).length) throw new Error("No tenés permiso para hacer eso.");
         m.remove(); aviso(`${j.apodo} eliminado`); await cargar();
@@ -159,16 +159,16 @@
 
   raiz.addEventListener("click", (e) => {
     if (e.target.closest("[data-nuevo]")) return formulario(null);
-    const fila = e.target.closest("tr[data-slug]"); if (!fila) return;
-    const j = jugadores.find((x) => x.slug === fila.dataset.slug);
+    const fila = e.target.closest("tr[data-id]"); if (!fila) return;
+    const j = jugadores.find((x) => String(x.id) === fila.dataset.id);
     if (e.target.closest("[data-editar]")) formulario(j);
     else if (e.target.closest("[data-borrar]")) confirmarBorrado(j);
   });
   raiz.addEventListener("change", async (e) => {
     const sw = e.target.closest("[data-visible]"); if (!sw) return;
-    const j = jugadores.find((x) => x.slug === sw.closest("tr").dataset.slug);
+    const j = jugadores.find((x) => String(x.id) === sw.closest("tr").dataset.id);
     try {
-      const r = await pedir(`jugadores?slug=eq.${encodeURIComponent(j.slug)}`, { method: "PATCH", body: JSON.stringify({ activo: sw.checked }) });
+      const r = await pedir(`jugadores?id=eq.${j.id}`, { method: "PATCH", body: JSON.stringify({ activo: sw.checked }) });
       if (!r.ok || !(await r.json()).length) throw new Error("No tenés permiso para hacer eso.");
       aviso(sw.checked ? `${j.apodo} ahora es visible` : `${j.apodo} ahora está oculto`); await cargar();
     } catch (er) { sw.checked = !sw.checked; aviso(er.message, true); }
@@ -219,10 +219,10 @@
   function formularioPractica(p) {
     const nueva = !p;
     const marcas = new Map();
-    for (const a of datosA.asistencias) if (p && a.practica_id === p.id) marcas.set(a.jugador_slug, a.presente);
+    for (const a of datosA.asistencias) if (p && a.practica_id === p.id) marcas.set(a.jugador_id, a.presente);
     // En una práctica nueva: los jugadores visibles, todos como "faltó" (se marca quién fue). Al editar: los que tenían registro.
-    const lista = datosA.jugadores.filter((j) => (nueva ? j.activo : marcas.has(j.slug) || j.activo));
-    const estado = (j) => (nueva ? "falto" : marcas.has(j.slug) ? (marcas.get(j.slug) ? "fue" : "falto") : "nocuenta");
+    const lista = datosA.jugadores.filter((j) => (nueva ? j.activo : marcas.has(j.id) || j.activo));
+    const estado = (j) => (nueva ? "falto" : marcas.has(j.id) ? (marcas.get(j.id) ? "fue" : "falto") : "nocuenta");
     const iso = nueva ? hoyISO() : p.fecha;
     const m = abrirModal(`
       <div class="quiz-top"><span>${nueva ? "Agregar práctica" : "Editar práctica"}</span><button class="quiz-x" data-cerrar aria-label="Cerrar">${ico("cerrar")}</button></div>
@@ -236,7 +236,7 @@
         <div class="asi-quienes-cab"><span>¿Quiénes fueron? <small>Tocá cada uno para cambiar</small></span>
           <span class="asi-rapido"><button type="button" data-todos="fue">Todos fueron</button><button type="button" data-todos="falto">Nadie</button></span></div>
         <div class="asi-chips">${lista.map((j) => `
-          <button type="button" class="asi-chip" data-slug="${esc(j.slug)}" data-estado="${estado(j)}">
+          <button type="button" class="asi-chip" data-id="${j.id}" data-estado="${estado(j)}">
             <img src="assets/jugadores/${esc(j.foto)}" alt="" onerror="this.style.visibility='hidden'">
             <span><b>${esc(j.apodo)}</b><small>${ESTADOS[estado(j)].txt}</small></span></button>`).join("")}</div>
         <p class="asi-cuenta" aria-live="polite"></p>
@@ -260,7 +260,7 @@
     f.addEventListener("submit", async (e) => {
       e.preventDefault(); err.textContent = "";
       if (!f.fecha.value) return (err.textContent = "Elegí la fecha de la práctica.");
-      const asist = [...f.querySelectorAll(".asi-chip")].filter((c) => c.dataset.estado !== "nocuenta").map((c) => ({ slug: c.dataset.slug, presente: c.dataset.estado === "fue" }));
+      const asist = [...f.querySelectorAll(".asi-chip")].filter((c) => c.dataset.estado !== "nocuenta").map((c) => ({ id: Number(c.dataset.id), presente: c.dataset.estado === "fue" }));
       if (!asist.length) return (err.textContent = "Marcá al menos a un jugador.");
       const boton = f.querySelector('[type="submit"]'); boton.disabled = true;
       try {
