@@ -24,10 +24,10 @@ function textoFechas() {
 document.title = `${base} — Escándalo Ultimate`;
 let html = `
   <a class="volver" href="/calendario">‹ Calendario</a>
-  <header class="t-hero${portada ? "" : " sin-foto"}"${portada ? ` style="--img:url('/assets/${portada}')"` : ""}>
+  <header class="t-hero${portada ? "" : " sin-foto"}"${portada ? ` style="--img:url('/assets/${escHtml(portada)}')"` : ""}>
     <span class="t-estado ${jugado ? "jugado" : "proximo"}">${jugado ? "Torneo jugado" : "Próximo torneo"}</span>
-    <h1 class="title">${base}${resto.length ? ` <span>${resto.join(" · ")}</span>` : ""}</h1>
-    <p>${ico("calendario")} ${textoFechas()} &nbsp;·&nbsp; ${ico("pin")} ${torneo.lugar}</p>
+    <h1 class="title">${escHtml(base)}${resto.length ? ` <span>${escHtml(resto.join(" · "))}</span>` : ""}</h1>
+    <p>${ico("calendario")} ${escHtml(textoFechas())} &nbsp;·&nbsp; ${ico("pin")} ${escHtml(torneo.lugar)}</p>
     ${jugado && torneo.logro ? `<div class="t-logro">${conIconos(torneo.logro)}</div>` : ""}
   </header>`;
 
@@ -50,11 +50,11 @@ if (partidos.length) {
   html += `<h2 class="grupo-ult">${jugado && torneo.logro ? "El camino al título" : "Partidos"}</h2>
   <div class="t-fases">${fases.map((f, i) => `
     <div class="t-fase${i === fases.length - 1 && torneo.logro ? " final" : ""}">
-      <h3>${f.nombre}</h3>
+      <h3>${escHtml(f.nombre)}</h3>
       ${f.partidos.map((r) => `
       <div class="t-partido ${gano(r) ? "win" : "loss"}">
-        <div class="${gano(r) ? "gana" : ""}"><span>Escándalo</span><b>${r.nuestros ?? (gano(r) ? "V" : "")}</b></div>
-        <div class="${gano(r) ? "" : "gana"}"><span>${r.rival}</span><b>${r.suyos ?? (gano(r) ? "" : "V")}</b></div>
+        <div class="${gano(r) ? "gana" : ""}"><span>Escándalo</span><b>${escHtml(r.nuestros ?? (gano(r) ? "V" : ""))}</b></div>
+        <div class="${gano(r) ? "" : "gana"}"><span>${escHtml(r.rival)}</span><b>${escHtml(r.suyos ?? (gano(r) ? "" : "V"))}</b></div>
       </div>`).join("")}
     </div>`).join("")}
   </div>`;
@@ -69,13 +69,13 @@ if (partidos.length) {
 if (media.length) {
   html += `<h2 class="grupo-ult">Fotos destacadas</h2>
   <div class="grid gallery t-fotos">${fotos.slice(0, 8).map((g) =>
-    `<a class="gitem" href="/galeria#${torneo.id}"><img src="assets/${g.src}" alt="Foto del torneo" loading="lazy"></a>`).join("")}</div>
-  <p class="center"><a class="btn" href="/galeria#${torneo.id}">Ver galería completa · ${fotos.length} fotos · ${videos.length} videos</a></p>`;
+    `<a class="gitem" href="/galeria#${escHtml(torneo.id)}"><img src="assets/${escHtml(g.src)}" alt="Foto del torneo" loading="lazy"></a>`).join("")}</div>
+  <p class="center"><a class="btn" href="/galeria#${escHtml(torneo.id)}">Ver galería completa · ${fotos.length} fotos · ${videos.length} videos</a></p>`;
 }
 
 const otros = TORNEOS.filter((x) => x.id !== torneo.id);
 if (otros.length) html += `<div class="t-otros"><span>Otros torneos:</span>${otros.map((x) =>
-  `<a class="chip" href="/torneo#${x.id}">${x.nombre.split(" · ")[0]}</a>`).join("")}</div>`;
+  `<a class="chip" href="/torneo#${escHtml(x.id)}">${escHtml(x.nombre.split(" · ")[0])}</a>`).join("")}</div>`;
 
 document.querySelector("#torneo").innerHTML = html;
 addEventListener("hashchange", () => location.reload());

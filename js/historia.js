@@ -27,13 +27,14 @@ if (lineaEl) {
   ].sort((a, b) => a.fecha.localeCompare(b.fecha));
   lineaEl.innerHTML = items.map((it) => {
     const f = new Date(it.fecha + "T00:00");
+    const linkOk = it.link && /^\/[A-Za-z0-9#/_-]*$/.test(it.link) ? it.link : "";
     return `<li class="hito${it.futuro ? " futuro" : ""}">
       <span class="hito-punto" aria-hidden="true">${conIconos(it.icono || "⭐")}</span>
       <div class="hito-card">
-        <time datetime="${it.fecha}">${f.getDate()} ${MC[f.getMonth()]} ${f.getFullYear()}</time>
-        <h3>${it.titulo}</h3>
+        <time datetime="${escHtml(it.fecha)}">${f.getDate()} ${MC[f.getMonth()]} ${f.getFullYear()}</time>
+        <h3>${escHtml(it.titulo)}</h3>
         <p>${conIconos(it.texto)}</p>
-        ${it.link ? `<a href="${it.link}">${it.futuro ? "Ver torneo" : "Ver resumen"} →</a>` : ""}
+        ${linkOk ? `<a href="${escHtml(linkOk)}">${it.futuro ? "Ver torneo" : "Ver resumen"} →</a>` : ""}
       </div>
     </li>`;
   }).join("");

@@ -21,7 +21,7 @@ const aviso = document.querySelector("#login-error");
 
 lista.innerHTML = '<option value="">Elegí tu nombre…</option>' +
   [...JUGADORES].sort((a, b) => a.nombre.localeCompare(b.nombre, "es"))
-    .map((j) => `<option value="${slugDe(j)}" data-id="${j.id || ""}">${j.nombre}</option>`).join("");
+    .map((j) => `<option value="${escHtml(slugDe(j))}" data-id="${escHtml(j.id || "")}">${escHtml(j.nombre)}</option>`).join("");
 
 if (typeof SUPABASE === "undefined" || !SUPABASE) {
   form.querySelectorAll("select,input,button").forEach((e) => (e.disabled = true));

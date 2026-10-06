@@ -27,5 +27,7 @@ const ICONOS = {
 };
 const ico = (n) => `<svg class="ico ico-${n}" viewBox="0 0 24 24" aria-hidden="true">${ICONOS[n] || ""}</svg>`;
 const EMOJI_ICONO = { "🏆": "trofeo", "📅": "calendario", "📍": "pin", "🥏": "disco", "⭐": "estrella", "⏱": "reloj" };
-const conIconos = (s) => String(s).replace(/🏆|📅|📍|🥏|⭐|⏱️?/gu, (e) => ico(EMOJI_ICONO[e.replace("️", "")]));
+// Escape para meter texto de DB/admin en innerHTML (antes de insertar SVGs de íconos)
+const escHtml = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const conIconos = (s) => escHtml(s).replace(/🏆|📅|📍|🥏|⭐|⏱️?/gu, (e) => ico(EMOJI_ICONO[e.replace("️", "")]));
 const sinEmojis = (s) => String(s).replace(/🏆|📅|📍|🥏|⭐|⏱️?/gu, "").trim();
