@@ -30,10 +30,13 @@
   async function rol() {
     const t = await token(); if (!t) return null;
     try {
-      const r = await fetch(`${SUPABASE.url}/rest/v1/perfiles?select=rol&id=eq.${idDelToken(t)}`,
+      const r = await fetch(`${SUPABASE.url}/rest/v1/perfiles?select=rol,jugadores(rol)&id=eq.${idDelToken(t)}`,
         { headers: { apikey: SUPABASE.key, Authorization: `Bearer ${t}` }, signal: AbortSignal.timeout(5000) });
       const f = await r.json();
-      const valor = Array.isArray(f) && f[0] ? f[0].rol : null;
+      const fila = Array.isArray(f) && f[0];
+      const anidado = fila && fila.jugadores;
+      const deJugador = Array.isArray(anidado) ? anidado[0]?.rol : anidado?.rol;
+      const valor = deJugador || (fila && fila.rol === "usuario" ? "jugador" : fila?.rol) || null;
       const s = leer(); if (s && valor && s.rol !== valor) guardar({ ...s, rol: valor });
       return valor;
     } catch (e) { return (leer() || {}).rol || null; }
@@ -116,7 +119,7 @@
         <span class="cuenta-nombre">${esc(primero)}</span>${ico("chevron")}
       </button>
       <div class="cuenta-menu" role="menu" hidden>
-        <div class="cuenta-quien"><b>${esc(s.nombre)}</b><small class="rol-${esc(rolActual || "usuario")}">${etiqueta(rolActual)}</small></div>
+        <div class="cuenta-quien"><b>${esc(s.nombre)}</b><small class="rol-${esc(rolActual || "jugador")}">${etiqueta(rolActual)}</small></div>
         <a role="menuitem" href="/asistencia">${ico("calendario")} Asistencia a prácticas</a>
         <a role="menuitem" href="/caja">${ico("caja")} Caja del equipo</a>
         ${rolActual === "admin" ? `<a role="menuitem" href="/admin">${ico("panel")} Panel de administración</a>` : ""}
