@@ -3,7 +3,7 @@
 //   node scripts/usuarios-produccion.js --todos      → resetea TODOS (admins con clave fija, resto aleatoria)
 //   node scripts/usuarios-produccion.js --resetear sofia-rodriguez
 //
-// Admins (juanjo, camila): contraseña desde
+// Admins (juanjo, camila, santiago, matilde): contraseña desde
 //   1) env CLAVE_ADMIN_JUANJO_ALONSO / CLAVE_ADMIN_CAMILA_COUTURE
 //   2) supabase/claves-locales.json (opcional, local; no se sube a Git)
 //   3) pregunta oculta por pantalla
@@ -16,7 +16,8 @@ const path = require("path");
 const crypto = require("crypto");
 
 const raiz = path.join(__dirname, "..");
-const ADMINS = ["juanjo-alonso", "camila-couture"];
+const ADMINS = ["juanjo-alonso", "camila-couture", "santiago-rodriguez", "matilde-rodriguez"];
+const rolDe = (slug) => (ADMINS.includes(slug) ? "admin" : "jugador");
 const URL = (process.env.URL_SUPABASE || "https://efdlvrznaqbijyftwzgf.supabase.co").replace(/\/$/, "");
 const local = /^https?:\/\/(127\.0\.0\.1|localhost)/.test(URL);
 const todos = process.argv.includes("--todos");
@@ -91,8 +92,9 @@ async function claveAdmin(j) {
     const ya = existentes.find((u) => u.email === email);
     const hayQuePisar = todos || (resetear && j.slug === resetear);
     if (ya && !hayQuePisar) {
-      const rolActual = ADMINS.includes(j.slug) ? "admin" : "usuario";
+      const rolActual = rolDe(j.slug);
       const p0 = await api("/rest/v1/perfiles", { method: "POST", headers: { Prefer: "resolution=merge-duplicates" }, body: JSON.stringify({ id: ya.id, jugador_id: j.id, rol: rolActual }) });
+      await api(`/rest/v1/jugadores?id=eq.${j.id}`, { method: "PATCH", body: JSON.stringify({ rol: rolActual }) });
       console.log(`  · ${j.nombre.padEnd(20)} ya tiene usuario [${rolActual}]${p0.ok ? "" : " (perfil HTTP " + p0.status + ")"}`); continue;
     }
     let password;
@@ -110,8 +112,9 @@ async function claveAdmin(j) {
       guardarClave(`${j.nombre}: ${password}`);
       creadas.push(j.nombre);
     }
-    const rol = ADMINS.includes(j.slug) ? "admin" : "usuario";
+    const rol = rolDe(j.slug);
     const p = await api("/rest/v1/perfiles", { method: "POST", headers: { Prefer: "resolution=merge-duplicates" }, body: JSON.stringify({ id: u.id, jugador_id: j.id, rol }) });
+    await api(`/rest/v1/jugadores?id=eq.${j.id}`, { method: "PATCH", body: JSON.stringify({ rol }) });
     console.log(`  ${p.ok ? "✓" : "✗"} ${j.nombre.padEnd(20)} ${ya ? "contraseña nueva" : "creado"} [${rol}]${ADMINS.includes(j.slug) ? " (clave fija)" : ""}${p.ok ? "" : " perfil HTTP " + p.status}`);
   }
 
