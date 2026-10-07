@@ -9,8 +9,20 @@
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
   const ANCHO = 37, LARGO = 100, GOL = 18;   // medidas de la cancha en metros (WFDF)
-  const MAX_FICHAS = 16, MAX_PASOS = 12;
-  const DUR = 950, PAUSA = 260;              // animación: ms de cada tramo y pausa entre pasos
+  const MAX_ATK = 7, MAX_DEF = 7, MAX_PASOS = 12;
+  // Velocidades de reproducción (ms por tramo y pausa entre pasos)
+  const VELOCIDADES = {
+    lenta:  { dur: 4200, pausa: 800, etq: "Lenta" },
+    media:  { dur: 1600, pausa: 350, etq: "Normal" },
+    rapida: { dur: 420,  pausa: 80,  etq: "Rápida" },
+  };
+  const selectVel = (valor = "media") => `
+    <label class="pz-vel">Velocidad
+      <select data-vel aria-label="Velocidad de reproducción">
+        ${Object.entries(VELOCIDADES).map(([k, v]) =>
+          `<option value="${k}"${k === valor ? " selected" : ""}>${v.etq}</option>`).join("")}
+      </select>
+    </label>`;
 
   document.querySelector("#year").textContent = new Date().getFullYear();
   const burger = document.querySelector("#burger"), menu = document.querySelector("#menu");
@@ -91,9 +103,11 @@
     const id = esc(f.id), etq = esc(String(f.etiqueta || "").slice(0, 2));
     const grupo = (tipo, clase, dentro) =>
       `<g class="pz-f ${clase}" data-f="${id}" role="img" aria-label="${tipo}${etq ? " " + etq : ""}"><g transform="scale(${k})">${dentro}</g></g>`;
-    if (f.tipo === "disco") return grupo("Disco", "pz-disco", `<circle class="pz-agarre" r="3.4"/><ellipse rx="2.1" ry="1.5"/><ellipse class="pz-disco-in" rx="1" ry=".7"/>`);
-    if (f.tipo === "defensa") return grupo("Defensa", "pz-def", `<circle class="pz-agarre" r="3.4"/><path d="M-2 -2L2 2M2 -2L-2 2"/>${etq ? `<text y="5.4">${etq}</text>` : ""}`);
-    return grupo("Atacante", "pz-atk", `<circle class="pz-agarre" r="3.4"/><circle class="pz-aro" r="2.6"/><text y="1.1">${etq}</text>`);
+    if (f.tipo === "disco") return grupo("Disco", "pz-disco", `<circle class="pz-agarre" r="2.8"/><ellipse rx="1.7" ry="1.2"/><ellipse class="pz-disco-in" rx=".8" ry=".55"/>`);
+    // Ataque y defensa: misma ficha (círculo + número); solo cambia el color
+    const jugador = `<circle class="pz-agarre" r="2.8"/><circle class="pz-aro" r="2.1"/><text y=".9">${etq}</text>`;
+    if (f.tipo === "defensa") return grupo("Defensa", "pz-def", jugador);
+    return grupo("Atacante", "pz-atk", jugador);
   };
 
   const montar = (svg, d, k = 1) => {
@@ -135,12 +149,12 @@
   const suave = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const dormir = (ms, yo) => new Promise((ok) => setTimeout(() => ok(!yo.cancelar), ms));
 
-  function tramo(svg, d, a, b, yo) {
+  function tramo(svg, d, a, b, yo, dur) {
     return new Promise((listo) => {
       const t0 = performance.now();
       const cuadro = (ahora) => {
         if (yo.cancelar) return listo(false);
-        const t = Math.min(1, (ahora - t0) / DUR), k = suave(t), pos = {};
+        const t = Math.min(1, (ahora - t0) / dur), k = suave(t), pos = {};
         for (const f of d.fichas) {
           const p1 = a[f.id]; if (!p1) continue;
           const p2 = b[f.id] || p1;
@@ -153,16 +167,17 @@
     });
   }
 
-  async function reproducir(svg, d, alPaso) {
+  async function reproducir(svg, d, alPaso, vel) {
     pararAnimacion();
     const yo = (animacion = { cancelar: false });
+    const { dur, pausa } = VELOCIDADES[vel] || VELOCIDADES.media;
     pintarFlechas(svg, d, null, null);
     ubicar(svg, d, d.pasos[0].pos);
     alPaso(0);
     for (let i = 1; i < d.pasos.length; i++) {
-      if (!(await tramo(svg, d, d.pasos[i - 1].pos, d.pasos[i].pos, yo))) return false;
+      if (!(await tramo(svg, d, d.pasos[i - 1].pos, d.pasos[i].pos, yo, dur))) return false;
       alPaso(i);
-      if (!(await dormir(PAUSA, yo))) return false;
+      if (!(await dormir(pausa, yo))) return false;
     }
     if (animacion === yo) animacion = null;
     return true;
@@ -171,6 +186,7 @@
   // Conecta el botón de play con la barra de pasos de un visor o del editor
   function botonPlay(caja, svg, dameDatos, mostrar) {
     const boton = caja.querySelector("[data-play]");
+    const sel = caja.querySelector("[data-vel]");
     const texto = (jugando) => { boton.innerHTML = `${ico(jugando ? "cerrar" : "flecha")} ${jugando ? "Parar" : boton.dataset.texto || "Reproducir"}`; };
     texto(false);
     boton.addEventListener("click", async () => {
@@ -178,9 +194,11 @@
       const d = dameDatos();
       if (d.pasos.length < 2) return aviso("Agregá al menos un paso para poder reproducir.", true);
       texto(true);
+      if (sel) sel.disabled = true;
       const marcar = (i) => caja.querySelectorAll("[data-paso]").forEach((c) => c.classList.toggle("on", +c.dataset.paso === i));
-      const entero = await reproducir(svg, d, marcar);
+      const entero = await reproducir(svg, d, marcar, sel ? sel.value : "media");
       texto(false);
+      if (sel) sel.disabled = false;
       if (entero) mostrar(d.pasos.length - 1);
     });
   }
@@ -189,11 +207,20 @@
   const pasoVacio = () => ({ pos: {} });
   function normalizar(bruto) {
     const d = bruto && typeof bruto === "object" ? bruto : {};
-    const fichas = (Array.isArray(d.fichas) ? d.fichas : [])
+    const crudas = (Array.isArray(d.fichas) ? d.fichas : [])
       .filter((f) => f && typeof f.id === "string" && /^[a-z0-9]+$/.test(f.id))
-      .slice(0, MAX_FICHAS)
       .map((f) => ({ id: f.id, tipo: f.tipo === "disco" || f.tipo === "defensa" ? f.tipo : "ataque", etiqueta: String(f.etiqueta ?? "").slice(0, 2) }));
-    const pasos = (Array.isArray(d.pasos) ? d.pasos : []).slice(0, MAX_PASOS).map((p) => {
+    const fichas = [];
+    let atk = 0, def = 0, disco = false;
+    for (const f of crudas) {
+      if (f.tipo === "ataque" && atk >= MAX_ATK) continue;
+      if (f.tipo === "defensa" && def >= MAX_DEF) continue;
+      if (f.tipo === "disco") { if (disco) continue; disco = true; }
+      if (f.tipo === "ataque") atk++;
+      if (f.tipo === "defensa") def++;
+      fichas.push(f);
+    }
+    const crudos = (Array.isArray(d.pasos) ? d.pasos : []).slice(0, MAX_PASOS).map((p) => {
       const pos = {};
       for (const f of fichas) {
         const v = p && p.pos && p.pos[f.id];
@@ -201,6 +228,17 @@
       }
       return { pos };
     });
+    // Un paso igual al anterior no mueve nada: era el "inicio" duplicado como paso 1
+    const igual = (a, b) => fichas.every((f) => {
+      const p = a[f.id], q = b[f.id];
+      if (!p && !q) return true;
+      if (!p || !q) return false;
+      return Math.hypot(p.x - q.x, p.y - q.y) < 0.015;
+    });
+    const pasos = [];
+    for (const p of crudos) {
+      if (!pasos.length || !igual(pasos[pasos.length - 1].pos, p.pos)) pasos.push(p);
+    }
     return { fichas, pasos: pasos.length ? pasos : [pasoVacio()] };
   }
 
@@ -258,7 +296,7 @@
 
   // ---------- Visor ----------
   const chips = (d, activo = 0) => d.pasos
-    .map((p, i) => `<button class="pz-chip${i === activo ? " on" : ""}" data-paso="${i}">${i ? i : "Inicio"}</button>`).join("");
+    .map((p, i) => `<button class="pz-chip${i === activo ? " on" : ""}" data-paso="${i}" title="${i ? "Movimiento" : "Posición inicial"}">Paso ${i + 1}</button>`).join("");
 
   // Si cambia el tamaño de la pantalla hay que redibujar: las fichas cambian de escala
   function alRedimensionar(m, repintar) {
@@ -285,9 +323,10 @@
       ${campo("pz-grande", "data-campo")}
       <div class="pz-barra">
         <button class="btn" data-play data-texto="Reproducir"></button>
+        ${selectVel("media")}
         <div class="pz-pasos">${chips(d)}</div>
       </div>
-      <p class="pz-ayuda">Los pasos muestran de dónde viene cada ficha. El disco va con la flecha punteada.</p>`, "pz-modal");
+      <p class="pz-ayuda">El paso 1 es la salida. En los siguientes se ve de dónde viene cada ficha. El disco va con la flecha punteada.</p>`, "pz-modal");
     const svg = m.querySelector("[data-campo]");
     let paso = 0;
     const repintar = () => { montar(svg, d, escalaFichas()); paso = mostrarPaso(m, svg, d, paso); };
@@ -319,7 +358,8 @@
         <button class="btn ghost" data-agregar="defensa">${ico("mas")} Defensa</button>
         <button class="btn ghost" data-agregar="disco">${ico("disco")} Disco</button>
         <label class="pz-etq">N° de ficha<input data-etiqueta maxlength="2" placeholder="1" aria-label="Número o letra de la ficha" disabled></label>
-        <button class="adm-ic peligro" data-quitar title="Quitar ficha" aria-label="Quitar ficha" disabled>${ico("basura")}</button>
+        <button class="btn ghost peligro" data-quitar disabled>${ico("basura")} Borrar ficha</button>
+        <button class="btn ghost" data-deshacer disabled>Deshacer</button>
       </div>
       ${campo("pz-grande pz-edita", "data-campo")}
       <div class="pz-barra">
@@ -327,10 +367,11 @@
         <div class="pz-barra-acc">
           <button class="btn ghost" data-nuevo-paso>${ico("mas")} Agregar paso</button>
           <button class="btn ghost" data-borrar-paso>${ico("basura")} Borrar paso</button>
+          ${selectVel("media")}
           <button class="btn ghost" data-play data-texto="Probar"></button>
         </div>
       </div>
-      <p class="pz-ayuda">Arrastrá las fichas para moverlas. Cada paso guarda una posición: agregá un paso y movelas de nuevo para armar el movimiento.</p>
+      <p class="pz-ayuda">El paso 1 es la posición inicial. Agregá un paso y mové las fichas: ese es el movimiento siguiente. Tocá una ficha para borrarla. Deshacer revierte el último cambio.</p>
       <small class="adm-error" aria-live="polite"></small>
       <div class="adm-botones">
         <button class="btn ghost" data-cerrar>Cancelar</button>
@@ -342,6 +383,35 @@
     m.querySelector("form").addEventListener("submit", (e) => e.preventDefault());
     const entradaEtq = m.querySelector("[data-etiqueta]");
     const botonQuitar = m.querySelector("[data-quitar]");
+    const botonDeshacer = m.querySelector("[data-deshacer]");
+    const historial = [];   // snapshots para Deshacer / Ctrl+Z
+    const clonar = () => ({
+      fichas: d.fichas.map((f) => ({ ...f })),
+      pasos: d.pasos.map((p) => {
+        const pos = {};
+        for (const [id, v] of Object.entries(p.pos)) pos[id] = { ...v };
+        return { pos };
+      }),
+      paso: ed.paso,
+      sel: ed.sel,
+      n: ed.n,
+    });
+    const recordar = () => {
+      historial.push(clonar());
+      if (historial.length > 40) historial.shift();
+      botonDeshacer.disabled = false;
+    };
+    const deshacer = () => {
+      const prev = historial.pop();
+      if (!prev) return;
+      d.fichas = prev.fichas;
+      d.pasos = prev.pasos;
+      ed.paso = prev.paso;
+      ed.sel = prev.sel;
+      ed.n = prev.n;
+      botonDeshacer.disabled = !historial.length;
+      refrescar();
+    };
 
     const marcarSel = () => {
       svg.querySelectorAll("[data-f]").forEach((g) => g.classList.toggle("sel", g.dataset.f === ed.sel));
@@ -351,8 +421,17 @@
       botonQuitar.disabled = !f;
     };
     const refrescar = () => {
+      const nAtk = d.fichas.filter((f) => f.tipo === "ataque").length;
+      const nDef = d.fichas.filter((f) => f.tipo === "defensa").length;
+      const btnAtk = m.querySelector('[data-agregar="ataque"]');
+      const btnDef = m.querySelector('[data-agregar="defensa"]');
+      btnAtk.innerHTML = `${ico("mas")} Atacante (${nAtk}/${MAX_ATK})`;
+      btnDef.innerHTML = `${ico("mas")} Defensa (${nDef}/${MAX_DEF})`;
+      btnAtk.disabled = nAtk >= MAX_ATK;
+      btnDef.disabled = nDef >= MAX_DEF;
+      m.querySelector('[data-agregar="disco"]').disabled = d.fichas.some((f) => f.tipo === "disco");
       m.querySelector("[data-chips]").innerHTML = chips(d, ed.paso);
-      m.querySelector("[data-borrar-paso]").disabled = d.pasos.length < 2 || ed.paso === 0;
+      m.querySelector("[data-borrar-paso]").disabled = d.pasos.length < 2;
       montar(svg, d, escalaFichas());
       ed.paso = mostrarPaso(m, svg, d, ed.paso);
       marcarSel();
@@ -367,8 +446,10 @@
     m.querySelectorAll("[data-agregar]").forEach((b) => b.addEventListener("click", () => {
       const tipo = b.dataset.agregar;
       if (tipo === "disco" && d.fichas.some((f) => f.tipo === "disco")) return aviso("La jugada ya tiene un disco.", true);
-      if (d.fichas.length >= MAX_FICHAS) return aviso(`Máximo ${MAX_FICHAS} fichas.`, true);
       const cuantas = d.fichas.filter((f) => f.tipo === tipo).length;
+      if (tipo === "ataque" && cuantas >= MAX_ATK) return aviso(`Máximo ${MAX_ATK} atacantes.`, true);
+      if (tipo === "defensa" && cuantas >= MAX_DEF) return aviso(`Máximo ${MAX_DEF} defensas.`, true);
+      recordar();
       const id = tipo === "disco" ? "disco" : `f${++ed.n}`;
       d.fichas.push({ id, tipo, etiqueta: tipo === "disco" ? "" : String(cuantas + 1).slice(0, 2) });
       const p = librePara(tipo, cuantas);
@@ -383,16 +464,20 @@
       f.etiqueta = entradaEtq.value.replace(/[^0-9A-Za-zÀ-ÿ]/g, "").slice(0, 2);
       montar(svg, d, escalaFichas()); mostrarPaso(m, svg, d, ed.paso); marcarSel();
     });
-    botonQuitar.addEventListener("click", () => {
-      if (!ed.sel) return;
+    const borrarFicha = () => {
+      if (!ed.sel) return aviso("Tocá una ficha para seleccionarla y después borrarla.", true);
+      recordar();
       d.fichas = d.fichas.filter((f) => f.id !== ed.sel);
       for (const paso of d.pasos) delete paso.pos[ed.sel];
       ed.sel = null;
       refrescar();
-    });
+    };
+    botonQuitar.addEventListener("click", borrarFicha);
+    botonDeshacer.addEventListener("click", deshacer);
 
     m.querySelector("[data-nuevo-paso]").addEventListener("click", () => {
       if (d.pasos.length >= MAX_PASOS) return aviso(`Máximo ${MAX_PASOS} pasos.`, true);
+      recordar();
       const copia = {};
       for (const [id, p] of Object.entries(d.pasos[ed.paso].pos)) copia[id] = { ...p };
       d.pasos.splice(ed.paso + 1, 0, { pos: copia });
@@ -400,7 +485,8 @@
       refrescar();
     });
     m.querySelector("[data-borrar-paso]").addEventListener("click", () => {
-      if (d.pasos.length < 2 || ed.paso === 0) return;
+      if (d.pasos.length < 2) return;
+      recordar();
       d.pasos.splice(ed.paso, 1);
       ed.paso = Math.min(ed.paso, d.pasos.length - 1);
       refrescar();
@@ -420,13 +506,16 @@
       const p = pt.matrixTransform(svg.getScreenCTM().inverse());
       return { x: clamp01(p.x / LARGO), y: clamp01(p.y / ANCHO) };
     };
-    let arrastre = null;
+    let arrastre = null, arrastreInicio = null;
     svg.addEventListener("pointerdown", (e) => {
       const g = e.target.closest("[data-f]");
       ed.sel = g ? g.dataset.f : null;
       marcarSel();
       if (!g) return;
       arrastre = g.dataset.f;
+      const p = d.pasos[ed.paso].pos[arrastre];
+      arrastreInicio = p ? { ...p } : null;
+      recordar();
       pararAnimacion();
       try { svg.setPointerCapture(e.pointerId); } catch (err) {}
       e.preventDefault();
@@ -437,9 +526,27 @@
       ubicar(svg, d, d.pasos[ed.paso].pos);
       pintarFlechas(svg, d, ed.paso ? d.pasos[ed.paso - 1].pos : null, ed.paso ? d.pasos[ed.paso].pos : null);
     });
-    const soltar = (e) => { if (arrastre) { arrastre = null; svg.releasePointerCapture?.(e.pointerId); } };
+    const soltar = (e) => {
+      if (!arrastre) return;
+      const fin = d.pasos[ed.paso].pos[arrastre];
+      // Si no se movió de verdad, sacamos el snapshot vacío del historial
+      if (arrastreInicio && fin && Math.hypot(fin.x - arrastreInicio.x, fin.y - arrastreInicio.y) < 0.01) historial.pop();
+      botonDeshacer.disabled = !historial.length;
+      arrastre = null;
+      arrastreInicio = null;
+      try { svg.releasePointerCapture?.(e.pointerId); } catch (err) {}
+    };
     svg.addEventListener("pointerup", soltar);
     svg.addEventListener("pointercancel", soltar);
+
+    // Delete / Supr borra la ficha; Ctrl+Z deshace
+    const teclas = (e) => {
+      if (!m.isConnected) return removeEventListener("keydown", teclas);
+      if (e.target.closest("input,textarea")) return;
+      if ((e.key === "Delete" || e.key === "Backspace") && ed.sel) { e.preventDefault(); borrarFicha(); }
+      else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") { e.preventDefault(); deshacer(); }
+    };
+    addEventListener("keydown", teclas);
 
     botonPlay(m, svg, () => d, (i) => { ed.paso = i; refrescar(); });
 

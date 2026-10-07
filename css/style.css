@@ -936,22 +936,24 @@ header.nav:has(> .cuenta:not(.cuenta-boot)) .cuenta-boot{display:none!important}
 .pz-brick{stroke:#ffffff3d;stroke-width:.3;fill:none}
 .pz-f{cursor:grab}
 .pz-f .pz-agarre{fill:transparent}
-.pz-atk .pz-aro{fill:#ffb81c;stroke:#00000066;stroke-width:.3}
-.pz-atk text{fill:#17170c;font:700 2.8px Inter,sans-serif;text-anchor:middle}
-.pz-def path{stroke:#58c7ff;stroke-width:.85;stroke-linecap:round;fill:none}
-.pz-def text{fill:#9fdcff;font:700 2.4px Inter,sans-serif;text-anchor:middle}
-.pz-disco ellipse{fill:#f4f4f7;stroke:#00000055;stroke-width:.25}
-.pz-disco .pz-disco-in{fill:none;stroke:#b0b0c0;stroke-width:.25}
-.pz-f.sel .pz-aro,.pz-f.sel ellipse{filter:drop-shadow(0 0 1.6px #b44cff)}
-.pz-f.sel .pz-agarre{fill:#b44cff33;stroke:#b44cff;stroke-width:.3}
+.pz-atk .pz-aro{fill:#ffb81c;stroke:#00000066;stroke-width:.25}
+.pz-def .pz-aro{fill:#58c7ff;stroke:#00000066;stroke-width:.25}
+.pz-atk text,.pz-def text{fill:#17170c;font:700 2.3px Inter,sans-serif;text-anchor:middle}
+.pz-disco ellipse{fill:#f4f4f7;stroke:#00000055;stroke-width:.2}
+.pz-disco .pz-disco-in{fill:none;stroke:#b0b0c0;stroke-width:.2}
+.pz-f.sel .pz-aro,.pz-f.sel ellipse{filter:drop-shadow(0 0 1.4px #b44cff)}
+.pz-f.sel .pz-agarre{fill:#b44cff33;stroke:#b44cff;stroke-width:.25}
 .pz-flecha{stroke:#ffd36b;stroke-width:.5;opacity:.85}
 .pz-flecha.pase{stroke:#f4f4f7;stroke-dasharray:2 1.6}
 .pz-grande{margin:0 auto;border-radius:12px;background:#0d1a12}
 
 .pz-barra{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px}
-.pz-barra-acc{display:flex;flex-wrap:wrap;gap:6px}
+.pz-barra-acc{display:flex;flex-wrap:wrap;align-items:flex-end;gap:6px}
 .pz-barra .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;font-size:.85rem;border-width:1px}
 .pz-barra .btn .ico{width:16px;height:16px}
+.pz-vel{display:grid;gap:4px;font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mute)}
+.pz-vel select{width:auto;min-width:110px;padding:9px 12px;font-size:.85rem;font-weight:600;text-transform:none;letter-spacing:0;cursor:pointer}
+.pz-vel select:disabled{opacity:.5;cursor:not-allowed}
 .pz-pasos{display:flex;flex-wrap:wrap;gap:6px}
 .pz-chip{min-width:34px;padding:7px 10px;border-radius:99px;border:1px solid #ffffff22;background:#ffffff0a;color:var(--mute);font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;transition:.2s}
 .pz-chip:hover{border-color:var(--b);color:#fff}
@@ -959,6 +961,9 @@ header.nav:has(> .cuenta:not(.cuenta-boot)) .cuenta-boot{display:none!important}
 .pz-tools{display:flex;align-items:flex-end;flex-wrap:wrap;gap:8px;margin:14px 0 12px}
 .pz-tools .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 14px;font-size:.82rem;border-width:1px}
 .pz-tools .btn .ico{width:15px;height:15px}
+.pz-tools .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.pz-tools .btn.ghost.peligro{border-color:#ff4d6d66;color:#ff8ea3}
+.pz-tools .btn.ghost.peligro:hover:not(:disabled){border-color:#ff4d6d;color:#ff4d6d;box-shadow:0 10px 30px #ff4d6d33}
 .pz-tools .adm-ic{margin-left:0}
 .pz-etq{display:grid;gap:4px;margin-left:auto;font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mute)}
 .pz-etq input{width:62px;padding:9px 10px;text-align:center}
