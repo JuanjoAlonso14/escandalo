@@ -16,7 +16,8 @@ if (!URL || !CLAVE) { console.error("No pude leer la base local. ¿Está prendid
 if (!/^https?:\/\/(127\.0\.0\.1|localhost)/.test(URL)) { console.error("Esto solo corre contra la base local."); process.exit(1); }
 
 const CONTRASENA = "sunombre123";
-const ADMINS = ["juanjo-alonso", "camila-couture"];
+const ADMINS = ["juanjo-alonso", "camila-couture", "santiago-rodriguez", "matilde-rodriguez"];
+const rolDe = (slug) => (ADMINS.includes(slug) ? "admin" : "jugador");
 const archivoClaves = path.join(raiz, "supabase", "claves-locales.json");
 const claves = fs.existsSync(archivoClaves) ? JSON.parse(fs.readFileSync(archivoClaves, "utf8")) : {};
 const cab = { apikey: CLAVE, Authorization: `Bearer ${CLAVE}`, "Content-Type": "application/json" };
@@ -40,9 +41,10 @@ function claveAdmin(slug) {
         console.log(`✗ ${j.nombre.padEnd(20)} admin sin contraseña (definí CLAVE_ADMIN_* o claves-locales.json)`);
         continue;
       }
-      const rol = "admin";
+      const rol = rolDe(j.slug);
       const p = await fetch(`${URL}/rest/v1/perfiles`, { method: "POST", headers: { ...cab, Prefer: "resolution=merge-duplicates" },
         body: JSON.stringify({ id: ya.id, jugador_id: j.id, rol }) });
+      await fetch(`${URL}/rest/v1/jugadores?id=eq.${j.id}`, { method: "PATCH", headers: cab, body: JSON.stringify({ rol }) });
       console.log(`· ${j.nombre.padEnd(20)} ya tiene usuario [${rol}] (contraseña intacta)${p.ok ? "" : " perfil HTTP " + p.status}`);
       continue;
     }
@@ -52,9 +54,10 @@ function claveAdmin(slug) {
     let rolTxt = "", hashTxt = "";
     if (r.ok) {
       const u = await r.clone().json();
-      const rol = esAdmin ? "admin" : "usuario";
+      const rol = rolDe(j.slug);
       const p = await fetch(`${URL}/rest/v1/perfiles`, { method: "POST", headers: { ...cab, Prefer: "resolution=merge-duplicates" },
         body: JSON.stringify({ id: u.id, jugador_id: j.id, rol }) });
+      await fetch(`${URL}/rest/v1/jugadores?id=eq.${j.id}`, { method: "PATCH", headers: cab, body: JSON.stringify({ rol }) });
       rolTxt = p.ok ? ` [${rol}]` : ` [perfil HTTP ${p.status}]`;
       try {
         const sql = `select set_jugador_clave('${j.slug.replace(/'/g, "''")}', '${password.replace(/'/g, "''")}')`;
