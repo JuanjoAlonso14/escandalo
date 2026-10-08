@@ -76,26 +76,37 @@ const Asistencia = (() => {
       <p class="asi-nota">El porcentaje cuenta solo las prácticas que había desde que cada uno se sumó al equipo.${admin ? " Tocá un nombre para ver la evolución." : propio ? " Tocá tu nombre para ver tu evolución." : ""}</p>`;
   }
 
-  function mapa(datos, c, propio, modo, admin) {
+  function mesesDe(practicas) {
     const meses = [];
-    for (const p of datos.practicas) {
+    for (const p of practicas) {
       const m = +p.fecha.slice(5, 7) - 1, y = p.fecha.slice(0, 4), k = `${y}-${m}`;
-      if (!meses.length || meses[meses.length - 1].k !== k) meses.push({ k, nombre: `${MESES[m]} ${y.slice(2)}`, n: 0 });
-      meses[meses.length - 1].n++;
+      if (!meses.length || meses[meses.length - 1].k !== k) meses.push({ k, nombre: `${MESES[m]} ${y.slice(2)}`, practicas: [] });
+      meses[meses.length - 1].practicas.push(p);
     }
-    // Divs + ancho fijo en px: iOS aplasta las <table> aunque tengan min-width (body tiene overflow-x:hidden).
-    const CEL = 20, NOM = 104, ancho = NOM + datos.practicas.length * CEL;
+    return meses;
+  }
+
+  function mapa(datos, c, propio, modo, admin, mesKey) {
+    const meses = mesesDe(datos.practicas);
+    const todas = mesKey === "todas";
+    const mes = todas ? null : meses.find((m) => m.k === mesKey);
+    const practicas = todas || !mes ? datos.practicas : mes.practicas;
+    const grupos = todas || !mes ? meses : [mes];
+    const chips = `<button type="button" class="chip${todas || !mes ? " on" : ""}" data-mes="todas">Todas</button>`
+      + meses.map((m) => `<button type="button" class="chip${m.k === mes?.k ? " on" : ""}" data-mes="${m.k}">${m.nombre}</button>`).join("");
+    const CEL = 22, NOM = 104, ancho = NOM + practicas.length * CEL;
     const celda = (j, p) => {
       const v = j.marcas.get(p.id), cls = v === undefined ? "na" : v ? "fue" : "falto";
       return `<i class="${cls}" title="${esc(j.apodo)} · ${fecha(p.fecha)}: ${v === undefined ? "no contaba" : v ? "fue" : "faltó"}"></i>`;
     };
     const filas = ordenar(c.lista, modo).map((j) => {
       const click = puedeVer(j, propio, admin);
-      return `<div class="asi-fila${esYo(j, propio) ? " yo" : ""}${click ? " asi-ver" : ""}" ${click ? `data-ver="${j.id}"` : ""}><span class="nom">${esc(j.apodo)}</span><span class="celdas">${datos.practicas.map((p) => celda(j, p)).join("")}</span></div>`;
+      return `<div class="asi-fila${esYo(j, propio) ? " yo" : ""}${click ? " asi-ver" : ""}" ${click ? `data-ver="${j.id}"` : ""}><span class="nom">${esc(j.apodo)}</span><span class="celdas">${practicas.map((p) => celda(j, p)).join("")}</span></div>`;
     }).join("");
-    return `<div class="asi-mapa"><div class="asi-mapa-pista" style="width:${ancho}px">
-      <div class="asi-cab"><span class="nom"></span><span class="meses">${meses.map((m) => `<span class="mes" style="width:${m.n * CEL}px">${m.nombre}</span>`).join("")}</span></div>
-      <div class="asi-cab"><span class="nom"></span><span class="celdas">${datos.practicas.map((p) => `<span class="dia">${+p.fecha.slice(8)}</span>`).join("")}</span></div>
+    return `<div class="asi-meses-sel"><span>Mes</span>${chips}</div>
+    <div class="asi-mapa"><div class="asi-mapa-pista" style="width:${ancho}px">
+      <div class="asi-cab"><span class="nom"></span><span class="meses">${grupos.map((m) => `<span class="mes" style="width:${m.practicas.length * CEL}px">${m.nombre}</span>`).join("")}</span></div>
+      <div class="asi-cab"><span class="nom"></span><span class="celdas">${practicas.map((p) => `<span class="dia">${+p.fecha.slice(8)}</span>`).join("")}</span></div>
       ${filas}
     </div></div>
     <div class="asi-leyenda"><i class="fue"></i> Fue <i class="falto"></i> Faltó <i class="na"></i> No contaba (todavía no estaba)</div>`;
@@ -258,6 +269,7 @@ const Asistencia = (() => {
   // Dibuja el resumen completo dentro de un contenedor y conecta el botón de orden
   function montar(el, datos, { propio, admin } = {}) {
     let modo = "pct";
+    let mes = "todas";
     const c = calcular(datos);
     const abrir = (id) => {
       const j = c.lista.find((x) => String(x.id) === String(id));
@@ -266,9 +278,10 @@ const Asistencia = (() => {
     const dibujar = () => {
       el.innerHTML = `${tarjetas(datos, c, propio)}
         <h2 class="grupo-ult">Ranking de asistencia</h2>${tabla(c, propio, modo, admin)}
-        <h2 class="grupo-ult">Práctica por práctica</h2>${mapa(datos, c, propio, modo, admin)}`;
+        <h2 class="grupo-ult">Práctica por práctica</h2>${mapa(datos, c, propio, modo, admin, mes)}`;
     };
     el.onclick = (e) => {
+      const mesBtn = e.target.closest("[data-mes]"); if (mesBtn) { mes = mesBtn.dataset.mes; dibujar(); return; }
       const b = e.target.closest("[data-orden]"); if (b) { modo = b.dataset.orden; dibujar(); return; }
       const fila = e.target.closest("[data-ver]"); if (fila) abrir(fila.dataset.ver);
     };

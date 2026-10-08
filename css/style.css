@@ -808,8 +808,10 @@ header.nav:has(> .cuenta:not(.cuenta-boot)) .cuenta-boot{display:none!important}
 .asi-fila.asi-ver:hover .nom{color:var(--b)}
 .asi-mapa .meses,.asi-mapa .celdas{display:flex;flex:none}
 .asi-mapa .mes{flex:none;box-sizing:border-box;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--b);text-align:left;padding:0 0 3px 2px;border-bottom:1px solid #ffffff1f;overflow:hidden;white-space:nowrap}
-.asi-mapa .dia{flex:0 0 20px;width:20px;box-sizing:border-box;font-size:.58rem;color:var(--mute);text-align:center;line-height:1.2;padding:0 0 2px}
-.asi-mapa .celdas i{flex:0 0 16px;width:16px;height:15px;margin:2px;border-radius:4px;display:block}
+.asi-meses-sel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px;color:var(--mute);font-size:.88rem}
+.asi-meses-sel .chip{padding:6px 12px;font-size:.82rem}
+.asi-mapa .dia{flex:0 0 22px;width:22px;box-sizing:border-box;font-size:.68rem;color:var(--mute);text-align:center;line-height:1.2;padding:2px 0 4px}
+.asi-mapa .celdas i{flex:0 0 16px;width:16px;height:15px;margin:3px;border-radius:4px;display:block}
 .asi-mapa .celdas i.fue,.asi-leyenda i.fue{background-color:#2ecc71}
 .asi-mapa .celdas i.falto,.asi-leyenda i.falto{background-color:#ff4d6d66}
 .asi-mapa .celdas i.na{background-color:#ffffff0d}
