@@ -886,6 +886,11 @@ header.nav:has(> .cuenta:not(.cuenta-boot)) .cuenta-boot{display:none!important}
 @media(max-width:800px){.asi-tarjetas{grid-template-columns:repeat(2,1fr);gap:10px}.asi-t{padding:14px 8px}.asi-t b{font-size:2rem}.asi-t span{font-size:.68rem}}
 .adm-main{min-width:0}
 .caja-sub{color:var(--mute);margin:-18px 0 22px}
+.rec-lista{display:grid;gap:10px;margin-bottom:36px}
+.rec-item{display:flex;justify-content:space-between;align-items:center;gap:14px 18px;flex-wrap:wrap;background:var(--card);border:1px solid var(--borde);border-radius:16px;padding:14px 16px}
+.rec-item h3{margin:0;font-size:1.15rem}
+.rec-item .btn{padding:9px 18px;font-size:.88rem}
+.rec-item .btn:disabled{opacity:.6;cursor:wait;transform:none}
 .caja-mio{display:inline-flex;align-items:center;margin:0 0 18px;padding:10px 16px;border-radius:99px;font-weight:800;text-decoration:none;border:1px solid #ffffff22}
 .caja-mio.ok{color:#2ecc71;background:#2ecc7118}
 .caja-mio.falta{color:#ff7a93;background:#ff4d6d18}
