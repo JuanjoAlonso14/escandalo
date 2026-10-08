@@ -213,16 +213,16 @@
     Asistencia.montar(raiz.querySelector("#asi-resumen"), datosA, { admin: true });
   }
 
-  // Estados de cada jugador en una práctica: fue → faltó → no contaba → fue …
+  // Al tocar: fue → faltó → no contaba → fue.
   const ESTADOS = { fue: { txt: "Fue", sig: "falto" }, falto: { txt: "Faltó", sig: "nocuenta" }, nocuenta: { txt: "No contaba", sig: "fue" } };
 
   function formularioPractica(p) {
     const nueva = !p;
     const marcas = new Map();
     for (const a of datosA.asistencias) if (p && a.practica_id === p.id) marcas.set(a.jugador_id, a.presente);
-    // En una práctica nueva: los jugadores visibles, todos como "faltó" (se marca quién fue). Al editar: los que tenían registro.
+    // Práctica nueva: todos arrancan en "fue". Cada toque pasa a faltó y después a no contaba.
     const lista = datosA.jugadores.filter((j) => (nueva ? j.activo : marcas.has(j.id) || j.activo));
-    const estado = (j) => (nueva ? "falto" : marcas.has(j.id) ? (marcas.get(j.id) ? "fue" : "falto") : "nocuenta");
+    const estado = (j) => (nueva ? "fue" : marcas.has(j.id) ? (marcas.get(j.id) ? "fue" : "falto") : "nocuenta");
     const iso = nueva ? hoyISO() : p.fecha;
     const m = abrirModal(`
       <div class="quiz-top"><span>${nueva ? "Agregar práctica" : "Editar práctica"}</span><button class="quiz-x" data-cerrar aria-label="Cerrar">${ico("cerrar")}</button></div>
