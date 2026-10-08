@@ -51,12 +51,19 @@
 
   async function cargar() {
     try {
-      const r = await pedir("jugadores?select=id,slug,nombre,apodo,foto,numero,nacionalidad,dato,activo,creado_en&order=nombre.asc");
+      const r = await pedir("jugadores?select=id,slug,nombre,apodo,foto,numero,nacionalidad,dato,activo,creado_en,sexo,cedula,nacimiento,reglas,contacto_nombre,contacto_tel,cobertura,socio&order=nombre.asc");
       if (!r.ok) throw new Error(await mensajeError(r));
       jugadores = await r.json();
     } catch (e) { raiz.innerHTML = `<p class="adm-vacio">No se pudo cargar: ${esc(e.message)}</p>`; return; }
     pintar();
   }
+
+  const fechaCorta = (iso) => {
+    const m = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+    return m ? `${m[3]}/${m[2]}/${m[1]}` : "–";
+  };
+  const socioTxt = (v) => (v === true ? "Sí" : v === false ? "No" : "–");
+  const celda = (v) => esc(v || "–");
 
   function pintar() {
     const activos = jugadores.filter((j) => j.activo).length;
@@ -68,15 +75,25 @@
             <div><h1>Jugadores</h1><p>${jugadores.length} en total · ${activos} visibles en el sitio</p></div>
             <button class="btn" data-nuevo>${ico("mas")} Agregar jugador</button>
           </div>
-          <div class="adm-tabla">
+          <div class="adm-tabla adm-ficha">
             <table>
-              <thead><tr><th>Jugador</th><th>Apodo</th><th>N°</th><th class="adm-oculta">Nacionalidad</th><th>Visible</th><th></th></tr></thead>
+              <thead><tr>
+                <th>Jugador</th><th>Sexo</th><th>N°</th><th>Nacionalidad</th><th>Cédula</th><th>Nacimiento</th>
+                <th>Reglas</th><th>Contacto</th><th>Tel. contacto</th><th>Cobertura</th><th>Socio</th><th>Visible</th><th></th>
+              </tr></thead>
               <tbody>${jugadores.map((j) => `
                 <tr class="${j.activo ? "" : "inactivo"}" data-id="${j.id}">
                   <td><div class="adm-quien"><img src="assets/jugadores/${esc(j.foto)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><b>${esc(j.nombre)}</b></div></td>
-                  <td>${esc(j.apodo)}</td>
+                  <td>${celda(j.sexo)}</td>
                   <td>${j.numero ?? "–"}</td>
-                  <td class="adm-oculta">${esc(j.nacionalidad || "–")}</td>
+                  <td>${celda(j.nacionalidad)}</td>
+                  <td>${celda(j.cedula)}</td>
+                  <td>${fechaCorta(j.nacimiento)}</td>
+                  <td>${celda(j.reglas)}</td>
+                  <td>${celda(j.contacto_nombre)}</td>
+                  <td>${celda(j.contacto_tel)}</td>
+                  <td>${celda(j.cobertura)}</td>
+                  <td>${socioTxt(j.socio)}</td>
                   <td><label class="adm-switch"><input type="checkbox" data-visible ${j.activo ? "checked" : ""} aria-label="Visible en el sitio"><i></i></label></td>
                   <td class="adm-acc"><button class="adm-ic" data-editar title="Editar" aria-label="Editar">${ico("editar")}</button><button class="adm-ic peligro" data-borrar title="Eliminar" aria-label="Eliminar">${ico("basura")}</button></td>
                 </tr>`).join("")}</tbody>
@@ -96,17 +113,37 @@
     return m;
   }
 
+  const opcion = (valor, actual, etiqueta) => `<option value="${valor}" ${actual === valor ? "selected" : ""}>${etiqueta}</option>`;
+  const textoONull = (s) => { const t = (s || "").trim(); return t || null; };
+
   function formulario(j) {
     const nuevo = !j;
     j = j || { nombre: "", apodo: "", foto: "", numero: "", nacionalidad: "Uruguaya", dato: "", activo: true };
+    const socio = j.socio === true ? "si" : j.socio === false ? "no" : "";
     const m = abrirModal(`
       <div class="quiz-top"><span>${nuevo ? "Agregar jugador" : "Editar jugador"}</span><button class="quiz-x" data-cerrar aria-label="Cerrar">${ico("cerrar")}</button></div>
       <form class="adm-form" novalidate>
         <label>Nombre completo<input name="nombre" value="${esc(j.nombre)}" ${nuevo ? "" : "disabled"} placeholder="Ej: Luis Davila"></label>
         <label>Apodo<input name="apodo" value="${esc(j.apodo)}" placeholder="Ej: Luisito"></label>
         <div class="adm-fila">
+          <label>Sexo<select name="sexo"><option value="">—</option>${opcion("Mujer", j.sexo, "Mujer")}${opcion("Hombre", j.sexo, "Hombre")}</select></label>
           <label>Número de camiseta<input name="numero" type="number" min="0" max="99" value="${j.numero ?? ""}"></label>
+        </div>
+        <div class="adm-fila">
           <label>Nacionalidad<input name="nacionalidad" value="${esc(j.nacionalidad)}"></label>
+          <label>Cédula<input name="cedula" value="${esc(j.cedula)}" inputmode="numeric"></label>
+        </div>
+        <div class="adm-fila">
+          <label>Fecha de nacimiento<input name="nacimiento" type="date" value="${esc((j.nacimiento || "").slice(0, 10))}"></label>
+          <label>Reglas<select name="reglas"><option value="">—</option>${opcion("Estándar", j.reglas, "Estándar")}${opcion("Avanzado", j.reglas, "Avanzado")}</select></label>
+        </div>
+        <div class="adm-fila">
+          <label>Contacto de emergencia<input name="contacto_nombre" value="${esc(j.contacto_nombre)}"></label>
+          <label>Teléfono del contacto<input name="contacto_tel" value="${esc(j.contacto_tel)}"></label>
+        </div>
+        <div class="adm-fila">
+          <label>Cobertura médica<input name="cobertura" value="${esc(j.cobertura)}"></label>
+          <label>Socio<select name="socio"><option value="">—</option>${opcion("si", socio, "Sí")}${opcion("no", socio, "No")}</select></label>
         </div>
         <label>Imagen de la carta <small>(archivo que ya está en assets/jugadores/)</small>
           <input name="foto" value="${esc(j.foto)}" placeholder="luis-davila.webp"></label>
@@ -126,7 +163,11 @@
       if (num !== null && (!Number.isInteger(num) || num < 0 || num > 99)) return (err.textContent = "El número tiene que estar entre 0 y 99.");
       const slug = nuevo ? limpiar(nombre) : j.slug;
       const cuerpo = { nombre, apodo, foto: (d.foto || "").trim() || `${slug}.webp`, numero: num,
-        nacionalidad: (d.nacionalidad || "").trim() || null, dato: (d.dato || "").trim() || null, activo: !!d.activo };
+        nacionalidad: textoONull(d.nacionalidad), dato: textoONull(d.dato), activo: !!d.activo,
+        sexo: textoONull(d.sexo), cedula: textoONull(d.cedula), nacimiento: textoONull(d.nacimiento),
+        reglas: textoONull(d.reglas), contacto_nombre: textoONull(d.contacto_nombre),
+        contacto_tel: textoONull(d.contacto_tel), cobertura: textoONull(d.cobertura),
+        socio: d.socio === "si" ? true : d.socio === "no" ? false : null };
       const boton = f.querySelector('[type="submit"]'); boton.disabled = true;
       try {
         const r = nuevo ? await pedir("jugadores", { method: "POST", body: JSON.stringify({ slug, ...cuerpo }) })

@@ -716,6 +716,15 @@ header.nav:has(> .cuenta:not(.cuenta-boot)) .cuenta-boot{display:none!important}
 .adm-cab .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px}
 .adm-cab .btn .ico{width:18px;height:18px}
 .adm-tabla{overflow-x:auto;background:var(--card);border:1px solid var(--borde);border-radius:18px}
+.adm-ficha td,.adm-ficha th{white-space:nowrap;font-size:.84rem}
+.adm-ficha .adm-quien b{font-size:.92rem}
+@media(min-width:1100px){
+  #admin.sec:has(.adm-ficha){max-width:none;padding-left:20px;padding-right:20px}
+  .adm-ficha th,.adm-ficha td{padding:10px 8px;letter-spacing:.03em}
+  .adm-ficha .adm-quien{gap:8px}
+  .adm-ficha .adm-quien img{width:28px;height:48px}
+}
+.adm-modal .quiz-caja{width:min(720px,100%)}
 .adm table{width:100%;border-collapse:collapse;min-width:520px}
 .adm th{text-align:left;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);padding:14px 16px;border-bottom:1px solid var(--borde)}
 .adm td{padding:10px 16px;border-bottom:1px solid #ffffff0d;vertical-align:middle}
