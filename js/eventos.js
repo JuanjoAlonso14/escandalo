@@ -21,6 +21,7 @@
     "/asistencia": "asistencia",
     "/caja": "caja",
     "/jugadas": "jugadas",
+    "/recursos": "recursos",
     "/torneo": "torneo",
   };
 
@@ -47,7 +48,7 @@
     aporte: "editar-aporte", egreso: "editar-egreso", quiz: "empezar-quiz",
     visible: "cambiar-visible", "nueva-practica": "nueva-practica",
     "editar-practica": "editar-practica", "borrar-practica": "borrar-practica",
-    salir: "cerrar-sesion",
+    salir: "cerrar-sesion", bajar: "descargar",
   };
 
   // /galeria → galeria · /#roster → roster · /jugador/... no aplica (redirige)

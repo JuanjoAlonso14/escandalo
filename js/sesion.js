@@ -126,8 +126,25 @@
         <button role="menuitem" type="button" data-salir>${ico("salir")} Cerrar sesión</button>
       </div>`;
   }
+  const ponerRecursos = () => {
+    if (!menuSitio || menuSitio.querySelector('a[href="/recursos"]')) return;
+    const ancla = menuSitio.querySelector('a[href="/jugadas"]');
+    const rec = document.createElement("a");
+    rec.href = "/recursos";
+    rec.textContent = "Recursos";
+    if (ancla) ancla.after(rec);
+    else menuSitio.appendChild(rec);
+  };
+  const sacarRecursos = () => menuSitio?.querySelector('a[href="/recursos"]')?.remove();
+
   pintar(leer().rol);
-  rol().then((r) => { if (leer()) pintar(r); else cuenta.remove(); });
+  if (leer().rol === "admin") ponerRecursos();
+  rol().then((r) => {
+    if (!leer()) { cuenta.remove(); return; }
+    pintar(r);
+    if (r === "admin") ponerRecursos();
+    else sacarRecursos();
+  });
 
   cuenta.addEventListener("click", (e) => {
     const btn = e.target.closest(".cuenta-btn");
