@@ -34,6 +34,21 @@
 
   const limpio = (s) => String(s || "").normalize("NFD").replace(/\p{M}/gu, "")
     .toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 32);
+  // Para el nombre del click: conserva guiones ("agregar-atacante"), no aplasta todo.
+  const token = (s) => String(s || "").normalize("NFD").replace(/\p{M}/gu, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
+
+  // data-* que describen la acción. El resto (id, mes, monto) no dice qué se clickeó.
+  const DATA_NOMBRE = {
+    play: "reproducir", ver: "ver", nueva: "nueva", editar: "editar", borrar: "borrar",
+    quitar: "borrar-ficha", deshacer: "deshacer", guardar: "guardar", cerrar: "cerrar",
+    ok: "confirmar", "nuevo-paso": "agregar-paso", "borrar-paso": "borrar-paso",
+    "nuevo-aporte": "nuevo-aporte", "nuevo-egreso": "nuevo-egreso",
+    aporte: "editar-aporte", egreso: "editar-egreso", quiz: "empezar-quiz",
+    visible: "cambiar-visible", "nueva-practica": "nueva-practica",
+    "editar-practica": "editar-practica", "borrar-practica": "borrar-practica",
+    salir: "cerrar-sesion",
+  };
 
   // /galeria → galeria · /#roster → roster · /jugador/... no aplica (redirige)
   function pagina(href) {
@@ -54,42 +69,95 @@
     }
   }
 
+  const paginaActual = () => (pagina(location.href).split(".")[0] || "sitio");
+
+  // Qué acción es este elemento, mirando data-* conocidos (el botón o un padre).
+  function nombreData(el) {
+    let n = el;
+    for (let i = 0; i < 6 && n && n.nodeType === 1; i++, n = n.parentElement) {
+      if (n.hasAttribute?.("data-agregar")) {
+        const v = token(n.getAttribute("data-agregar"));
+        if (v === "ataque") return "agregar-atacante";
+        if (v === "defensa") return "agregar-defensa";
+        if (v === "disco") return "agregar-disco";
+        return "agregar" + (v ? "-" + v : "");
+      }
+      if (n.hasAttribute?.("data-paso")) {
+        const num = Number(n.getAttribute("data-paso"));
+        return "paso-" + (Number.isFinite(num) ? num + 1 : token(n.getAttribute("data-paso")));
+      }
+      if (n.hasAttribute?.("data-nivel")) return "quiz-nivel-" + token(n.getAttribute("data-nivel"));
+      if (n.hasAttribute?.("data-f") && !n.closest?.(".pz-campo")) return "filtro-" + token(n.getAttribute("data-f"));
+      for (const [k, nom] of Object.entries(DATA_NOMBRE)) {
+        if (n.hasAttribute?.("data-" + k)) return nom;
+      }
+    }
+    return "";
+  }
+
+  function nombreForm(btn) {
+    const form = btn.closest("form");
+    const id = form?.id || "";
+    if (id === "form") return "sumate-enviar";
+    if (id === "login-form") return "login-entrar";
+    if (id === "uni-candado") return "uniformes-desbloquear";
+    const texto = token(btn.innerText || btn.getAttribute("aria-label") || "");
+    return texto || "enviar-formulario";
+  }
+
+  // className en un SVG es un objeto, no texto: por eso aparecía "objectsvganimatedstring".
+  function claseTexto(el) {
+    const c = el?.getAttribute?.("class");
+    return typeof c === "string" ? c : "";
+  }
+
   function describir(el) {
-    if (!el || el.nodeType !== 1) return "click";
+    const pag = paginaActual();
+    const marca = (que) => (que ? pag + "." + que : pag + ".click").slice(0, 80);
+    if (!el || el.nodeType !== 1) return marca("click");
+
+    const data = nombreData(el);
+    if (data) return marca(data);
+
     const a = el.closest?.("a");
     if (a) {
       const dest = pagina(a.getAttribute("href") || "/");
-      if (a.classList.contains("brand")) return "nav.logo";
+      if (a.classList.contains("brand")) return marca("logo");
       if (a.closest("#menu") || a.closest("header.nav")) return "nav." + dest;
-      if (a.classList.contains("btn")) return "btn." + dest;
-      if (a.classList.contains("dorso-wa")) return "carta.whatsapp";
-      if (a.hasAttribute("download")) return "carta.descargar";
+      if (a.classList.contains("dorso-wa")) return marca("carta-whatsapp");
+      if (a.hasAttribute("download")) return marca("carta-descargar");
+      if (a.classList.contains("btn")) return marca("ir-" + token(dest));
       return "link." + dest;
     }
     const btn = el.closest?.("button");
     if (btn) {
-      if (btn.id === "burger") return "nav.menu";
-      if (btn.closest(".cuenta")) return btn.closest("[data-salir]") ? "cuenta.salir" : "cuenta";
-      if (btn.classList.contains("dorso-zoom")) return "carta.ampliar";
-      if (btn.classList.contains("dorso-compartir")) return "carta.compartir";
-      if (btn.classList.contains("clave-ojito")) return "login.ojito";
-      if (btn.type === "submit") {
-        const form = btn.closest("form");
-        if (form?.id === "form") return "form.sumate";
-        if (form?.id === "login-form") return "form.login";
-        return "form.enviar";
-      }
-      const t = limpio(btn.getAttribute("aria-label") || btn.innerText || btn.title);
-      return t ? "btn." + t : "btn";
+      if (btn.id === "burger") return marca("abrir-menu");
+      if (btn.closest(".cuenta")) return marca(btn.closest("[data-salir]") ? "cerrar-sesion" : "menu-cuenta");
+      if (btn.classList.contains("dorso-zoom")) return marca("carta-ampliar");
+      if (btn.classList.contains("dorso-compartir")) return marca("carta-compartir");
+      if (btn.classList.contains("clave-ojito")) return marca("mostrar-clave");
+      if (btn.type === "submit") return marca(nombreForm(btn));
+      const t = token(btn.getAttribute("aria-label") || btn.innerText || btn.title);
+      if (t) return marca(t);
     }
     const input = el.closest?.("input,select,textarea");
     if (input) {
-      if (input.type === "password") return "campo.clave";
-      return "campo." + (limpio(input.name || input.id) || input.tagName.toLowerCase());
+      if (input.type === "password") return marca("campo-clave");
+      const campo = token(input.name || input.id || input.getAttribute("aria-label") || "");
+      return marca(campo ? "campo-" + campo : "campo");
     }
     const carta = el.closest?.(".pcard");
-    if (carta) return "carta." + limpio(carta.dataset.slug || "jugador");
-    return "click." + limpio(el.id || el.className || el.tagName);
+    if (carta) return marca("carta-" + token(carta.dataset.slug || "jugador"));
+    if (el.closest?.(".pz-campo")) return marca(el.closest("[data-f]") ? "ficha" : "cancha");
+    const svg = el.closest?.("svg");
+    if (svg) {
+      const c = claseTexto(svg).split(/\s+/).find((x) => x && x !== "ico" && !x.startsWith("ico-"));
+      if (c) return marca(token(c));
+    }
+    const id = token(el.id || "");
+    if (id) return marca(id);
+    const c = claseTexto(el).split(/\s+/).find(Boolean);
+    return marca(c ? token(c) : "click");
   }
 
   function encolar(type, value) {
@@ -140,8 +208,7 @@
   document.addEventListener("click", (e) => {
     const t = e.target;
     if (!t || t.closest?.("[data-no-track]")) return;
-    const el = t.closest?.("a,button,input,select,textarea,summary,label,[role='button']") || t;
-    encolar("click", describir(el));
+    encolar("click", describir(t));
   }, true);
 
   addEventListener("pagehide", () => flush(true));
