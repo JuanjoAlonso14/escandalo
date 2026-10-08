@@ -77,12 +77,23 @@
     });
     const saldoFinal = saldoAcum.filter((x) => x != null).pop();
 
+    const yoId = Number((Sesion.actual() || {}).jugador_id);
+    const hoy = new Date();
+    const mesHoy = hoy.getMonth() + 1;
+    const anioHoy = hoy.getFullYear();
+    const mesPlanilla = anioHoy === ANIO ? MESES.find((m) => m.n === mesHoy) : null;
+    const pagoHoy = mesPlanilla && ingresos.some((x) => x.jugador_id === yoId && x.mes === mesHoy && Number(x.monto) > 0);
+    const avisoMio = mesPlanilla && yoId
+      ? `<a class="caja-mio ${pagoHoy ? "ok" : "falta"}" href="#caja-yo">${mesPlanilla.nom}: ${pagoHoy ? "pagaste" : "falta tu aporte"}</a>`
+      : "";
+
     const filasJug = jugadores.map((j) => {
       const montos = MESES.map((m) => {
         const fila = ingresos.find((x) => x.jugador_id === j.id && x.mes === m.n);
         return celdaNum(fila?.monto, `data-aporte data-id="${j.id}" data-mes="${m.n}" data-monto="${fila ? fila.monto : ""}"`);
       }).join("");
-      return `<tr><th class="caja-nom">${esc(j.nombre)}</th>${montos}</tr>`;
+      const yo = j.id === yoId;
+      return `<tr class="${yo ? "caja-yo" : ""}" ${yo ? 'id="caja-yo"' : ""}><th class="caja-nom">${esc(j.nombre)}</th>${montos}</tr>`;
     }).join("");
 
     const nombresInv = [...new Set(ingresos.filter((x) => x.invitado).map((x) => x.invitado))]
@@ -116,6 +127,7 @@
           <button class="btn ghost" data-nuevo-egreso>${ico("mas")} Cargar egreso</button>
         </div>` : ""}
       </div>
+      ${avisoMio}
 
       <h2 class="grupo-ult">Balance</h2>
       <div class="caja-tabla"><table>
