@@ -1,4 +1,4 @@
-// Panel de administración (/admin). Solo para el rol admin. Hoy gestiona jugadores; torneos y partidos vienen después.
+// Panel de administración (/admin). Solo para el rol admin. El trackeo de partidos está en /trackeo.
 // La seguridad real está en las reglas de la base: aunque alguien abra esta página, solo un admin puede modificar datos.
 (() => {
   const raiz = document.querySelector("#admin");
@@ -44,14 +44,13 @@
           <h2>Panel</h2>
           <a class="${cual === "jugadores" ? "on" : ""}" href="/admin">${ico("usuario")} Jugadores</a>
           <a class="${cual === "asistencia" ? "on" : ""}" href="/admin#asistencia">${ico("calendario")} Asistencia</a>
-          <span class="pronto">${ico("trofeo")} Torneos <small>Pronto</small></span>
-          <span class="pronto">${ico("disco")} Partidos <small>Pronto</small></span>
+          <a href="/trackeo">${ico("disco")} Trackeo</a>
         </aside>`;
   addEventListener("hashchange", () => { if (document.querySelector(".adm")) mostrar(); });
 
   async function cargar() {
     try {
-      const r = await pedir("jugadores?select=id,slug,nombre,apodo,foto,numero,nacionalidad,dato,activo,creado_en,sexo,cedula,nacimiento,reglas,contacto_nombre,contacto_tel,cobertura,socio&order=nombre.asc");
+      const r = await pedir("jugadores?invitado=eq.false&select=id,slug,nombre,apodo,foto,numero,nacionalidad,dato,activo,creado_en,sexo,cedula,nacimiento,reglas,contacto_nombre,contacto_tel,cobertura,socio&order=nombre.asc");
       if (!r.ok) throw new Error(await mensajeError(r));
       jugadores = await r.json();
     } catch (e) { raiz.innerHTML = `<p class="adm-vacio">No se pudo cargar: ${esc(e.message)}</p>`; return; }

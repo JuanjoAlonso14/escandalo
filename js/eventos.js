@@ -22,6 +22,7 @@
     "/caja": "caja",
     "/jugadas": "jugadas",
     "/recursos": "recursos",
+    "/trackeo": "trackeo",
     "/torneo": "torneo",
   };
 

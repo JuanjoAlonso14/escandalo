@@ -122,6 +122,7 @@
         <div class="cuenta-quien"><b>${esc(s.nombre)}</b><small class="rol-${esc(rolActual || "jugador")}">${etiqueta(rolActual)}</small></div>
         <a role="menuitem" href="/asistencia">${ico("calendario")} Asistencia a prácticas</a>
         <a role="menuitem" href="/caja">${ico("caja")} Caja del equipo</a>
+        ${rolActual === "admin" ? `<a role="menuitem" href="/trackeo">${ico("disco")} Trackeo</a>` : ""}
         ${rolActual === "admin" ? `<a role="menuitem" href="/admin">${ico("panel")} Panel de administración</a>` : ""}
         <button role="menuitem" type="button" data-clave>${ico("candado")} Cambiar contraseña</button>
         <button role="menuitem" type="button" data-salir>${ico("salir")} Cerrar sesión</button>
