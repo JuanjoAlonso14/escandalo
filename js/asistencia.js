@@ -19,7 +19,7 @@ const Asistencia = (() => {
   const cargar = async () => {
     const [practicas, jugadores, asistencias] = await Promise.all([
       pedirTodo("practicas?select=id,fecha,lugar,notas&order=fecha.asc,id.asc"),
-      pedirTodo("jugadores?select=id,slug,nombre,apodo,foto,activo&order=nombre.asc"),
+      pedirTodo("jugadores?invitado=eq.false&select=id,slug,nombre,apodo,foto,activo&order=nombre.asc"),
       pedirTodo("asistencias?select=practica_id,jugador_id,presente&order=practica_id.asc,jugador_id.asc"),
     ]);
     return { practicas, jugadores, asistencias };
