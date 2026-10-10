@@ -5,7 +5,7 @@
   if (!raiz) return;
 
   const esc = (s) => (typeof escHtml === "function" ? escHtml(s) : String(s ?? ""));
-  const FASES = ["Grupos", "Pre-cuartos", "Cuartos", "Semifinal", "Final", "Amistoso"];
+  const FASES = ["Grupos", "Pre-cuartos", "Cuartos", "Semifinal", "Final"];
   const TIPOS = [
     ["gol", "Gol"],
     ["asistencia", "Asistencia"],
@@ -198,7 +198,7 @@
   }
 
   async function vistaLista() {
-    const torneos = await api("track_torneos?select=id,nombre,lugar,desde,track_partidos(id)&order=creado_en.desc");
+    const torneos = await api("track_torneos?select=id,nombre,lugar,desde,track_partidos(id,fase)&order=creado_en.desc");
     raiz.innerHTML = `
       <div class="adm-cab">
         <div><h1>Trackeo</h1><p>Armás el torneo, marcás quién juega y trackeás cada punto.</p></div>
@@ -207,6 +207,11 @@
       ${formTorneo ? `
         <form class="trk-form adm-form" data-form="torneo">
           <label>Nombre<input name="nombre" required maxlength="80" placeholder="Copa Oriental 2026"></label>
+          <label class="adm-check"><input name="unico" type="checkbox"> Partido único, sin armar un torneo</label>
+          <div class="trk-unico" hidden>
+            <label>Rival<input name="rival" maxlength="80" placeholder="Equipo rival"></label>
+            <label>Tiempo del partido<input name="duracion_min" type="number" min="10" max="180" inputmode="numeric" placeholder="Minutos, por ejemplo 75"></label>
+          </div>
           <div class="adm-fila">
             <label>Lugar<input name="lugar" maxlength="80" placeholder="Punta del Este"></label>
             <label>Desde<input name="desde" type="date"></label>
@@ -217,7 +222,7 @@
         ${torneos.length ? torneos.map((t) => `
           <a class="trk-torneo" href="#t-${t.id}">
             <span><b>${esc(t.nombre)}</b><small>${esc(t.lugar || "Sin lugar")}${t.desde ? " · " + esc(t.desde) : ""}</small></span>
-            <small>${(t.track_partidos || []).length} partidos</small>
+            <small>${(t.track_partidos || []).length === 1 && t.track_partidos[0].fase === "Amistoso" ? "Partido único" : `${(t.track_partidos || []).length} partidos`}</small>
           </a>`).join("") : `<p class="adm-vacio">Todavía no hay torneos trackeados.</p>`}
       </div>`;
   }
@@ -269,7 +274,10 @@
 
   async function htmlPartidos(torneo) {
     const partidos = await api(`track_partidos?torneo_id=eq.${torneo.id}&select=id,rival,fase,estado,duracion_min,creado_en,track_puntos(resultado)&order=creado_en.asc`);
+    const unico = partidos.length === 1 && partidos[0].fase === "Amistoso";
+    const borrar = `<p style="margin-top:18px"><button class="btn ghost peligro" type="button" data-acc="borrar-torneo" data-torneo="${torneo.id}">Borrar torneo</button></p>`;
     return `
+      ${unico ? "" : `
       <form class="trk-form adm-form" data-form="partido" data-torneo="${torneo.id}">
         <div class="adm-fila">
           <label>Rival<input name="rival" required maxlength="80" placeholder="Equipo rival"></label>
@@ -278,16 +286,17 @@
         <label>Tiempo del partido<input name="duracion_min" type="number" required min="10" max="180" inputmode="numeric" placeholder="Minutos, por ejemplo 75"></label>
         <p class="trk-ayuda">El reloj total arranca con el primer punto. El medio tiempo se marca a los 8 goles, o cuando lo marques vos.</p>
         <button class="btn" type="submit">Nuevo partido</button>
-      </form>
+      </form>`}
       <div class="trk-partidos">
         ${partidos.length ? partidos.map((p) => {
           const m = marcadorDe(p.track_puntos || []);
           return `<a class="trk-partido" href="#p-${p.id}">
-            <span><b>${esc(p.rival)}</b><small>${esc(p.fase)}${p.duracion_min ? ` · ${p.duracion_min} min` : ""} · ${p.estado === "finalizado" ? "Finalizado" : "En juego"}</small></span>
+            <span><b>${esc(p.rival)}</b><small>${unico ? "Partido único" : esc(p.fase)}${p.duracion_min ? ` · ${p.duracion_min} min` : ""} · ${p.estado === "finalizado" ? "Finalizado" : "En juego"}</small></span>
             <b>${m.favor}–${m.contra}</b>
           </a>`;
         }).join("") : `<p class="trk-ayuda">Todavía no hay partidos en este torneo.</p>`}
-      </div>`;
+      </div>
+      ${borrar}`;
   }
 
   async function htmlResumen(torneo) {
@@ -970,6 +979,18 @@
     if (el && !el.classList.contains("tip")) ocultarGlobo();
   });
 
+  raiz.addEventListener("change", (e) => {
+    if (e.target.name !== "unico") return;
+    const form = e.target.closest("form");
+    const extra = form.querySelector(".trk-unico");
+    const on = e.target.checked;
+    extra.hidden = !on;
+    form.querySelector("[name=nombre]").required = !on;
+    form.querySelector("[name=rival]").required = on;
+    form.querySelector("[name=duracion_min]").required = on;
+    form.querySelector("[type=submit]").textContent = on ? "Crear partido" : "Crear torneo";
+  });
+
   raiz.addEventListener("submit", async (e) => {
     const form = e.target.closest("form");
     if (!form) return;
@@ -979,8 +1000,15 @@
     try {
       ocupado = true;
       if (form.dataset.form === "torneo") {
-        const nombre = String(d.get("nombre") || "").trim();
-        if (!nombre) { aviso("Poné el nombre del torneo.", true); return; }
+        const unico = d.get("unico") === "on";
+        const rival = String(d.get("rival") || "").trim();
+        const minutos = Math.round(Number(d.get("duracion_min")));
+        let nombre = String(d.get("nombre") || "").trim();
+        if (unico) {
+          if (!rival) { aviso("Poné el rival.", true); return; }
+          if (!Number.isInteger(minutos) || minutos < 10 || minutos > 180) { aviso("El tiempo tiene que ser entre 10 y 180 minutos.", true); return; }
+          if (!nombre) nombre = rival;
+        } else if (!nombre) { aviso("Poné el nombre del torneo.", true); return; }
         const creado = await api("track_torneos", { method: "POST", body: JSON.stringify({
           nombre, lugar: String(d.get("lugar") || "").trim() || null, desde: d.get("desde") || null,
         }) });
@@ -989,7 +1017,10 @@
           await api("track_roster", { method: "POST", body: JSON.stringify(plantel.map((j) => ({ torneo_id: creado[0].id, jugador_id: j.id, juega: true }))) });
         }
         formTorneo = false;
-        location.hash = `t-${creado[0].id}-roster`;
+        if (unico) {
+          const partido = await api("track_partidos", { method: "POST", body: JSON.stringify({ torneo_id: creado[0].id, rival, fase: "Amistoso", duracion_min: minutos }) });
+          location.hash = `p-${partido[0].id}`;
+        } else location.hash = `t-${creado[0].id}-roster`;
       } else if (form.dataset.form === "partido") {
         const rival = String(d.get("rival") || "").trim();
         const minutos = Math.round(Number(d.get("duracion_min")));
