@@ -123,6 +123,7 @@
         <a role="menuitem" href="/asistencia">${ico("calendario")} Asistencia a prácticas</a>
         <a role="menuitem" href="/caja">${ico("caja")} Caja del equipo</a>
         ${rolActual === "admin" ? `<a role="menuitem" href="/admin">${ico("panel")} Panel de administración</a>` : ""}
+        <button role="menuitem" type="button" data-clave>${ico("candado")} Cambiar contraseña</button>
         <button role="menuitem" type="button" data-salir>${ico("salir")} Cerrar sesión</button>
       </div>`;
   }
@@ -161,8 +162,74 @@
       }
       return;
     }
+    if (e.target.closest("[data-clave]")) { menu.hidden = true; abrirClave(); return; }
     if (e.target.closest("[data-salir]")) cerrar();
   });
+
+  function abrirClave() {
+    document.querySelector(".clave-modal")?.remove();
+    const m = document.createElement("div");
+    m.className = "quiz-modal open clave-modal";
+    m.innerHTML = `
+      <div class="quiz-caja">
+        <div class="quiz-top"><span>Cambiar contraseña</span><button class="quiz-x" type="button" data-cerrar aria-label="Cerrar">${ico("cerrar")}</button></div>
+        <form class="adm-form" novalidate>
+          <label>Contraseña actual<span class="clave-wrap"><input name="actual" type="password" autocomplete="current-password"><button class="clave-ojito" type="button" aria-label="Mostrar contraseña"></button></span></label>
+          <label>Nueva contraseña<span class="clave-wrap"><input name="nueva" type="password" autocomplete="new-password" minlength="6"><button class="clave-ojito" type="button" aria-label="Mostrar contraseña"></button></span></label>
+          <label>Repetir la nueva<span class="clave-wrap"><input name="repetir" type="password" autocomplete="new-password" minlength="6"><button class="clave-ojito" type="button" aria-label="Mostrar contraseña"></button></span></label>
+          <small class="adm-error" aria-live="polite"></small>
+          <div class="adm-botones"><button type="button" class="btn ghost" data-cerrar>Cancelar</button><button class="btn" type="submit">Guardar</button></div>
+        </form>
+      </div>`;
+    document.body.appendChild(m);
+    const cerrarModal = () => m.remove();
+    m.addEventListener("click", (ev) => { if (ev.target === m || ev.target.closest("[data-cerrar]")) cerrarModal(); });
+    m.querySelectorAll(".clave-wrap").forEach((wrap) => {
+      const input = wrap.querySelector("input"), btn = wrap.querySelector(".clave-ojito");
+      const pintarOjo = () => { btn.innerHTML = ico(input.type === "text" ? "ojo-off" : "ojo"); };
+      pintarOjo();
+      btn.addEventListener("click", () => { input.type = input.type === "password" ? "text" : "password"; pintarOjo(); });
+    });
+    const f = m.querySelector("form"), err = f.querySelector(".adm-error");
+    f.addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      err.textContent = "";
+      const d = Object.fromEntries(new FormData(f));
+      if (!d.actual || !d.nueva) { err.textContent = "Completá la contraseña actual y la nueva."; return; }
+      if (d.nueva.length < 6) { err.textContent = "La nueva contraseña tiene que tener al menos 6 caracteres."; return; }
+      if (d.nueva !== d.repetir) { err.textContent = "La repetición no coincide."; return; }
+      if (d.nueva === d.actual) { err.textContent = "Elegí una contraseña distinta a la actual."; return; }
+      const boton = f.querySelector('[type="submit"]');
+      boton.disabled = true;
+      try {
+        const r = await fetch(`${SUPABASE.url}/rest/v1/rpc/cambiar_mi_clave`, {
+          method: "POST",
+          headers: await Sesion.headers(),
+          body: JSON.stringify({ p_actual: d.actual, p_nueva: d.nueva }),
+          signal: AbortSignal.timeout(8000),
+        });
+        if (!r.ok) {
+          let msg = "No se pudo cambiar la contraseña.";
+          try { msg = (await r.json()).message || msg; } catch (e2) {}
+          throw new Error(msg);
+        }
+        cerrarModal();
+        const t = document.createElement("div");
+        t.className = "toast ver"; t.setAttribute("role", "status"); t.textContent = "Contraseña actualizada";
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 2400);
+      } catch (e2) {
+        err.textContent = e2.message;
+        boton.disabled = false;
+      }
+    });
+    f.querySelector("input").focus();
+  }
+
   document.addEventListener("click", (e) => { if (!cuenta.contains(e.target)) { const m = cuenta.querySelector(".cuenta-menu"); if (m) m.hidden = true; } });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") { const m = cuenta.querySelector(".cuenta-menu"); if (m) m.hidden = true; } });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    document.querySelector(".clave-modal")?.remove();
+    const m = cuenta.querySelector(".cuenta-menu"); if (m) m.hidden = true;
+  });
 })();
