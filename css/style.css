@@ -1054,6 +1054,8 @@ header.nav:has(> .cuenta:not(.cuenta-boot)) .cuenta-boot{display:none!important}
 .trk-cerrados{margin-top:22px}
 .trk-form{display:grid;gap:14px;margin:0 0 22px;padding:18px;border-radius:16px;background:var(--card);border:1px solid var(--borde)}
 .trk-form[data-form="jugador"]{margin-top:36px}
+.trk-unico{display:grid;gap:14px}
+.trk-unico[hidden]{display:none}
 .trk-form .btn,.trk-acciones .trk-modo{width:100%}
 button.btn[data-acc="empezar"]:disabled{opacity:.4;cursor:not-allowed}
 #trackeo .adm-tabla{margin-top:8px;margin-bottom:16px}
