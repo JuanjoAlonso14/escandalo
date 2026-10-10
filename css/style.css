@@ -701,6 +701,7 @@ header.nav:has(> .cuenta:not(.cuenta-boot)) .cuenta-boot{display:none!important}
 .cuenta-menu a:hover,.cuenta-menu button:hover{background:#ffffff12}
 .cuenta-menu .ico{width:18px;height:18px;color:var(--b)}
 .clave-modal .quiz-caja{width:min(420px,100%)}
+.trk-cancelar .quiz-caja{width:min(420px,100%)}
 .clave-modal .adm-form label{text-transform:none;letter-spacing:0;font-size:.9rem;color:var(--txt)}
 
 /* PANEL DE ADMINISTRACION */
@@ -998,4 +999,128 @@ header.nav:has(> .cuenta:not(.cuenta-boot)) .cuenta-boot{display:none!important}
   .pz-modal .quiz-caja{padding:16px}
   .pz-etq{margin-left:0}
   .pz-barra{justify-content:center}
+}
+
+/* TRACKEO DE PARTIDOS (solo admins) */
+#trackeo .adm-cab{margin-bottom:28px}
+#trackeo h2{margin:32px 0 16px}
+.trk-lista,.trk-partidos{display:grid;gap:14px}
+.trk-torneo,.trk-partido{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:18px 20px;border-radius:16px;background:var(--card);border:1px solid var(--borde)}
+.trk-torneo:hover,.trk-partido:hover{border-color:#b44cff66}
+.trk-torneo b,.trk-partido b{font-family:Anton,Impact,sans-serif;font-size:1.35rem;letter-spacing:.03em}
+.trk-torneo small,.trk-partido small{display:block;color:var(--mute);margin-top:4px}
+.trk-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 22px}
+.trk-tabs a{padding:8px 14px;border-radius:99px;border:1px solid var(--borde);font-weight:700}
+.trk-tabs a.on{background:var(--b);color:#17170c;border-color:transparent}
+.trk-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:22px}
+.trk-card{display:grid;gap:4px;align-content:start;background:var(--card);border:1px solid var(--borde);border-radius:16px;padding:18px 20px}
+.trk-card span{display:block;color:var(--mute);font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.trk-card b{font-family:Anton,Impact,sans-serif;font-size:1.7rem;line-height:1;color:#b7b7c9;margin-bottom:16px;white-space:nowrap}
+.trk-pct{margin-left:.16em}
+.trk-card .trk-pct{display:inline;font:inherit;letter-spacing:0;text-transform:none;color:inherit;vertical-align:baseline}
+.trk-card small{display:block;color:var(--mute);font-size:.8rem;line-height:1.4;margin-top:0}
+.trk-botones{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:18px}
+.trk-borrar-punto{margin-top:28px}
+.trk-plantel{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0 20px}
+.trk-chip,.trk-lado,.trk-modo{border:1px solid #ffffff22;background:#ffffff0a;color:#fff;border-radius:999px;padding:10px 14px;font:700 .92rem Inter,sans-serif;cursor:pointer}
+.trk-chip.on{background:#ffb81c22;border-color:var(--b);color:var(--b)}
+.trk-chip.trk-lanzo{opacity:.4;border-style:dashed;cursor:default}
+.trk-acciones.trk-espera{opacity:.45}
+.trk-chip small{font-weight:600;opacity:.75;margin-left:6px}
+.trk-lados,.trk-cerrar{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.trk-lado.on{background:var(--a);border-color:transparent;color:#fff}
+.trk-lado.def.on{background:#31c4ff;border-color:transparent;color:#041018}
+.trk-marcador{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;background:var(--card);border:1px solid var(--borde);border-radius:18px;padding:18px 22px;margin-bottom:20px}
+.trk-marcador b{font-family:Anton,Impact,sans-serif;font-size:2.6rem;letter-spacing:.04em;line-height:1}
+.trk-nos{display:flex;align-items:center;gap:32px}
+.trk-tiempo{display:grid;justify-items:end;gap:4px}
+.trk-marcador .trk-tiempo b{font-size:1.7rem;color:#b7b7c9}
+.trk-medio{flex-basis:100%;margin:6px 0 0;padding:12px 14px;border-radius:12px;text-align:center;background:#b44cff22;border:1px solid #b44cff66;font-weight:700}
+.trk-medio[hidden]{display:none}
+.trk-descanso{display:grid;gap:14px;margin:0 0 22px}
+.trk-descanso h2{font-family:Anton,Impact,sans-serif;font-size:2rem;letter-spacing:.03em;margin:0}
+.trk-minutos{display:flex;flex-wrap:wrap;gap:12px}
+.trk-minutos .btn{width:auto;min-width:92px}
+.trk-atras{font-size:4rem}
+[data-fin-descanso][hidden]{display:none}
+.trk-cron{font-family:Anton,Impact,sans-serif;font-size:3rem;line-height:1}
+.trk-acciones{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;margin:16px 0}
+.trk-modo.on{background:var(--a);border-color:transparent}
+.trk-cerrar button{border:0;border-radius:14px;padding:16px 10px;font:700 1rem Inter,sans-serif;cursor:pointer}
+.trk-cerrar .favor{background:#2ecc71;color:#04140c}
+.trk-cerrar .contra{background:#ff4d6d;color:#fff}
+.trk-log{display:grid;gap:8px;margin:14px 0 18px;color:var(--mute);font-size:.92rem}
+.trk-ayuda{color:var(--mute);margin:0 0 14px}
+.trk-cerrados{margin-top:22px}
+.trk-form{display:grid;gap:14px;margin:0 0 22px;padding:18px;border-radius:16px;background:var(--card);border:1px solid var(--borde)}
+.trk-form[data-form="jugador"]{margin-top:36px}
+.trk-form .btn,.trk-acciones .trk-modo{width:100%}
+button.btn[data-acc="empezar"]:disabled{opacity:.4;cursor:not-allowed}
+#trackeo .adm-tabla{margin-top:8px;margin-bottom:16px}
+#trackeo .adm-tabla table{width:100%;border-collapse:separate;border-spacing:0;min-width:920px}
+#trackeo .adm-tabla th,#trackeo .adm-tabla td{padding:13px 14px}
+#trackeo .adm-tabla th{
+  white-space:nowrap;
+  text-align:right;
+  font-size:.68rem;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  color:#8e8ea6;
+  font-weight:700;
+  background:#171722;
+  border-bottom:1px solid #ffffff18;
+}
+#trackeo .adm-tabla td{
+  text-align:right;
+  font-variant-numeric:tabular-nums;
+  color:#c4c4d2;
+  font-weight:600;
+  border-bottom:1px solid #ffffff0d;
+  background:#14141c;
+}
+#trackeo .adm-tabla tr:last-child td{border-bottom:0}
+#trackeo .adm-tabla th:first-child,#trackeo .adm-tabla td:first-child{
+  text-align:left;
+  position:sticky;
+  left:0;
+  z-index:1;
+  padding-left:18px;
+  min-width:148px;
+}
+#trackeo .adm-tabla th:first-child{z-index:2}
+#trackeo .trk-quien{display:grid;gap:1px;line-height:1.15}
+#trackeo .trk-quien b{color:#f3f3f8;font-weight:700;font-size:.98rem}
+#trackeo .trk-quien small{color:#8e8ea6;font-weight:500;font-size:.78rem}
+#trackeo .trk-de{color:#6f6f86;font-weight:500}
+#trackeo .adm-tabla .trk-pct{margin-left:.2em;color:#8e8ea6;font-weight:600}
+#trackeo .trk-mas{color:#3ddc84}
+#trackeo .trk-menos{color:#ff6b86}
+#trackeo .trk-cero{color:#8e8ea6}
+#trackeo .trk-fila:hover td{background:#22222e}
+.trk-tip{cursor:help}
+.trk-lado.trk-tip{cursor:pointer}
+.trk-fila{cursor:pointer}
+.trk-detalle .quiz-caja{width:min(720px,100%)}
+.trk-leyenda{display:flex;flex-wrap:wrap;gap:8px 16px;color:#8e8ea6;font-size:.78rem;margin:0 0 8px}
+.trk-leyenda i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.trk-leyenda i.favor{background:#3ddc84}
+.trk-leyenda i.contra{background:#ff6b86}
+.trk-leyenda i.fuera{background:#ffffff33}
+.trk-grafica{display:flex;align-items:flex-end;gap:8px;overflow-x:auto;min-height:168px;padding:8px 2px 4px;margin-bottom:12px}
+.trk-barra{display:grid;align-items:end;justify-items:center;gap:5px;min-width:30px;padding:0;border:0;background:none;color:inherit;cursor:pointer}
+.trk-barra i{display:block;width:22px;border-radius:7px 7px 3px 3px;background:#3ddc84}
+.trk-barra.contra i{background:#ff6b86}
+.trk-barra.fuera i{width:14px;background:#ffffff22}
+.trk-barra small{font-size:.62rem;letter-spacing:.04em;color:#f3f3f8;min-height:.9em;font-weight:700}
+.trk-barra b{font-size:.72rem;color:#8e8ea6;font-weight:700}
+.trk-barra.on i{box-shadow:0 0 0 2px #fff}
+.trk-nota{min-height:2.8em;margin:0 0 14px;color:#c4c4d2;font-size:.92rem}
+.trk-globo{position:fixed;z-index:80;max-width:240px;padding:8px 10px;border-radius:10px;background:#16162a;border:1px solid #ffffff33;color:#e8e8f0;font:500 .78rem Inter,sans-serif;line-height:1.35;box-shadow:0 10px 24px #0008}
+.trk-globo[hidden]{display:none}
+@media(max-width:700px){
+  .trk-cron{font-size:2.4rem}
+  .trk-marcador b{font-size:2rem}
+  #trackeo .adm-cab h1{font-size:2rem}
+  .trk-botones{flex-direction:column;align-items:stretch}
+  .trk-botones .btn{width:100%}
 }
