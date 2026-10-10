@@ -369,6 +369,13 @@
       await api(`track_partidos?id=eq.${partido.id}`, { method: "PATCH", body: JSON.stringify({ medio_en: null, medio_motivo: null }) });
     }
     const resumen = resumir(puntos, new Map([...nombres].map(([k, v]) => [k, v.nombre])));
+    const ya = new Set(resumen.jugadores.map((j) => j.id));
+    for (const x of roster) {
+      const j = x.jugadores;
+      if (!j || ya.has(j.id)) continue;
+      resumen.jugadores.push({ id: j.id, ...vacio(), nombre: j.nombre });
+    }
+    resumen.jugadores.sort((a, b) => b.puntos - a.puntos || a.nombre.localeCompare(b.nombre, "es"));
     detallePartido = { puntos, nombres };
     const finReloj = !enJuego && partido.finalizado_en ? new Date(partido.finalizado_en) : new Date();
     const segTotal = segJugados(partido, finReloj);
