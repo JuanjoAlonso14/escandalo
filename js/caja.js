@@ -130,18 +130,18 @@
       ${avisoMio}
 
       <h2 class="grupo-ult">Balance</h2>
-      <div class="caja-tabla"><table>
+      <div class="caja-bloque"><div class="caja-tabla"><table>
         <thead><tr><th></th>${thMeses}</tr></thead>
         <tbody>
           <tr><th class="caja-nom">Ingresos</th>${ingPorMes.map((n) => `<td class="caja-num">${n ? plata(n) : ""}</td>`).join("")}</tr>
           <tr><th class="caja-nom">Egresos</th>${egrPorMes.map((n) => `<td class="caja-num">${n ? plata(n) : ""}</td>`).join("")}</tr>
           <tr class="caja-resaltar"><th class="caja-nom">Balance</th>${balPorMes.map((n, i) => `<td class="caja-num ${clsBal(n)}">${(ingPorMes[i] || egrPorMes[i]) ? plata(n) : ""}</td>`).join("")}</tr>
         </tbody>
-      </table></div>
+      </table></div></div>
       <p class="caja-saldo">Saldo de caja: <b class="${clsBal(saldoFinal ?? 0)}">${saldoFinal == null ? "—" : plata(saldoFinal)}</b></p>
 
       <h2 class="grupo-ult">Ingresos</h2>
-      <div class="caja-tabla"><table>
+      <div class="caja-bloque"><div class="caja-tabla"><table>
         <thead><tr><th>Jugador</th>${thMeses}</tr></thead>
         <tbody>
           ${filasJug || `<tr><td colspan="${MESES.length + 1}" class="caja-vacio">Sin jugadores</td></tr>`}
@@ -149,16 +149,80 @@
           ${filasInv || `<tr><td colspan="${MESES.length + 1}" class="caja-vacio">Todavía no hay invitados cargados</td></tr>`}
           <tr class="caja-resaltar"><th class="caja-nom">Total</th>${ingPorMes.map((n) => `<td class="caja-num">${n ? plata(n) : ""}</td>`).join("")}</tr>
         </tbody>
-      </table></div>
+      </table></div></div>
 
       <h2 class="grupo-ult">Egresos</h2>
-      <div class="caja-tabla"><table>
+      <div class="caja-bloque"><div class="caja-tabla"><table>
         <thead><tr><th>Gasto</th>${thMeses}</tr></thead>
         <tbody>
           ${filasEgr}
           <tr class="caja-resaltar"><th class="caja-nom">Total</th>${egrPorMes.map((n) => `<td class="caja-num">${n ? plata(n) : ""}</td>`).join("")}</tr>
         </tbody>
-      </table></div>`;
+      </table></div></div>`;
+    fijarMeses();
+  }
+
+  function fijarMeses() {
+    const movil = window.matchMedia("(max-width: 800px)").matches;
+    const nav = document.querySelector("header.nav");
+    const top = nav ? nav.getBoundingClientRect().height : 62;
+    raiz.querySelectorAll(".caja-bloque").forEach((bloque) => {
+      const caja = bloque.querySelector(".caja-tabla");
+      const table = caja.querySelector("table");
+      const cabeza = table.tHead;
+      let pin = bloque.querySelector(".caja-meses");
+      if (!movil) {
+        if (pin) pin.remove();
+        table.querySelector("colgroup.caja-anchos")?.remove();
+        cabeza.style.visibility = "";
+        table.style.tableLayout = "";
+        table.style.width = "";
+        [...cabeza.rows[0].cells].forEach((c) => { c.style.width = ""; });
+        return;
+      }
+      if (!pin) {
+        pin = document.createElement("div");
+        pin.className = "caja-meses";
+        const clon = document.createElement("table");
+        clon.appendChild(cabeza.cloneNode(true));
+        pin.appendChild(clon);
+        caja.before(pin);
+        caja.addEventListener("scroll", () => { pin.scrollLeft = caja.scrollLeft; }, { passive: true });
+      }
+      pin.style.top = top + "px";
+      const clon = pin.querySelector("table");
+      cabeza.style.visibility = "visible";
+      table.style.tableLayout = "auto";
+      table.style.width = "";
+      [...cabeza.rows[0].cells].forEach((c) => { c.style.width = ""; });
+      const origen = [...cabeza.rows[0].cells];
+      const anchos = origen.map((c) => c.getBoundingClientRect().width);
+      const total = anchos.reduce((a, b) => a + b, 0);
+      let cols = table.querySelector("colgroup.caja-anchos");
+      if (!cols) {
+        cols = document.createElement("colgroup");
+        cols.className = "caja-anchos";
+        table.insertBefore(cols, table.firstChild);
+      }
+      cols.innerHTML = anchos.map((w) => `<col style="width:${w}px">`).join("");
+      table.style.tableLayout = "fixed";
+      table.style.width = total + "px";
+      clon.style.tableLayout = "fixed";
+      clon.style.width = total + "px";
+      const dest = [...clon.tHead.rows[0].cells];
+      anchos.forEach((w, i) => {
+        origen[i].style.width = w + "px";
+        dest[i].style.width = w + "px";
+      });
+      cabeza.style.visibility = "collapse";
+      pin.scrollLeft = caja.scrollLeft;
+    });
+  }
+
+  if (!fijarMeses.listo) {
+    fijarMeses.listo = true;
+    window.addEventListener("resize", fijarMeses);
+    window.matchMedia("(max-width: 800px)").addEventListener("change", fijarMeses);
   }
 
   function formAporte({ id, invitado, mes, monto } = {}) {
