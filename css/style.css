@@ -572,7 +572,7 @@ footer small{color:var(--mute)}
   .t-stats .t-stat:last-child{grid-column:span 2}
   .t-fotos{grid-template-columns:repeat(2,1fr)}
   /* el desenfoque de la barra encierra al menú fijo dentro de ella: en celular se usa fondo opaco */
-  .nav.solid{backdrop-filter:none;-webkit-backdrop-filter:none;background:#0b0b10f5}
+  .nav.solid{backdrop-filter:none;-webkit-backdrop-filter:none;background:#0b0b10}
   #menu{height:100dvh}
   .nav:has(#menu.open) .burger span:first-child{top:16px;rotate:45deg}
   .nav:has(#menu.open) .burger span:last-child{top:16px;rotate:-45deg}
@@ -925,6 +925,13 @@ header.nav:has(> .cuenta:not(.cuenta-boot)) .cuenta-boot{display:none!important}
 .caja-tabla tr.caja-sep th{text-align:left;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--b);background:#161622;padding-top:14px}
 .caja-tabla .caja-vacio{text-align:left;color:var(--mute);font-weight:400}
 .caja-tabla .pos{color:#2ecc71}.caja-tabla .neg{color:#ff6b86}
+@media(max-width:800px){
+  .caja-meses{position:sticky;top:62px;z-index:6;overflow:hidden;background:#1d1d2b;border:1px solid var(--borde);border-bottom:0;border-radius:18px 18px 0 0}
+  .caja-meses table{border-collapse:collapse;margin:0}
+  .caja-meses th{padding:10px 12px;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);background:#1d1d2b;text-align:right;white-space:nowrap}
+  .caja-meses th:first-child{text-align:left;position:sticky;left:0;z-index:1;background:#1d1d2b;box-shadow:6px 0 8px -4px #000a}
+  .caja-bloque .caja-tabla{border-radius:0 0 18px 18px}
+}
 .caja-saldo{margin:4px 2px 28px;color:var(--mute)}
 .caja-saldo b{font-size:1.35rem;font-family:Anton,Impact,sans-serif;font-weight:400}
 .caja-saldo b.pos{color:#2ecc71}.caja-saldo b.neg{color:#ff6b86}
