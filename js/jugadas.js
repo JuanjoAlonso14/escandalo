@@ -23,6 +23,7 @@
           `<option value="${k}"${k === valor ? " selected" : ""}>${v.etq}</option>`).join("")}
       </select>
     </label>`;
+  const checkOcultar = () => `<label class="pz-ocultar"><input type="checkbox" data-ocultar-def> Ocultar defensa</label>`;
 
   document.querySelector("#year").textContent = new Date().getFullYear();
   const burger = document.querySelector("#burger"), menu = document.querySelector("#menu");
@@ -115,10 +116,13 @@
     svg.querySelector("[data-fichas]").innerHTML = d.fichas.map((f) => fichaSvg(f, k)).join("");
   };
 
+  const defensaOculta = (svg) => svg.classList.contains("pz-oculta-def");
+
   function ubicar(svg, d, pos) {
+    const oculta = defensaOculta(svg);
     for (const f of d.fichas) {
       const g = svg.querySelector(`[data-f="${f.id}"]`), p = pos[f.id];
-      if (!g || !p) { if (g) g.style.display = "none"; continue; }
+      if (!g || !p || (oculta && f.tipo === "defensa")) { if (g) g.style.display = "none"; continue; }
       g.style.display = "";
       const m = metros(p);
       g.setAttribute("transform", `translate(${m.x.toFixed(2)} ${m.y.toFixed(2)})`);
@@ -130,7 +134,9 @@
     const capa = svg.querySelector("[data-flechas]");
     if (!desde || !hasta) { capa.innerHTML = ""; return; }
     const k = Number(svg.dataset.k) || 1;
+    const oculta = defensaOculta(svg);
     capa.innerHTML = d.fichas.map((f) => {
+      if (oculta && f.tipo === "defensa") return "";
       const a = desde[f.id], b = hasta[f.id];
       if (!a || !b) return "";
       const p1 = metros(a), p2 = metros(b);
@@ -324,6 +330,7 @@
       <div class="pz-barra">
         <button class="btn" data-play data-texto="Reproducir"></button>
         ${selectVel("media")}
+        ${checkOcultar()}
         <div class="pz-pasos">${chips(d)}</div>
       </div>
       <p class="pz-ayuda">El paso 1 es la salida. En los siguientes se ve de dónde viene cada ficha. El disco va con la flecha punteada.</p>`, "pz-modal");
@@ -332,6 +339,10 @@
     const repintar = () => { montar(svg, d, escalaFichas()); paso = mostrarPaso(m, svg, d, paso); };
     repintar();
     alRedimensionar(m, repintar);
+    m.querySelector("[data-ocultar-def]").addEventListener("change", (e) => {
+      svg.classList.toggle("pz-oculta-def", e.target.checked);
+      paso = mostrarPaso(m, svg, d, paso);
+    });
     botonPlay(m, svg, () => d, (i) => { paso = i; mostrarPaso(m, svg, d, i); });
     m.addEventListener("click", (e) => {
       const chip = e.target.closest("[data-paso]");
@@ -368,6 +379,7 @@
           <button class="btn ghost" data-nuevo-paso>${ico("mas")} Agregar paso</button>
           <button class="btn ghost" data-borrar-paso>${ico("basura")} Borrar paso</button>
           ${selectVel("media")}
+          ${checkOcultar()}
           <button class="btn ghost" data-play data-texto="Probar"></button>
         </div>
       </div>
@@ -547,6 +559,16 @@
       else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") { e.preventDefault(); deshacer(); }
     };
     addEventListener("keydown", teclas);
+
+    m.querySelector("[data-ocultar-def]").addEventListener("change", (e) => {
+      svg.classList.toggle("pz-oculta-def", e.target.checked);
+      if (e.target.checked) {
+        const f = d.fichas.find((x) => x.id === ed.sel);
+        if (f && f.tipo === "defensa") ed.sel = null;
+      }
+      ed.paso = mostrarPaso(m, svg, d, ed.paso);
+      marcarSel();
+    });
 
     botonPlay(m, svg, () => d, (i) => { ed.paso = i; refrescar(); });
 
