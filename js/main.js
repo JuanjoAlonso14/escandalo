@@ -14,11 +14,12 @@ if (heroVid) {
   s.type = "application/ld+json";
   s.textContent = JSON.stringify({
     "@context": "https://schema.org", "@type": "SportsTeam",
-    name: "Escándalo Ultimate", sport: "Ultimate Frisbee", url: "https://escandaloultimate.com/",
+    name: "Escándalo Ultimate", alternateName: "Escándalo Ultimate Frisbee Uruguay",
+    sport: "Ultimate Frisbee", url: "https://escandaloultimate.com/",
     logo: "https://escandaloultimate.com/assets/og.jpg", image: "https://escandaloultimate.com/assets/og.jpg",
     email: TEAM.email, sameAs: [TEAM.instagram], foundingDate: "2026-04-14",
-    location: { "@type": "Place", address: { "@type": "PostalAddress", addressCountry: "UY" } },
-    description: "Equipo uruguayo de Ultimate Frisbee, campeón de la Copa Primavera 2026.",
+    location: { "@type": "Place", name: "Montevideo", address: { "@type": "PostalAddress", addressLocality: "Montevideo", addressCountry: "UY" } },
+    description: "Equipo mixto de Ultimate Frisbee en Uruguay. Entrenamos en Montevideo y recibimos gente nueva. Campeones de la Copa Primavera 2026.",
   });
   document.head.appendChild(s);
 })();
