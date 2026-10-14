@@ -987,6 +987,8 @@ header.nav:has(> .cuenta:not(.cuenta-boot)) .cuenta-boot{display:none!important}
 .pz-vel{display:grid;gap:4px;font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mute)}
 .pz-vel select{width:auto;min-width:110px;padding:9px 12px;font-size:.85rem;font-weight:600;text-transform:none;letter-spacing:0;cursor:pointer}
 .pz-vel select:disabled{opacity:.5;cursor:not-allowed}
+.pz-ocultar{display:flex;align-items:center;gap:8px;margin:0;font-size:.82rem;font-weight:700;letter-spacing:0;text-transform:none;color:#fff;cursor:pointer;user-select:none}
+.pz-ocultar input{width:16px;height:16px;margin:0;accent-color:var(--b);cursor:pointer}
 .pz-pasos{display:flex;flex-wrap:wrap;gap:6px}
 .pz-chip{min-width:34px;padding:7px 10px;border-radius:99px;border:1px solid #ffffff22;background:#ffffff0a;color:var(--mute);font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;transition:.2s}
 .pz-chip:hover{border-color:var(--b);color:#fff}
