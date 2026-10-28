@@ -60,6 +60,7 @@ const RESULTADOS = [
 const JUGADORES = [
   { nombre: "Ainara Rodriguez", apodo: "Aini", foto: "ainara-rodriguez.webp", numero: 4, nacionalidad: "Uruguaya", dato: "Mejor forehand que varios que juegan hace años…" },
   { nombre: "Camila Couture", apodo: "Camilinha", foto: "camila-couture.webp", numero: 24, nacionalidad: "Uruguaya", dato: "La mamá del grupo, y gran handler cuando la obligamos." },
+  { nombre: "Facundo Gonzalez", apodo: "Facu", foto: "facundo-gonzalez.webp", numero: 17 },
   { nombre: "Juanjo Alonso", apodo: "Juano", foto: "juanjo-alonso.webp", numero: 10, nacionalidad: "Uruguaya", dato: "La persona más flexible que vas a conocer." },
   { nombre: "Julieta Noguez", apodo: "Ju", foto: "julieta-noguez.webp", numero: 33, nacionalidad: "Uruguaya", dato: "Si se enoja, no la mires: temé por tu vida." },
   { nombre: "Leandro Rodriguez", apodo: "Lean", foto: "leandro-rodriguez.webp", numero: 22, nacionalidad: "Uruguaya", dato: "Cuidado, que te salta por arriba." },
