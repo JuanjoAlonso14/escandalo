@@ -28,11 +28,12 @@ function claveAdmin(slug) {
 }
 
 (async () => {
-  const jugadores = await (await fetch(`${URL}/rest/v1/jugadores?select=id,slug,nombre&order=nombre`, { headers: cab })).json();
+  const jugadores = await (await fetch(`${URL}/rest/v1/jugadores?select=id,slug,nombre,activo&order=nombre`, { headers: cab })).json();
   const existentes = (await (await fetch(`${URL}/auth/v1/admin/users?per_page=500`, { headers: cab })).json()).users || [];
   for (const j of jugadores) {
     const email = `${j.slug}@escandalo.test`;
     const ya = existentes.find((u) => u.email === email);
+    if (!ya && !j.activo) { console.log(`· ${j.nombre.padEnd(20)} no activo: sin cuenta todavía`); continue; }
     const esAdmin = ADMINS.includes(j.slug);
     const propia = esAdmin ? claveAdmin(j.slug) : (claves[j.slug] || null);
     // Admin sin clave explícita: si ya existe, solo sincroniza perfil; si no, no se puede crear sin contraseña
