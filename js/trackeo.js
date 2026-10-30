@@ -190,7 +190,7 @@
       </tr></thead>
       <tbody>${r.jugadores.map(fila).join("")}</tbody>
     </table></div>
-    <p class="trk-ayuda">${conDetalle ? "Tocá un jugador para ver qué hizo en cada punto. " : ""}Pases es completados sobre completados + errados. Recepción es recibidos sobre recibidos + caídos. +/− suma un punto a favor o en contra por cada punto jugado.</p>`;
+    <p class="trk-ayuda">${conDetalle ? "Tocá un jugador para ver qué hizo en cada punto. " : ""}Pases es completados sobre completados + errados; si se le cae a quien recibe, a quien tiró le cuenta como completado. Recepción es recibidos sobre recibidos + caídos. +/− suma un punto a favor o en contra por cada punto jugado.</p>`;
   }
 
   function marcadorDe(puntos) {
@@ -452,6 +452,8 @@
           ? "¿Quién hizo el gol?"
           : esperando.paso === "punto-asistencia"
             ? `¿Quién dio la asistencia${ya ? ` del gol de ${esc(corto(ya))}` : ""}? Puede ser la misma persona.`
+            : esperando.paso === "caido"
+              ? `Se le cayó a ${esc(corto(ya))}. ¿Quién se lo tiró? Le cuenta como pase completado.`
             : esperando.paso === "gol"
               ? `¿Quién se lo pasó a ${esc(corto(ya))}?`
               : esperando.paso === "asistencia"
@@ -477,6 +479,7 @@
           return `<button type="button" class="trk-chip${esSale || esYa ? " trk-lanzo" : " on"}" data-acc="${acc}" data-jugador="${l.jugador_id}">${esc(corto(j))}${n ? ` <small>${n}</small>` : ""}</button>`;
         }).join("")}
         ${eligiendo && esperando.paso === "punto-cagada" ? `<button type="button" class="trk-chip" data-acc="nadie" data-punto="${punto.id}">Nadie</button>` : ""}
+        ${eligiendo && esperando.paso === "caido" ? `<button type="button" class="trk-chip" data-acc="nose">No sé</button>` : ""}
       </div>
       ${enCambio && sale ? `<p class="trk-ayuda">Entra por ${esc(corto(sale))}</p>
         <div class="trk-plantel">${banca.length ? banca.map((j) => `<button type="button" class="trk-chip" data-acc="entra" data-jugador="${j.id}">${esc(corto(j))}${j.numero != null ? ` <small>#${j.numero}</small>` : ""}</button>`).join("") : `<p class="trk-ayuda">No hay nadie más marcado para jugar este torneo.</p>`}</div>` : ""}
@@ -732,7 +735,7 @@
       return;
     }
     if (acc === "modo") {
-      const estaba = cambio || esperando?.paso === "punto-cagada";
+      const estaba = cambio || esperando?.paso === "punto-cagada" || esperando?.paso === "caido";
       cambio = null;
       esperando = null;
       modo = b.dataset.tipo;
@@ -827,7 +830,7 @@
         const jugadorId = +b.dataset.jugador;
         if (modo === "gol") await anotarGol(puntoId, jugadorId);
         else await api("track_eventos", { method: "POST", body: JSON.stringify({ punto_id: puntoId, jugador_id: jugadorId, tipo: modo }) });
-        const paso = modo === "pase_completado" ? "pase" : modo === "gol" ? "gol" : modo === "asistencia" ? "asistencia" : null;
+        const paso = modo === "pase_completado" ? "pase" : modo === "gol" ? "gol" : modo === "asistencia" ? "asistencia" : modo === "pase_caido" ? "caido" : null;
         esperando = paso ? { puntoId, ya: jugadorId, paso } : null;
         await entrar();
       } else if (acc === "lanzador") {
@@ -836,7 +839,9 @@
           ? "Elegí a quien se lo pasó, no a quien hizo el gol."
           : esperando?.paso === "asistencia"
             ? "Elegí a quien hizo el gol, no a quien asistió."
-            : "Elegí a un compañero, no a quien tiró.";
+            : esperando?.paso === "caido"
+              ? "Elegí a quien tiró, no a quien se le cayó."
+              : "Elegí a un compañero, no a quien tiró.";
         aviso(texto, true);
       } else if (acc === "recibir") {
         const abierto = raiz.querySelector("[data-acc=deshacer]");
@@ -853,6 +858,13 @@
             throw err;
           }
           esperando = null;
+          await entrar();
+          return;
+        }
+        if (paso === "caido") {
+          await api("track_eventos", { method: "POST", body: JSON.stringify({ punto_id: puntoId, jugador_id: jugadorId, tipo: "pase_completado" }) });
+          esperando = null;
+          modo = "pase_completado";
           await entrar();
           return;
         }
@@ -884,6 +896,11 @@
             body: JSON.stringify({ resultado: "favor", duracion_seg: seg, cerrado_en: new Date().toISOString() }),
           });
         } else modo = "pase_completado";
+        await entrar();
+      } else if (acc === "nose") {
+        if (esperando?.paso !== "caido") return;
+        esperando = null;
+        modo = "pase_completado";
         await entrar();
       } else if (acc === "nadie") {
         if (esperando?.paso !== "punto-cagada") return;
@@ -928,7 +945,7 @@
           return;
         }
         if (esperando) {
-          const falta = esperando.paso === "gol" ? "Elegí quién se lo pasó." : esperando.paso === "asistencia" ? "Elegí quién hizo el gol." : "Elegí a quién le llegó el pase.";
+          const falta = esperando.paso === "gol" ? "Elegí quién se lo pasó." : esperando.paso === "asistencia" ? "Elegí quién hizo el gol." : esperando.paso === "caido" ? "Elegí quién tiró el pase, o No sé." : "Elegí a quién le llegó el pase.";
           aviso(falta, true);
           return;
         }
