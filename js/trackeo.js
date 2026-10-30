@@ -16,6 +16,7 @@
   ];
   const NOMBRE_TIPO = Object.fromEntries(TIPOS);
   NOMBRE_TIPO.pase_recibido = "Pase recibido";
+  NOMBRE_TIPO.cagada = "Cagada en defensa";
   let modo = "pase_completado";
   let esperando = null;
   let cambio = null;
@@ -79,7 +80,7 @@
   }
 
   function vacio(tipo) {
-    return { gol: 0, asistencia: 0, defensa: 0, pase_completado: 0, pase_errado: 0, pase_recibido: 0, pase_caido: 0, puntos: 0, ataque: 0, defensaPts: 0, favor: 0, contra: 0, segundos: 0 };
+    return { gol: 0, asistencia: 0, defensa: 0, pase_completado: 0, pase_errado: 0, pase_recibido: 0, pase_caido: 0, cagada: 0, puntos: 0, ataque: 0, defensaPts: 0, favor: 0, contra: 0, segundos: 0 };
   }
   // Cierra el cálculo de un conjunto de puntos ya terminados.
   function resumir(puntos, nombres) {
@@ -138,6 +139,7 @@
         <div class="trk-card"><span class="trk-tip" data-info="Goles totales.">Goles</span><b>${r.equipo.gol}</b></div>
         <div class="trk-card"><span class="trk-tip" data-info="Asistencias totales.">Asistencias</span><b>${r.equipo.asistencia}</b></div>
         <div class="trk-card"><span class="trk-tip" data-info="Bloqueos totales y el promedio por punto.">Defensas</span><b>${r.equipo.defensa}</b><small>${porPunto(r.equipo.defensa)} por punto</small></div>
+        <div class="trk-card"><span class="trk-tip" data-info="Puntos del rival en los que alguien de Escándalo la cagó en defensa.">Cagadas</span><b>${r.equipo.cagada}</b><small>en ${r.contra} puntos del rival</small></div>
       </div>`;
   }
 
@@ -160,6 +162,7 @@
         <td>${j.gol}</td>
         <td>${j.asistencia}</td>
         <td>${j.defensa}</td>
+        <td>${j.cagada}</td>
         <td>${j.pase_completado}<span class="trk-de">/${intento || 0}</span></td>
         <td>${pctTxt(pct(j.pase_completado, intento))}</td>
         <td>${j.pase_recibido}</td>
@@ -178,6 +181,7 @@
         <th class="trk-tip" data-info="Goles.">G</th>
         <th class="trk-tip" data-info="Asistencias.">A</th>
         <th class="trk-tip" data-info="Defensas.">D</th>
+        <th class="trk-tip" data-info="Cagadas en defensa: puntos del rival en los que la cagó.">C</th>
         <th class="trk-tip" data-info="Pases completados sobre completados más errados.">Pases</th>
         <th class="trk-tip" data-info="Porcentaje de pases completados.">% pase</th>
         <th class="trk-tip" data-info="Pases que recibió.">Recepc.</th>
@@ -186,7 +190,7 @@
       </tr></thead>
       <tbody>${r.jugadores.map(fila).join("")}</tbody>
     </table></div>
-    <p class="trk-ayuda">${conDetalle ? "Tocá un jugador para ver qué hizo en cada punto. " : ""}Pases es completados sobre completados + errados. Recepción es recibidos sobre recibidos + caídos. +/− suma un punto a favor o en contra por cada punto jugado.</p>`;
+    <p class="trk-ayuda">${conDetalle ? "Tocá un jugador para ver qué hizo en cada punto. " : ""}Pases es completados sobre completados + errados; si se le cae a quien recibe, a quien tiró le cuenta como completado. Recepción es recibidos sobre recibidos + caídos. +/− suma un punto a favor o en contra por cada punto jugado.</p>`;
   }
 
   function marcadorDe(puntos) {
@@ -442,10 +446,14 @@
       ? (sale ? `Tocá a quién entra por ${esc(corto(sale))}.` : "Tocá a quién sale.")
       : !eligiendo
         ? "Elegí la acción y tocá a quién. La acción queda elegida para el siguiente toque."
+        : esperando.paso === "punto-cagada"
+          ? "Punto del rival. ¿Quién de Escándalo la cagó en defensa? Si no fue nadie, tocá Nadie."
         : esperando.paso === "punto-gol"
           ? "¿Quién hizo el gol?"
           : esperando.paso === "punto-asistencia"
             ? `¿Quién dio la asistencia${ya ? ` del gol de ${esc(corto(ya))}` : ""}? Puede ser la misma persona.`
+            : esperando.paso === "caido"
+              ? `Se le cayó a ${esc(corto(ya))}. ¿Quién se lo tiró? Le cuenta como pase completado.`
             : esperando.paso === "gol"
               ? `¿Quién se lo pasó a ${esc(corto(ya))}?`
               : esperando.paso === "asistencia"
@@ -470,6 +478,8 @@
           const acc = enCambio ? (cambio.sale ? "lanzador" : "sale") : esYa ? "lanzador" : eligiendo ? "recibir" : "anotar";
           return `<button type="button" class="trk-chip${esSale || esYa ? " trk-lanzo" : " on"}" data-acc="${acc}" data-jugador="${l.jugador_id}">${esc(corto(j))}${n ? ` <small>${n}</small>` : ""}</button>`;
         }).join("")}
+        ${eligiendo && esperando.paso === "punto-cagada" ? `<button type="button" class="trk-chip" data-acc="nadie" data-punto="${punto.id}">Nadie</button>` : ""}
+        ${eligiendo && esperando.paso === "caido" ? `<button type="button" class="trk-chip" data-acc="nose">No sé</button>` : ""}
       </div>
       ${enCambio && sale ? `<p class="trk-ayuda">Entra por ${esc(corto(sale))}</p>
         <div class="trk-plantel">${banca.length ? banca.map((j) => `<button type="button" class="trk-chip" data-acc="entra" data-jugador="${j.id}">${esc(corto(j))}${j.numero != null ? ` <small>#${j.numero}</small>` : ""}</button>`).join("") : `<p class="trk-ayuda">No hay nadie más marcado para jugar este torneo.</p>`}</div>` : ""}
@@ -477,7 +487,7 @@
         ${eventos.length ? eventos.map((e) => `<div>${esc(NOMBRE_TIPO[e.tipo] || e.tipo)} · ${esc(corto(nombres.get(e.jugador_id) || { nombre: "Jugador" }))}</div>`).join("") : `<div>Sin acciones todavía.</div>`}
       </div>
       <div class="trk-botones">
-        <button class="btn ghost" type="button" data-acc="deshacer" data-punto="${punto.id}" ${eventos.length && !enCambio ? "" : "disabled"}>Deshacer</button>
+        <button class="btn ghost" type="button" data-acc="deshacer" data-punto="${punto.id}" ${(eventos.length || (eligiendo && esperando.paso === "punto-cagada")) && !enCambio ? "" : "disabled"}>Deshacer</button>
         <button class="btn ghost" type="button" data-acc="${enCambio ? "cancelar-cambio" : "cambio"}" data-punto="${punto.id}">${enCambio ? "Cancelar cambio" : "Cambiar jugador"}</button>
       </div>
       <div class="trk-cerrar">
@@ -562,6 +572,15 @@
     ]) });
   }
 
+  async function cerrarPunto(puntoId, resultado) {
+    const inicio = raiz.querySelector(".trk-cron")?.dataset.inicio;
+    const seg = Math.max(0, Math.round((Date.now() - new Date(inicio).getTime()) / 1000));
+    await api(`track_puntos?id=eq.${puntoId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ resultado, duracion_seg: seg, cerrado_en: new Date().toISOString() }),
+    });
+  }
+
   async function entrar() {
     const n = ++seq;
     pararReloj();
@@ -631,6 +650,7 @@
       if (hechos.some((e) => e.tipo === "gol")) marcas.push("G");
       if (hechos.some((e) => e.tipo === "asistencia")) marcas.push("A");
       if (hechos.some((e) => e.tipo === "defensa")) marcas.push("D");
+      if (hechos.some((e) => e.tipo === "cagada")) marcas.push("C");
       const alto = jugo ? Math.max(22, Math.round(((p.duracion_seg || 16) / maxSeg) * 128)) : 10;
       const cls = !jugo ? "fuera" : p.resultado === "favor" ? "favor" : "contra";
       return `<button type="button" class="trk-barra ${cls}" data-nota="${esc(notaDe(p))}">
@@ -648,7 +668,7 @@
       <div class="quiz-caja">
         <div class="quiz-top"><span>${esc(persona.nombre)}</span><button class="quiz-x" type="button" data-cerrar aria-label="Cerrar">${ico("cerrar")}</button></div>
         <p class="adm-confirma">${jugados} de ${puntos.length} puntos.</p>
-        <div class="trk-leyenda"><span><i class="favor"></i>Escándalo</span><span><i class="contra"></i>Rival</span><span><i class="fuera"></i>No entró</span><span>G gol · A asistencia · D defensa</span></div>
+        <div class="trk-leyenda"><span><i class="favor"></i>Escándalo</span><span><i class="contra"></i>Rival</span><span><i class="fuera"></i>No entró</span><span>G gol · A asistencia · D defensa · C cagada</span></div>
         <div class="trk-grafica">${barras || `<p class="adm-confirma">Todavía no hay puntos cerrados.</p>`}</div>
         <p class="trk-nota">${primero ? esc(notaDe(primero)) : "No jugó ningún punto cerrado."}</p>
         <div class="adm-botones"><button type="button" class="btn ghost" data-cerrar>Cerrar</button></div>
@@ -715,7 +735,7 @@
       return;
     }
     if (acc === "modo") {
-      const estaba = cambio;
+      const estaba = cambio || esperando?.paso === "punto-cagada" || esperando?.paso === "caido";
       cambio = null;
       esperando = null;
       modo = b.dataset.tipo;
@@ -810,7 +830,7 @@
         const jugadorId = +b.dataset.jugador;
         if (modo === "gol") await anotarGol(puntoId, jugadorId);
         else await api("track_eventos", { method: "POST", body: JSON.stringify({ punto_id: puntoId, jugador_id: jugadorId, tipo: modo }) });
-        const paso = modo === "pase_completado" ? "pase" : modo === "gol" ? "gol" : modo === "asistencia" ? "asistencia" : null;
+        const paso = modo === "pase_completado" ? "pase" : modo === "gol" ? "gol" : modo === "asistencia" ? "asistencia" : modo === "pase_caido" ? "caido" : null;
         esperando = paso ? { puntoId, ya: jugadorId, paso } : null;
         await entrar();
       } else if (acc === "lanzador") {
@@ -819,7 +839,9 @@
           ? "Elegí a quien se lo pasó, no a quien hizo el gol."
           : esperando?.paso === "asistencia"
             ? "Elegí a quien hizo el gol, no a quien asistió."
-            : "Elegí a un compañero, no a quien tiró.";
+            : esperando?.paso === "caido"
+              ? "Elegí a quien tiró, no a quien se le cayó."
+              : "Elegí a un compañero, no a quien tiró.";
         aviso(texto, true);
       } else if (acc === "recibir") {
         const abierto = raiz.querySelector("[data-acc=deshacer]");
@@ -827,6 +849,25 @@
         const paso = esperando?.paso;
         const jugadorId = +b.dataset.jugador;
         const inicio = raiz.querySelector(".trk-cron")?.dataset.inicio;
+        if (paso === "punto-cagada") {
+          await api("track_eventos", { method: "POST", body: JSON.stringify({ punto_id: puntoId, jugador_id: jugadorId, tipo: "cagada" }) });
+          try {
+            await cerrarPunto(puntoId, "contra");
+          } catch (err) {
+            await api(`track_eventos?punto_id=eq.${puntoId}&jugador_id=eq.${jugadorId}&tipo=eq.cagada`, { method: "DELETE" });
+            throw err;
+          }
+          esperando = null;
+          await entrar();
+          return;
+        }
+        if (paso === "caido") {
+          await api("track_eventos", { method: "POST", body: JSON.stringify({ punto_id: puntoId, jugador_id: jugadorId, tipo: "pase_completado" }) });
+          esperando = null;
+          modo = "pase_completado";
+          await entrar();
+          return;
+        }
         if (paso === "punto-gol") {
           await anotarGol(puntoId, jugadorId);
           esperando = { puntoId, ya: jugadorId, paso: "punto-asistencia" };
@@ -856,8 +897,23 @@
           });
         } else modo = "pase_completado";
         await entrar();
+      } else if (acc === "nose") {
+        if (esperando?.paso !== "caido") return;
+        esperando = null;
+        modo = "pase_completado";
+        await entrar();
+      } else if (acc === "nadie") {
+        if (esperando?.paso !== "punto-cagada") return;
+        await cerrarPunto(+b.dataset.punto, "contra");
+        esperando = null;
+        await entrar();
       } else if (acc === "deshacer") {
         const puntoId = +b.dataset.punto;
+        if (esperando?.paso === "punto-cagada" && esperando.puntoId === puntoId) {
+          esperando = null;
+          await entrar();
+          return;
+        }
         const evs = await api(`track_eventos?punto_id=eq.${puntoId}&select=id,tipo,jugador_id&order=id.desc&limit=2`);
         const golDelPunto = esperando?.paso === "punto-asistencia" && esperando.puntoId === puntoId
           && evs.length >= 2 && evs[0].jugador_id === evs[1].jugador_id
@@ -880,12 +936,16 @@
         await entrar();
       } else if (acc === "cerrar") {
         const puntoId = +b.dataset.punto;
+        if (esperando?.paso === "punto-cagada") {
+          aviso("Elegí quién la cagó en defensa, o Nadie.", true);
+          return;
+        }
         if (esperando?.paso === "punto-gol" || esperando?.paso === "punto-asistencia") {
           aviso(esperando.paso === "punto-gol" ? "Elegí quién hizo el gol." : "Elegí quién dio la asistencia.", true);
           return;
         }
         if (esperando) {
-          const falta = esperando.paso === "gol" ? "Elegí quién se lo pasó." : esperando.paso === "asistencia" ? "Elegí quién hizo el gol." : "Elegí a quién le llegó el pase.";
+          const falta = esperando.paso === "gol" ? "Elegí quién se lo pasó." : esperando.paso === "asistencia" ? "Elegí quién hizo el gol." : esperando.paso === "caido" ? "Elegí quién tiró el pase, o No sé." : "Elegí a quién le llegó el pase.";
           aviso(falta, true);
           return;
         }
@@ -895,11 +955,8 @@
           await entrar();
           return;
         }
-        const seg = Math.max(0, Math.round((Date.now() - new Date(b.dataset.inicio).getTime()) / 1000));
-        await api(`track_puntos?id=eq.${b.dataset.punto}`, {
-          method: "PATCH",
-          body: JSON.stringify({ resultado: b.dataset.resultado, duracion_seg: seg, cerrado_en: new Date().toISOString() }),
-        });
+        cambio = null;
+        esperando = { puntoId, paso: "punto-cagada" };
         await entrar();
       } else if (acc === "cancelar") {
         const puntoId = +b.dataset.punto;
