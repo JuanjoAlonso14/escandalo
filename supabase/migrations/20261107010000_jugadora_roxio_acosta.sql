@@ -3,9 +3,9 @@
 -- Solo datos públicos: sus datos personales NO van en una migración, este repositorio es público.
 
 update public.jugadores
-set slug = 'roxio-acosta', nombre = 'Roxio Acosta', apodo = 'Roxi', foto = 'roxio-acosta.webp', numero = 75, activo = true
+set slug = 'roxio-acosta', nombre = 'Roxio Acosta', apodo = 'Roxi', foto = 'roxio-acosta.webp', numero = 75, nacionalidad = 'Uruguaya', activo = true
 where slug = 'roxi';
 
-insert into public.jugadores (slug, nombre, apodo, foto, numero, activo, rol)
-values ('roxio-acosta', 'Roxio Acosta', 'Roxi', 'roxio-acosta.webp', 75, true, 'jugador')
+insert into public.jugadores (slug, nombre, apodo, foto, numero, nacionalidad, activo, rol)
+values ('roxio-acosta', 'Roxio Acosta', 'Roxi', 'roxio-acosta.webp', 75, 'Uruguaya', true, 'jugador')
 on conflict (slug) do nothing;
