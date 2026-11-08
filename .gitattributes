@@ -1,0 +1,3 @@
+# Finales de línea LF en todo el repo (los scripts y GitHub Actions escriben LF).
+# Evita los "archivos modificados" fantasma en Windows.
+* text=auto eol=lf
