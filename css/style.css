@@ -132,7 +132,7 @@ h3{font-size:1.5rem;text-transform:uppercase;margin-bottom:16px;color:var(--b)}
 
 /* JUGADORES */
 .grid{display:grid;gap:20px}
-.players{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.players{grid-template-columns:repeat(4,1fr)}   /* 16 jugadores: 4 filas de 4, sin uno suelto */
 .filters{display:flex;gap:10px;margin-bottom:28px}
 .chip{background:var(--card);color:var(--txt);border:1px solid #ffffff22;padding:8px 20px;border-radius:99px;cursor:pointer;font:inherit;transition:.2s}
 .chip.on,.chip:hover{background:var(--a);border-color:var(--a)}
