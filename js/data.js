@@ -69,6 +69,7 @@ const JUGADORES = [
   { nombre: "Maximiliano Lois", apodo: "Maxi", foto: "maximiliano-lois.webp", nacionalidad: "Uruguaya", dato: "Llegó con la 3 y ya está corriendo." },
   { nombre: "Nicolas Cabana", apodo: "Nico", foto: "nicolas-cabana.webp", numero: 5, nacionalidad: "Uruguaya", dato: "El veterano del equipo." },
   { nombre: "Rosina Cordero", apodo: "Rosi", foto: "rosina-cordero.webp", numero: 12, nacionalidad: "Uruguaya", dato: "Más rápida que el Correcaminos. La queremos." },
+  { nombre: "Roxio Acosta", apodo: "Roxi", foto: "roxio-acosta.webp", numero: 75, nacionalidad: "Uruguaya" },
   { nombre: "Santiago Rodriguez", apodo: "Santi", foto: "santiago-rodriguez.webp", numero: 9, nacionalidad: "Uruguaya", dato: "Si hace give and go, andá preparándote para atacar en el siguiente punto." },
   { nombre: "Sebastian Migdal", apodo: "Seba", foto: "sebastian-migdal.webp", numero: 30, nacionalidad: "Uruguaya", dato: "El muñe, por su gran forehand." },
   { nombre: "Sofia Rodriguez", apodo: "Sofi", foto: "sofia-rodriguez.webp", numero: 27, nacionalidad: "Uruguaya", dato: "Lentamente se está transformando en el demonio de Tasmania, pero maneja mejor que vos." },
