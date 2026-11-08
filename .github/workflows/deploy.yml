@@ -26,6 +26,8 @@ jobs:
         with:
           node-version: 20
       - run: node scripts/verificar.js
+      - name: Traer los jugadores de la base
+        run: node scripts/data-desde-base.js || echo "::warning::No se pudo leer la base; se publica js/data.js como está en el repo"
       - name: Armar el sitio
         run: |
           node scripts/jugadores.js
