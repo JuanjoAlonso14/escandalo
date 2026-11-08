@@ -36,7 +36,8 @@ function preguntarOculto(texto) {
       for (const c of trozo) {
         if (c === "\u0003") process.exit(1);
         if (c === "\r" || c === "\n") { process.stdin.setRawMode(false); process.stdin.pause(); process.stdin.off("data", alTeclear); process.stdout.write("\n"); return resolve(valor); }
-        if (c === "\u007f" || c === "\b") valor = valor.slice(0, -1); else valor += c;
+        if (c === "\u007f" || c === "\b") valor = valor.slice(0, -1);
+        else if (c >= " ") valor += c;   // ignora caracteres de control (Ctrl+V en la consola clásica manda uno)
       }
     };
     process.stdin.on("data", alTeclear);
@@ -73,6 +74,12 @@ async function claveAdmin(j) {
   if (!local && !/^https:\/\/[a-z0-9]{20}\.supabase\.co$/.test(URL)) { console.error("La dirección del proyecto no parece válida:", URL); process.exit(1); }
   let clave = process.env.SUPABASE_SERVICE_ROLE_KEY || (await preguntarOculto("Clave secreta service_role del proyecto (no se muestra): ")).trim();
   if (!clave) { console.error("Hace falta la clave secreta. Se encuentra en Project Settings → API Keys → secret / service_role."); process.exit(1); }
+  clave = clave.replace(/\[20[01]~/g, "").replace(/[^\x21-\x7e]/g, "");   // restos del pegado y espacios
+  if (!/^(sb_secret_[A-Za-z0-9_-]+|eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)$/.test(clave)) {
+    console.error("Eso no parece la clave secreta: tiene que empezar con sb_secret_ (o ser la service_role vieja, que empieza con eyJ).");
+    console.error("En la ventana de PowerShell pegala con CLIC DERECHO, no con Ctrl+V, y después Enter.");
+    process.exit(1);
+  }
   const cab = { apikey: clave, ...(clave.startsWith("sb_") ? {} : { Authorization: `Bearer ${clave}` }), "Content-Type": "application/json" };
   const api = async (ruta, opciones = {}) => fetch(`${URL}${ruta}`, { ...opciones, headers: { ...cab, ...(opciones.headers || {}) }, signal: AbortSignal.timeout(15000) });
 
