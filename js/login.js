@@ -19,9 +19,29 @@ const aviso = document.querySelector("#login-error");
   btn.addEventListener("click", () => { input.type = input.type === "password" ? "text" : "password"; pintar(); });
 })(form.querySelector(".clave-wrap"));
 
-lista.innerHTML = '<option value="">Elegí tu nombre…</option>' +
-  [...JUGADORES].sort((a, b) => a.nombre.localeCompare(b.nombre, "es"))
-    .map((j) => `<option value="${escHtml(slugDe(j))}" data-id="${escHtml(j.id || "")}">${escHtml(j.nombre)}</option>`).join("");
+// Los del roster vienen en JUGADORES; los que tienen cuenta sin estar en el roster se piden aparte a la base.
+const personas = [...JUGADORES];
+const pintarLista = () => {
+  lista.innerHTML = '<option value="">Elegí tu nombre…</option>' +
+    [...personas].sort((a, b) => a.nombre.localeCompare(b.nombre, "es"))
+      .map((j) => `<option value="${escHtml(slugDe(j))}" data-id="${escHtml(j.id || "")}">${escHtml(j.nombre)}</option>`).join("");
+};
+pintarLista();
+if (typeof SUPABASE !== "undefined" && SUPABASE) {
+  fetch(`${SUPABASE.url}/rest/v1/jugadores?select=id,slug,nombre&activo=eq.false&cuenta=eq.true`,
+    { headers: { apikey: SUPABASE.key }, signal: AbortSignal.timeout(5000) })
+    .then((r) => (r.ok ? r.json() : []))
+    .then((extra) => {
+      const ya = new Set(personas.map(slugDe));
+      const nuevos = extra.filter((j) => !ya.has(j.slug));
+      if (!nuevos.length) return;
+      const elegido = lista.value;
+      personas.push(...nuevos);
+      pintarLista();
+      lista.value = elegido;
+    })
+    .catch(() => {});
+}
 
 if (typeof SUPABASE === "undefined" || !SUPABASE) {
   form.querySelectorAll("select,input,button").forEach((e) => (e.disabled = true));
@@ -38,7 +58,7 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   aviso.classList.remove("ver");
   const slug = lista.value, escrito = document.querySelector("#login-clave").value;
-  const j = JUGADORES.find((x) => slugDe(x) === slug);
+  const j = personas.find((x) => slugDe(x) === slug);
   if (!j) return error("Elegí tu nombre de la lista.");
   const jugadorId = j.id != null ? Number(j.id) : Number(lista.selectedOptions[0]?.dataset.id);
   if (!jugadorId) return error("Falta el id del jugador. Recargá la página.");
