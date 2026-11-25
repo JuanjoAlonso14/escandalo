@@ -87,7 +87,7 @@ async function claveAdmin(j) {
   if (!prueba.ok) { console.error(`La clave no sirve para ${URL} (HTTP ${prueba.status}). ¿Copiaste la clave secreta de ese proyecto?`); process.exit(1); }
   console.log(`Conectado a ${URL}${local ? " (local)" : " (PRODUCCIÓN)"}${todos ? " — reseteando TODOS" : ""}`);
 
-  const jr = await api("/rest/v1/jugadores?select=id,slug,nombre,activo&order=nombre");
+  const jr = await api("/rest/v1/jugadores?select=id,slug,nombre,activo,cuenta&order=nombre");
   const jugadores = jr.ok ? await jr.json() : [];
   if (!jugadores.length) { console.error("No hay jugadores en la base. ¿Corriste antes `npx supabase db push`?"); process.exit(1); }
   const existentes = (await (await api("/auth/v1/admin/users?per_page=1000")).json()).users || [];
@@ -104,7 +104,7 @@ async function claveAdmin(j) {
       await api(`/rest/v1/jugadores?id=eq.${j.id}`, { method: "PATCH", body: JSON.stringify({ rol: rolActual }) });
       console.log(`  · ${j.nombre.padEnd(20)} ya tiene usuario [${rolActual}]${p0.ok ? "" : " (perfil HTTP " + p0.status + ")"}`); continue;
     }
-    if (!ya && !j.activo && j.slug !== resetear) { console.log(`  · ${j.nombre.padEnd(20)} no activo: sin cuenta todavía`); continue; }
+    if (!ya && !j.activo && !j.cuenta && j.slug !== resetear) { console.log(`  · ${j.nombre.padEnd(20)} no activo: sin cuenta todavía`); continue; }
     let password;
     if (ADMINS.includes(j.slug)) {
       password = await claveAdmin(j);
